@@ -2,34 +2,63 @@ name: CI
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
-  group: ci
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   ios:
-    runs-on: macos-latest
+    runs-on: macos-26
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app
       - name: Build and test
         shell: bash
         run: |
           mkdir -p ci-output
-          test ! -f ci/run.sh || bash ci/run.sh 2>&1 | tee ci-output/log.txt
+          if [ ! -f ci/run.sh ]; then
+            echo "ci/run.sh not found" > ci-output/log.txt
+            echo "::error::ci/run.sh not found"
+            exit 1
+          fi
+          bash ci/run.sh 2>&1 | tee ci-output/log.txt
+      - name: Upload results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-output
+          path: ci-output/
+          if-no-files-found: ignore
+          include-hidden-files: true
+  publish:
+    needs: ios
+    if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        continue-on-error: true
+        with:
+          name: ci-output
+          path: ${{ runner.temp }}/ci-output
       - name: Publish results
-        if: always()
         shell: bash
         env:
           TOKEN: ${{ github.token }}
         run: |
-          mkdir -p ci-output
-          cd "$(mktemp -d)"
-          cp -R "$GITHUB_WORKSPACE/ci-output/." .
+          mkdir -p "$RUNNER_TEMP/ci-output"
+          cd "$RUNNER_TEMP/ci-output"
           echo "$GITHUB_SHA" > SHA
           git init -q -b ci-results
           git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "$GITHUB_SHA"
-          git push -f "https://x-access-token:$TOKEN@github.com/$GITHUB_REPOSITORY.git" ci-results
+          git push -f "https://x-access-token:${TOKEN}@github.com/$GITHUB_REPOSITORY.git" ci-results
