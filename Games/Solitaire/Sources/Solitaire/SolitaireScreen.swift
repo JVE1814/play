@@ -61,7 +61,9 @@ struct SolitaireScreen: View {
         .environment(\.accent, context.accent)
         .confirmationDialog("Start a new deal?", isPresented: $session.confirmingNewGame, titleVisibility: .visible) {
             Button("New Deal", role: .destructive) { session.startNewGame() }
-            Button("Keep Playing", role: .cancel) {}
+            // Not a cancel-role button: iOS 26 hides those in dialogs, and an explicit way out is
+            // easier on a moving train than tapping outside.
+            Button("Keep Playing") {}
         } message: {
             Text("The current game will count as a loss.")
         }

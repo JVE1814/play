@@ -110,5 +110,6 @@ worth a look before you submit are marked **review**.
     full battery.
 34. **A hint's highlight stays until your next move** (the sentence fades after a few seconds).
     On a train you often look away mid-thought, so a highlight that vanishes on a timer gets missed.
-35. **On iOS 26 the "Start a new deal?" dialog has no Cancel button.** The system shows it as a
-    popover that you dismiss by tapping outside it. iOS 17 and 18 show "Keep Playing".
+35. **"Start a new deal?" offers an explicit "Keep Playing" button.** It is a plain button rather
+    than a cancel button, because iOS 26 hides cancel buttons in dialogs, and tapping outside a
+    dialog is awkward on a moving train.

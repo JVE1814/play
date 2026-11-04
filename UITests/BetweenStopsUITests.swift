@@ -123,11 +123,13 @@ final class BetweenStopsUITests: XCTestCase {
     }
 
     func testTestOnlyGameAppearsOnHomeAndOpens() {
-        launch(["-includeTestGames"])
+        launch(["-includeTestGames"], appearance: "light")
         let tile = waitFor("game-testgame")
         XCTAssertTrue(element("game-klondike").exists)
+        snap("30-test-game-on-home-light")
         tile.tap()
         XCTAssertTrue(waitFor("testGameTitle").exists)
+        snap("31-test-game-open-light")
         element("testGameTap").tap()
         XCTAssertEqual(element("testGameCount").value as? String, "1")
         element("back").tap()
@@ -146,6 +148,24 @@ final class BetweenStopsUITests: XCTestCase {
         tapCenter(element("stock"))
         let waste = signature().split(separator: "|").first { $0.hasPrefix("W:") } ?? ""
         XCTAssertEqual(waste.split(separator: ",").count, 3, String(waste))
+        snap("09-draw-three-light")
+    }
+
+    func testLeftHandedLayoutPutsTheStockOnTheLeft() {
+        launch(["-seed", "42"], appearance: "light")
+        openSolitaire()
+        XCTAssertGreaterThan(element("stock").frame.midX, app.frame.midX)
+        element("back").tap()
+        waitFor("settingsButton").tap()
+        let toggle = waitFor("leftHanded")
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+        element("done").tap()
+        openSolitaire()
+        XCTAssertLessThan(element("stock").frame.midX, app.frame.midX)
+        XCTAssertLessThan(element("undo").frame.midX, element("newGame").frame.midX)
+        tapCenter(element("stock"))
+        XCTAssertEqual(moves(), "1")
+        snap("10-left-handed-light")
     }
 
     func testAccessibilityAudit() throws {
@@ -216,12 +236,9 @@ final class BetweenStopsUITests: XCTestCase {
         let newDeal = app.buttons["New Deal"]
         XCTAssertTrue(newDeal.waitForExistence(timeout: 5))
         snap("08-confirm-new-deal-\(appearance)")
-        // iOS 26 shows the dialog as a popover without a cancel button; tap outside to dismiss.
-        if app.buttons["Keep Playing"].exists {
-            app.buttons["Keep Playing"].tap()
-        } else {
-            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12)).tap()
-        }
+        let keepPlaying = app.buttons["Keep Playing"]
+        XCTAssertTrue(keepPlaying.exists)
+        keepPlaying.tap()
         XCTAssertTrue(newDeal.waitForNonExistence(timeout: 5))
         XCTAssertEqual(moves(), "1", "dismissing keeps the current game")
         element("back").tap()

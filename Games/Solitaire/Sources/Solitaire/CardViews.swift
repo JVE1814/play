@@ -80,8 +80,9 @@ struct CardBack: View {
         ZStack {
             RoundedRectangle(cornerRadius: w * 0.12, style: .continuous)
                 .fill(accent.deep)
+            // A thin edge in the table colour separates stacked face-down cards cleanly.
             RoundedRectangle(cornerRadius: w * 0.12, style: .continuous)
-                .strokeBorder(Color.black.opacity(0.25), lineWidth: 1)
+                .strokeBorder(accent.table, lineWidth: 1.5)
             SuitShape(suit: .diamonds)
                 .fill(CardPalette.backMark)
                 .frame(width: w * 0.32, height: w * 0.32)
