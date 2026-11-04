@@ -29,7 +29,6 @@ public final class SolitaireSession: ObservableObject {
     private var runStartedAt: Date?
     private var isOnScreen = false
     private var dealsStarted: Int
-    private var hintTask: Task<Void, Never>?
     private var toastTask: Task<Void, Never>?
     private var autoFinishTask: Task<Void, Never>?
     private var winTask: Task<Void, Never>?
@@ -192,21 +191,16 @@ public final class SolitaireSession: ObservableObject {
     public func showHint() {
         guard canHint else { return }
         context.feedback.play(.tap)
-        hintTask?.cancel()
         guard let move = game.hint() else {
             hint = nil
             showToast("No helpful moves left. Try Undo or a new deal.")
             return
         }
+        // The highlight stays until the next move, so a glance away doesn't lose it.
         hint = move
         let text = describe(move)
         showToast(text)
         announce(text)
-        hintTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 3_000_000_000)
-            guard !Task.isCancelled, let self, self.hint == move else { return }
-            self.hint = nil
-        }
     }
 
     /// Play the remaining moves to the foundations one by one.
@@ -306,7 +300,7 @@ public final class SolitaireSession: ObservableObject {
         toastTask?.cancel()
         toast = text
         toastTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 2_600_000_000)
+            try? await Task.sleep(nanoseconds: 4_500_000_000)
             guard !Task.isCancelled, let self, self.toast == text else { return }
             self.toast = nil
         }

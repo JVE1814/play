@@ -80,7 +80,7 @@ struct BoardView: View {
             .onTapGesture { session.tapPile(.stock) }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Stock")
-            .accessibilityValue(value)
+            .accessibilityValue(session.hintedPile == .stock ? value + ", suggested by hint" : value)
             .accessibilityHint(game.stock.isEmpty ? "Turns the waste over." : "Draws from the stock.")
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { session.tapPile(.stock) }
@@ -123,7 +123,7 @@ struct BoardView: View {
             .animation(animate ? .linear(duration: 0.3) : nil, value: shakes)
             .contentShape(Rectangle())
             .gesture(cardGesture(placement))
-            .modifier(accessibility(for: placement))
+            .modifier(accessibility(for: placement, highlighted: highlighted))
             .position(x: placement.center.x + offset.width, y: placement.center.y + offset.height)
             .zIndex(z)
     }
@@ -192,7 +192,7 @@ struct BoardView: View {
 
     // MARK: Accessibility
 
-    private func accessibility(for placement: CardPlacement) -> CardAccessibility {
+    private func accessibility(for placement: CardPlacement, highlighted: Bool) -> CardAccessibility {
         let game = session.game
         var accessible = false
         var place = ""
@@ -227,6 +227,7 @@ struct BoardView: View {
             }
         }
         let card = placement.card
+        if highlighted { place += ", suggested by hint" }
         return CardAccessibility(
             label: placement.faceUp ? card.name : "Face-down card",
             value: place,

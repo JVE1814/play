@@ -31,22 +31,22 @@ struct SolitaireScreen: View {
                     .accessibilityIdentifier("boardSignature")
             }
             GeometryReader { proxy in
-                BoardView(session: session,
-                          layout: BoardLayout(size: proxy.size, leftHanded: preferences.leftHanded),
-                          animate: animate)
+                let layout = BoardLayout(size: proxy.size, leftHanded: preferences.leftHanded)
+                ZStack(alignment: .bottom) {
+                    BoardView(session: session, layout: layout, animate: animate)
+                    if let toast = session.toast {
+                        // Just above the bottom row, so it never hides a card you need.
+                        Toast(toast)
+                            .padding(.horizontal, Theme.Space.l)
+                            .padding(.bottom, layout.card.height + layout.margin + Theme.Space.m)
+                            .transition(.opacity)
+                            .allowsHitTesting(false)
+                    }
+                }
             }
             toolbar
         }
         .background(context.accent.table.ignoresSafeArea())
-        .overlay(alignment: .bottom) {
-            if let toast = session.toast {
-                Toast(toast)
-                    .padding(.horizontal, Theme.Space.xl)
-                    .padding(.bottom, 96)
-                    .transition(.opacity)
-                    .allowsHitTesting(false)
-            }
-        }
         .overlay {
             if session.showsWin {
                 WinOverlay(time: session.elapsed(), moves: session.game.moveCount,

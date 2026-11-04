@@ -52,6 +52,7 @@ public struct ToolbarButton: View {
             VStack(spacing: 3) {
                 Image(systemName: systemImage)
                     .font(.system(size: 20, weight: .bold))
+                    .frame(height: 24)
                     .accessibilityHidden(true)
                 Text(title)
                     .font(Typography.label)

@@ -71,7 +71,16 @@ final class BetweenStopsUITests: XCTestCase {
         launch(["-seed", "4"])
         openSolitaire()
         element("hint").tap()
-        XCTAssertTrue(waitFor("toast").exists)
+        // The best move is the 6 of Diamonds onto the 7 of Spades: a short sentence appears,
+        // and both cards stay highlighted (and say so to VoiceOver) until the next move.
+        XCTAssertTrue(labelled("Move the 6 of Diamonds onto the 7 of Spades").waitForExistence(timeout: 4))
+        let six = waitFor("card-6D")
+        XCTAssertTrue((six.value as? String ?? "").contains("suggested by hint"), six.value as? String ?? "")
+        XCTAssertTrue((element("card-7S").value as? String ?? "").contains("suggested by hint"))
+        XCTAssertEqual(moves(), "0", "a hint never moves anything by itself")
+        tapCenter(six)
+        XCTAssertEqual(moves(), "1")
+        XCTAssertFalse((element("card-6D").value as? String ?? "").contains("suggested"), "the highlight clears after a move")
     }
 
     func testNearlyFinishedGamePlaysThroughToTheWinScreen() {
@@ -204,10 +213,17 @@ final class BetweenStopsUITests: XCTestCase {
         snap("05-new-deal-\(appearance)")
         tapCenter(element("stock"))
         element("newGame").tap()
-        let keepPlaying = app.buttons["Keep Playing"]
-        XCTAssertTrue(keepPlaying.waitForExistence(timeout: 5))
+        let newDeal = app.buttons["New Deal"]
+        XCTAssertTrue(newDeal.waitForExistence(timeout: 5))
         snap("08-confirm-new-deal-\(appearance)")
-        keepPlaying.tap()
+        // iOS 26 shows the dialog as a popover without a cancel button; tap outside to dismiss.
+        if app.buttons["Keep Playing"].exists {
+            app.buttons["Keep Playing"].tap()
+        } else {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12)).tap()
+        }
+        XCTAssertTrue(newDeal.waitForNonExistence(timeout: 5))
+        XCTAssertEqual(moves(), "1", "dismissing keeps the current game")
         element("back").tap()
         waitFor("statsButton").tap()
         _ = waitFor("done")

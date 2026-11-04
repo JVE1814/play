@@ -5,6 +5,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var stats: StatsStore
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         ScrollView {
@@ -31,7 +32,10 @@ struct HomeView: View {
             .padding(.bottom, Theme.Space.l)
         }
         .safeAreaInset(edge: .bottom) {
-            HStack(spacing: Theme.Space.m) {
+            let layout = dynamicTypeSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(spacing: Theme.Space.s))
+                : AnyLayout(HStackLayout(spacing: Theme.Space.m))
+            layout {
                 HomeButton(title: "Statistics", systemImage: "chart.bar.fill", identifier: "statsButton") {
                     model.showingStats = true
                 }
@@ -109,6 +113,8 @@ struct HomeButton: View {
         Button(action: action) {
             Label(title, systemImage: systemImage)
                 .font(Typography.headline)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .foregroundStyle(Theme.ink)
                 .frame(maxWidth: .infinity, minHeight: Theme.minTouchTarget)
                 .background(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous).fill(Theme.hairline))

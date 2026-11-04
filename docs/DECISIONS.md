@@ -108,3 +108,7 @@ worth a look before you submit are marked **review**.
 33. **App Store screenshots** come from the CI UI tests on an iPhone 17 Pro Max simulator
     (1320 × 2868, the 6.9" size App Store Connect asks for), with the status bar set to 9:41 and
     full battery.
+34. **A hint's highlight stays until your next move** (the sentence fades after a few seconds).
+    On a train you often look away mid-thought, so a highlight that vanishes on a timer gets missed.
+35. **On iOS 26 the "Start a new deal?" dialog has no Cancel button.** The system shows it as a
+    popover that you dismiss by tapping outside it. iOS 17 and 18 show "Keep Playing".

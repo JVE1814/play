@@ -53,6 +53,27 @@ step "Source audit (networking APIs, third-party dependencies)"
 bash ci/audit.sh | tee "$OUT/source-audit.txt"
 if [ "${PIPESTATUS[0]}" -ne 0 ]; then fail "source audit found networking APIs or third-party dependencies"; fi
 
+step "Create and boot a simulator (it finishes booting while the engine tests and build run)"
+RUNTIME_ID=$(xcrun simctl list runtimes -j | python3 -c '
+import json, sys
+rts = [r for r in json.load(sys.stdin)["runtimes"]
+       if r.get("isAvailable") and (r.get("platform") == "iOS" or ".iOS-" in r["identifier"])]
+rts.sort(key=lambda r: [int(x) for x in r["version"].split(".")])
+print(rts[-1]["identifier"] if rts else "")')
+DEVICE_TYPE_ID=$(xcrun simctl list devicetypes -j | python3 -c '
+import json, sys
+types = {t["name"]: t["identifier"] for t in json.load(sys.stdin)["devicetypes"]}
+# 6.9-inch first: its screenshots are the size App Store Connect requires.
+for name in ["iPhone 17 Pro Max", "iPhone 16 Pro Max", "iPhone 17 Pro", "iPhone 16 Pro", "iPhone 17", "iPhone 16"]:
+    if name in types:
+        print(types[name]); break')
+echo "runtime: $RUNTIME_ID"
+echo "device type: $DEVICE_TYPE_ID"
+UDID=$(xcrun simctl create "CI iPhone" "$DEVICE_TYPE_ID" "$RUNTIME_ID")
+echo "simulator: $UDID"
+xcrun simctl boot "$UDID"
+DESTINATION="platform=iOS Simulator,id=$UDID"
+
 step "Engine tests: swift test in Packages/KlondikeEngine"
 (cd Packages/KlondikeEngine && with_timeout 900 swift test) > "$OUT/engine-tests.log" 2>&1
 ENGINE_RC=$?
@@ -74,27 +95,6 @@ if ! xcodegen generate --spec project.yml > "$OUT/xcodegen.log" 2>&1; then
   cat "$OUT/xcodegen.log"
   fail "xcodegen generate"
 fi
-
-step "Create and boot a simulator"
-RUNTIME_ID=$(xcrun simctl list runtimes -j | python3 -c '
-import json, sys
-rts = [r for r in json.load(sys.stdin)["runtimes"]
-       if r.get("isAvailable") and (r.get("platform") == "iOS" or ".iOS-" in r["identifier"])]
-rts.sort(key=lambda r: [int(x) for x in r["version"].split(".")])
-print(rts[-1]["identifier"] if rts else "")')
-DEVICE_TYPE_ID=$(xcrun simctl list devicetypes -j | python3 -c '
-import json, sys
-types = {t["name"]: t["identifier"] for t in json.load(sys.stdin)["devicetypes"]}
-# 6.9-inch first: its screenshots are the size App Store Connect requires.
-for name in ["iPhone 17 Pro Max", "iPhone 16 Pro Max", "iPhone 17 Pro", "iPhone 16 Pro", "iPhone 17", "iPhone 16"]:
-    if name in types:
-        print(types[name]); break')
-echo "runtime: $RUNTIME_ID"
-echo "device type: $DEVICE_TYPE_ID"
-UDID=$(xcrun simctl create "CI iPhone" "$DEVICE_TYPE_ID" "$RUNTIME_ID")
-echo "simulator: $UDID"
-xcrun simctl boot "$UDID"
-DESTINATION="platform=iOS Simulator,id=$UDID"
 
 step "Build for testing"
 with_timeout 1200 xcodebuild build-for-testing \

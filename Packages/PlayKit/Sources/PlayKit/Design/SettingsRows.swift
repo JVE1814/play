@@ -22,6 +22,7 @@ public struct SettingsPanel<Content: View>: View {
             VStack(alignment: .leading, spacing: 0) {
                 content
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, Theme.Space.xs)
             .background(RoundedRectangle(cornerRadius: Theme.Radius.l, style: .continuous).fill(Theme.surface))
             if let footer {
