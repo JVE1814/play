@@ -1,0 +1,42 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "DD45AF75-6FF2-4D38-9F9D-7E262B708C0E",
+        "deviceName": "CI iPhone",
+        "modelName": "iPhone 17 Pro Max",
+        "osBuildNumber": "23F77",
+        "osVersion": "26.5",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "passedTests": 45,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "BetweenStops \u00b7 Built with macOS 26.6.2",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1793787102.087,
+  "passedTests": 45,
+  "result": "Passed",
+  "skippedTests": 0,
+  "startTime": 1793786659.742,
+  "statistics": [],
+  "testFailures": [],
+  "title": "Test - BetweenStops",
+  "topInsights": [
+    {
+      "category": "Longest Test Runs",
+      "impact": "85% of duration",
+      "text": "1 longest test run with outlier durations exceeding 0.70s (three standard deviations)"
+    }
+  ],
+  "totalTestCount": 45
+}

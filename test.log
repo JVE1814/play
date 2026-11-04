@@ -1,0 +1,1296 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project BetweenStops.xcodeproj -scheme BetweenStops -destination "platform=iOS Simulator,id=DD45AF75-6FF2-4D38-9F9D-7E262B708C0E" -derivedDataPath /Users/runner/work/play/play/build/DerivedData -resultBundlePath /Users/runner/work/play/play/build/Tests.xcresult -parallel-testing-enabled NO -test-timeouts-enabled YES -default-test-execution-time-allowance 300 -maximum-test-execution-time-allowance 600
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  KlondikeEngine: /Users/runner/work/play/play/Packages/KlondikeEngine
+  TestGame: /Users/runner/work/play/play/Games/TestGame
+  PlayKit: /Users/runner/work/play/play/Packages/PlayKit
+  Solitaire: /Users/runner/work/play/play/Games/Solitaire
+
+Writing result bundle at path:
+	/Users/runner/work/play/play/build/Tests.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:DD45AF75-6FF2-4D38-9F9D-7E262B708C0E, OS:26.5, name:CI iPhone }
+{ platform:iOS Simulator, arch:x86_64, id:DD45AF75-6FF2-4D38-9F9D-7E262B708C0E, OS:26.5, name:CI iPhone }
+Test Suite 'All tests' started at 2026-11-04 10:04:58.200.
+Test Suite 'BetweenStopsTests.xctest' started at 2026-11-04 10:04:58.203.
+Test Suite 'PlayKitTests' started at 2026-11-04 10:04:58.203.
+Test Case '-[BetweenStopsTests.PlayKitTests testFeedbackPlaysEveryEventWithSoundOn]' started.
+2026-11-04 10:04:58.511458+0000 BetweenStops[22810:67187] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x114604ca0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-11-04 10:04:59.014429+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1755  ReadPListFile: unable to open stream for LoudnessManager plist
+2026-11-04 10:04:59.014970+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1261  GetHardwarePlatformKey: cannot get acoustic ID
+2026-11-04 10:04:59.015068+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.015399+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.048687+0000 BetweenStops[22810:68344] [AMCP]          HALC_ProxyIOContext.cpp:1623  HALC_ProxyIOContext::IOWorkLoop: skipping cycle due to overload
+2026-11-04 10:04:59.070857+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.071342+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.281335+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.281521+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.313146+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.313555+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.333180+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+2026-11-04 10:04:59.333354+0000 BetweenStops[22810:67187] [AQ]        LoudnessManager.mm:1215  IsHardwareSupported: no plist loaded, returning false
+Test Case '-[BetweenStopsTests.PlayKitTests testFeedbackPlaysEveryEventWithSoundOn]' passed (1.212 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testFormatting]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testFormatting]' passed (0.003 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testGamePreferencesAreNamespaced]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testGamePreferencesAreNamespaced]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testLaunchOptionsParsing]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testLaunchOptionsParsing]' passed (0.002 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testOpenGameIsRemembered]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testOpenGameIsRemembered]' passed (0.007 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testSaveSlotRoundTripAndClear]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testSaveSlotRoundTripAndClear]' passed (0.008 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testSoundIsOffAndHapticsOnByDefault]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testSoundIsOffAndHapticsOnByDefault]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testStatsAreKeptPerGameAndPersisted]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testStatsAreKeptPerGameAndPersisted]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testWinsLossesStreaksAndBestTime]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testWinsLossesStreaksAndBestTime]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testWipeRemovesEverything]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testWipeRemovesEverything]' passed (0.005 seconds).
+Test Suite 'PlayKitTests' passed at 2026-11-04 10:04:59.563.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 1.268 (1.360) seconds
+Test Suite 'RegistryTests' started at 2026-11-04 10:04:59.563.
+Test Case '-[BetweenStopsTests.RegistryTests testAppModelReopensTheLastGame]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testAppModelReopensTheLastGame]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.RegistryTests testEveryGameProvidesItsViews]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testEveryGameProvidesItsViews]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.RegistryTests testSolitaireIsListedAndIdsAreUnique]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testSolitaireIsListedAndIdsAreUnique]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.RegistryTests testTestGameIsAddedOnlyWhenRequested]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testTestGameIsAddedOnlyWhenRequested]' passed (0.001 seconds).
+Test Suite 'RegistryTests' passed at 2026-11-04 10:04:59.632.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.016 (0.068) seconds
+Test Suite 'SolitaireTests' started at 2026-11-04 10:04:59.657.
+Test Case '-[BetweenStopsTests.SolitaireTests testCorruptSaveIsReplacedByAFreshDeal]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testCorruptSaveIsReplacedByAFreshDeal]' passed (0.018 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testDrawThreeAppliesFromTheNextDeal]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testDrawThreeAppliesFromTheNextDeal]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testDrawThreeFanShowsRanksWithoutTouchingTheFoundations]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testDrawThreeFanShowsRanksWithoutTouchingTheFoundations]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testDropOnlyAcceptsLegalMoves]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testDropOnlyAcceptsLegalMoves]' passed (0.019 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testEveryMoveIsSavedSoARelaunchRestoresTheExactBoard]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testEveryMoveIsSavedSoARelaunchRestoresTheExactBoard]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testFirstDealFollowsTheSeed]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testFirstDealFollowsTheSeed]' passed (0.004 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testHintSuggestsALegalMove]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testHintSuggestsALegalMove]' passed (0.004 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testLayoutFitsTheSmallestPhoneWithBigTouchTargets]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testLayoutFitsTheSmallestPhoneWithBigTouchTargets]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testLeftHandedLayoutMirrorsTheBottomRow]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testLeftHandedLayoutMirrorsTheBottomRow]' passed (0.000 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testNewGameAfterPlayingCountsAsALoss]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testNewGameAfterPlayingCountsAsALoss]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testStatusLineShowsGameInProgress]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testStatusLineShowsGameInProgress]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testTapPlaysTheBestMove]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testTapPlaysTheBestMove]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testTapWithNoMoveChangesNothing]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testTapWithNoMoveChangesNothing]' passed (0.008 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testTimerOnlyRunsWhileOnScreen]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testTimerOnlyRunsWhileOnScreen]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testUndoRestoresThePreviousBoard]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testUndoRestoresThePreviousBoard]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testWinningRecordsStatsOnceAndShowsTheWinScreen]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testWinningRecordsStatsOnceAndShowsTheWinScreen]' passed (0.015 seconds).
+Test Suite 'SolitaireTests' passed at 2026-11-04 10:05:00.176.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.131 (0.519) seconds
+Test Suite 'BetweenStopsTests.xctest' passed at 2026-11-04 10:05:00.176.
+	 Executed 30 tests, with 0 failures (0 unexpected) in 1.415 (1.973) seconds
+Test Suite 'All tests' passed at 2026-11-04 10:05:00.176.
+	 Executed 30 tests, with 0 failures (0 unexpected) in 1.415 (1.976) seconds
+2026-11-04 10:05:04.617174+0000 BetweenStopsUITests-Runner[23499:69062] [Default] Running tests...
+2026-11-04 10:05:04.667703+0000 BetweenStopsUITests-Runner[23499:69151] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-11-04 10:05:06.431578+0000 BetweenStopsUITests-Runner[23499:69156] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+objc[23499]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x107974310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10648c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'All tests' started at 2026-11-04 10:05:22.012.
+Test Suite 'BetweenStopsUITests.xctest' started at 2026-11-04 10:05:22.013.
+Test Suite 'BetweenStopsUITests' started at 2026-11-04 10:05:22.014.
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testAccessibilityAudit]' started.
+    t =     0.00s Start Test at 2026-11-04 10:05:22.015
+    t =     3.58s Set Up
+    t =     3.61s Open io.github.jve1814.betweenstops
+    t =     3.61s     Launch io.github.jve1814.betweenstops
+2026-11-04 10:05:26.548 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:05:26.548 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     7.49s         Setting up automation session
+    t =    12.78s         Wait for io.github.jve1814.betweenstops to idle
+    t =    29.22s Waiting 10.0s for "homeTitle" Any to exist
+    t =    30.25s     Checking `Expect predicate `existsNoRetry == 1` for object "homeTitle" Any`
+    t =    30.25s         Checking existence of `"homeTitle" Any`
+    t =    31.69s Waiting 10.0s for "game-klondike" Any to exist
+    t =    32.71s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =    32.72s         Checking existence of `"game-klondike" Any`
+    t =    32.78s Tap "game-klondike" Any
+    t =    32.78s     Wait for io.github.jve1814.betweenstops to idle
+    t =    32.78s     Find the "game-klondike" Any
+    t =    32.84s     Check for interrupting elements affecting "game-klondike" Button
+    t =    32.89s     Synthesize event
+    t =    33.31s     Wait for io.github.jve1814.betweenstops to idle
+    t =    34.29s Waiting 10.0s for "stock" Any to exist
+    t =    35.31s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    35.32s         Checking existence of `"stock" Any`
+    t =    35.87s Tap "back" Any
+    t =    35.87s     Wait for io.github.jve1814.betweenstops to idle
+    t =    35.87s     Find the "back" Any
+    t =    35.91s     Check for interrupting elements affecting "back" Button
+    t =    35.98s     Synthesize event
+    t =    36.29s     Wait for io.github.jve1814.betweenstops to idle
+    t =    36.29s Waiting 10.0s for "settingsButton" Any to exist
+    t =    37.31s     Checking `Expect predicate `existsNoRetry == 1` for object "settingsButton" Any`
+    t =    37.32s         Checking existence of `"settingsButton" Any`
+    t =    37.40s Tap "settingsButton" Any
+    t =    37.40s     Wait for io.github.jve1814.betweenstops to idle
+    t =    37.41s     Find the "settingsButton" Any
+    t =    37.45s     Check for interrupting elements affecting "settingsButton" Button
+    t =    39.63s     Synthesize event
+    t =    40.46s     Wait for io.github.jve1814.betweenstops to idle
+    t =    45.23s Waiting 10.0s for "done" Any to exist
+    t =    46.27s     Checking `Expect predicate `existsNoRetry == 1` for object "done" Any`
+    t =    46.28s         Checking existence of `"done" Any`
+    t =    47.32s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testAccessibilityAudit]' passed (47.676 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDraggingACardOntoAColumn]' started.
+    t =     0.00s Start Test at 2026-11-04 10:06:09.692
+    t =     0.11s Set Up
+    t =     0.11s Open io.github.jve1814.betweenstops
+    t =     0.12s     Launch io.github.jve1814.betweenstops
+    t =     0.12s         Terminate io.github.jve1814.betweenstops:24487
+2026-11-04 10:06:11.195 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:06:11.195 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.42s         Setting up automation session
+    t =     5.04s         Wait for io.github.jve1814.betweenstops to idle
+    t =     6.75s Waiting 10.0s for "game-klondike" Any to exist
+    t =     7.80s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     7.80s         Checking existence of `"game-klondike" Any`
+    t =     7.89s Tap "game-klondike" Any
+    t =     7.90s     Wait for io.github.jve1814.betweenstops to idle
+    t =     7.90s     Find the "game-klondike" Any
+    t =     7.96s     Check for interrupting elements affecting "game-klondike" Button
+    t =     8.02s     Synthesize event
+    t =     8.32s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.43s Waiting 10.0s for "stock" Any to exist
+    t =     9.46s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =     9.46s         Checking existence of `"stock" Any`
+    t =     9.51s Waiting 10.0s for "card-9D" Any to exist
+    t =    10.57s     Checking `Expect predicate `existsNoRetry == 1` for object "card-9D" Any`
+    t =    10.57s         Checking existence of `"card-9D" Any`
+    t =    10.73s Waiting 10.0s for "card-10C" Any to exist
+    t =    11.79s     Checking `Expect predicate `existsNoRetry == 1` for object "card-10C" Any`
+    t =    11.79s         Checking existence of `"card-10C" Any`
+    t =    11.97s Press "card-9D" Any for 0.2 seconds, drag to "card-10C" Any with velocity of 500.00 pixels per second, and then hold for 0.0 seconds
+    t =    11.97s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.97s     Find the "card-9D" Any
+    t =    12.13s     Check for interrupting elements affecting "card-9D" Button
+    t =    12.21s     Synthesize event
+    t =    12.21s         Find the "card-10C" Any
+    t =    12.36s         Compute first hitpoint
+    t =    12.37s         Compute second hitpoint
+    t =    12.99s     Wait for io.github.jve1814.betweenstops to idle
+    t =    13.00s Waiting 10.0s for "moves" Any to exist
+    t =    14.07s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    14.08s         Checking existence of `"moves" Any`
+    t =    14.12s Find the "moves" Any
+    t =    14.16s Waiting 10.0s for "boardSignature" Any to exist
+    t =    15.20s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    15.20s         Checking existence of `"boardSignature" Any`
+    t =    15.26s Find the "boardSignature" Any
+    t =    15.29s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDraggingACardOntoAColumn]' passed (15.532 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDrawingFromTheStockAndUndo]' started.
+    t =     0.00s Start Test at 2026-11-04 10:06:25.226
+    t =     0.04s Set Up
+    t =     0.04s Open io.github.jve1814.betweenstops
+    t =     0.04s     Launch io.github.jve1814.betweenstops
+    t =     0.04s         Terminate io.github.jve1814.betweenstops:26470
+2026-11-04 10:06:26.294 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:06:26.294 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.91s         Setting up automation session
+    t =     4.35s         Wait for io.github.jve1814.betweenstops to idle
+    t =     8.25s Waiting 10.0s for "game-klondike" Any to exist
+    t =     9.31s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     9.31s         Checking existence of `"game-klondike" Any`
+    t =     9.89s Tap "game-klondike" Any
+    t =     9.90s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.92s     Find the "game-klondike" Any
+    t =     9.99s     Check for interrupting elements affecting "game-klondike" Button
+    t =    10.07s     Synthesize event
+    t =    10.37s     Wait for io.github.jve1814.betweenstops to idle
+    t =    10.40s Waiting 10.0s for "stock" Any to exist
+    t =    11.47s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    11.47s         Checking existence of `"stock" Any`
+    t =    11.52s Waiting 10.0s for "boardSignature" Any to exist
+    t =    12.57s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    12.57s         Checking existence of `"boardSignature" Any`
+    t =    12.62s Find the "boardSignature" Any
+    t =    12.78s Tap "stock" Any[0.50, 0.50]
+    t =    12.78s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.78s     Find the "stock" Any
+    t =    12.83s     Check for interrupting elements affecting "stock" Button
+    t =    13.02s     Synthesize event
+    t =    13.02s         Find the "stock" Button
+    t =    13.09s         Find the "stock" Button
+    t =    13.14s         Find the "stock" Button
+    t =    13.49s     Wait for io.github.jve1814.betweenstops to idle
+    t =    13.50s Waiting 10.0s for "moves" Any to exist
+    t =    14.54s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    14.54s         Checking existence of `"moves" Any`
+    t =    14.57s Find the "moves" Any
+    t =    14.60s Waiting 10.0s for "boardSignature" Any to exist
+    t =    15.64s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    15.64s         Checking existence of `"boardSignature" Any`
+    t =    15.76s Find the "boardSignature" Any
+    t =    15.79s Waiting 10.0s for "boardSignature" Any to exist
+    t =    16.84s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    16.84s         Checking existence of `"boardSignature" Any`
+    t =    16.90s Find the "boardSignature" Any
+    t =    16.95s Tap "undo" Any
+    t =    16.95s     Wait for io.github.jve1814.betweenstops to idle
+    t =    16.95s     Find the "undo" Any
+    t =    17.39s     Check for interrupting elements affecting "undo" Button
+    t =    17.54s     Synthesize event
+    t =    17.84s     Wait for io.github.jve1814.betweenstops to idle
+    t =    17.85s Waiting 10.0s for "boardSignature" Any to exist
+    t =    18.89s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    18.89s         Checking existence of `"boardSignature" Any`
+    t =    18.94s Find the "boardSignature" Any
+    t =    19.08s Waiting 10.0s for "moves" Any to exist
+    t =    20.13s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    20.13s         Checking existence of `"moves" Any`
+    t =    20.20s Find the "moves" Any
+    t =    20.23s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDrawingFromTheStockAndUndo]' passed (20.485 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDrawThreeSettingAppliesToTheNextDeal]' started.
+    t =     0.00s Start Test at 2026-11-04 10:06:45.712
+    t =     0.04s Set Up
+    t =     0.04s Open io.github.jve1814.betweenstops
+    t =     0.04s     Launch io.github.jve1814.betweenstops
+    t =     0.04s         Terminate io.github.jve1814.betweenstops:27208
+2026-11-04 10:06:46.779 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:06:46.779 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     4.05s         Setting up automation session
+    t =     7.25s         Wait for io.github.jve1814.betweenstops to idle
+    t =    10.23s Waiting 10.0s for "settingsButton" Any to exist
+    t =    11.30s     Checking `Expect predicate `existsNoRetry == 1` for object "settingsButton" Any`
+    t =    11.30s         Checking existence of `"settingsButton" Any`
+    t =    11.37s Tap "settingsButton" Any
+    t =    11.37s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.37s     Find the "settingsButton" Any
+    t =    11.42s     Check for interrupting elements affecting "settingsButton" Button
+    t =    11.65s     Synthesize event
+    t =    11.97s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.39s Waiting 5.0s for "Draw 3" Button to exist
+    t =    13.44s     Checking `Expect predicate `existsNoRetry == 1` for object "Draw 3" Button`
+    t =    13.44s         Checking existence of `"Draw 3" Button`
+    t =    13.67s Tap "Draw 3" Button
+    t =    13.67s     Wait for io.github.jve1814.betweenstops to idle
+    t =    13.68s     Find the "Draw 3" Button
+    t =    13.79s     Check for interrupting elements affecting "Draw 3" Button
+    t =    13.87s     Synthesize event
+    t =    14.19s     Wait for io.github.jve1814.betweenstops to idle
+    t =    15.44s Tap "done" Any
+    t =    15.45s     Wait for io.github.jve1814.betweenstops to idle
+    t =    15.45s     Find the "done" Any
+    t =    15.58s     Check for interrupting elements affecting "done" Other
+    t =    15.74s     Synthesize event
+    t =    16.10s     Wait for io.github.jve1814.betweenstops to idle
+    t =    16.73s Waiting 10.0s for "game-klondike" Any to exist
+    t =    17.75s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =    17.75s         Checking existence of `"game-klondike" Any`
+    t =    17.83s Tap "game-klondike" Any
+    t =    17.83s     Wait for io.github.jve1814.betweenstops to idle
+    t =    17.83s     Find the "game-klondike" Any
+    t =    17.88s     Check for interrupting elements affecting "game-klondike" Button
+    t =    17.93s     Synthesize event
+    t =    18.23s     Wait for io.github.jve1814.betweenstops to idle
+    t =    18.24s Waiting 10.0s for "stock" Any to exist
+    t =    19.28s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    19.29s         Checking existence of `"stock" Any`
+    t =    19.35s Waiting 10.0s for "boardSignature" Any to exist
+    t =    20.37s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    20.37s         Checking existence of `"boardSignature" Any`
+    t =    20.42s Find the "boardSignature" Any
+    t =    20.45s Tap "stock" Any[0.50, 0.50]
+    t =    20.45s     Wait for io.github.jve1814.betweenstops to idle
+    t =    20.46s     Find the "stock" Any
+    t =    20.50s     Check for interrupting elements affecting "stock" Button
+    t =    20.60s     Synthesize event
+    t =    20.60s         Find the "stock" Button
+    t =    20.66s         Find the "stock" Button
+    t =    20.71s         Find the "stock" Button
+    t =    21.06s     Wait for io.github.jve1814.betweenstops to idle
+    t =    21.06s Waiting 10.0s for "boardSignature" Any to exist
+    t =    22.08s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    22.09s         Checking existence of `"boardSignature" Any`
+    t =    22.13s Find the "boardSignature" Any
+    t =    22.47s Added attachment named '09-draw-three-light'
+    t =    22.47s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDrawThreeSettingAppliesToTheNextDeal]' passed (22.712 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testForceQuitMidGameRestoresTheExactBoard]' started.
+    t =     0.00s Start Test at 2026-11-04 10:07:08.424
+    t =     0.04s Set Up
+    t =     0.04s Open io.github.jve1814.betweenstops
+    t =     0.04s     Launch io.github.jve1814.betweenstops
+    t =     0.04s         Terminate io.github.jve1814.betweenstops:28512
+2026-11-04 10:07:09.517 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:07:09.517 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.75s         Setting up automation session
+    t =     3.81s         Wait for io.github.jve1814.betweenstops to idle
+    t =     6.39s Waiting 10.0s for "game-klondike" Any to exist
+    t =     7.42s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     7.42s         Checking existence of `"game-klondike" Any`
+    t =     9.17s Tap "game-klondike" Any
+    t =     9.17s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.18s     Find the "game-klondike" Any
+    t =     9.25s     Check for interrupting elements affecting "game-klondike" Button
+    t =     9.38s     Synthesize event
+    t =     9.69s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.72s Waiting 10.0s for "stock" Any to exist
+    t =    10.74s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    10.74s         Checking existence of `"stock" Any`
+    t =    10.81s Tap "stock" Any[0.50, 0.50]
+    t =    10.81s     Wait for io.github.jve1814.betweenstops to idle
+    t =    10.81s     Find the "stock" Any
+    t =    10.88s     Check for interrupting elements affecting "stock" Button
+    t =    10.95s     Synthesize event
+    t =    10.95s         Find the "stock" Button
+    t =    11.02s         Find the "stock" Button
+    t =    11.09s         Find the "stock" Button
+    t =    11.43s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.43s Tap "stock" Any[0.50, 0.50]
+    t =    11.43s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.44s     Find the "stock" Any
+    t =    11.61s     Check for interrupting elements affecting "stock" Button
+    t =    11.69s     Synthesize event
+    t =    11.69s         Find the "stock" Button
+    t =    11.75s         Find the "stock" Button
+    t =    11.82s         Find the "stock" Button
+    t =    12.17s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.18s Tap "stock" Any[0.50, 0.50]
+    t =    12.18s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.18s     Find the "stock" Any
+    t =    12.25s     Check for interrupting elements affecting "stock" Button
+    t =    12.33s     Synthesize event
+    t =    12.33s         Find the "stock" Button
+    t =    12.41s         Find the "stock" Button
+    t =    12.50s         Find the "stock" Button
+    t =    12.87s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.87s Waiting 10.0s for "card-6H" Any to exist
+    t =    13.91s     Checking `Expect predicate `existsNoRetry == 1` for object "card-6H" Any`
+    t =    13.91s         Checking existence of `"card-6H" Any`
+    t =    14.10s Tap "card-6H" Any[0.50, 0.50]
+    t =    14.10s     Wait for io.github.jve1814.betweenstops to idle
+    t =    14.11s     Find the "card-6H" Any
+    t =    14.29s     Check for interrupting elements affecting "card-6H" Button
+    t =    14.36s     Synthesize event
+    t =    14.36s         Find the "card-6H" Button
+    t =    14.56s         Find the "card-6H" Button
+    t =    14.79s         Find the "card-6H" Button
+    t =    15.27s     Wait for io.github.jve1814.betweenstops to idle
+    t =    15.27s Waiting 10.0s for "boardSignature" Any to exist
+    t =    16.33s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    16.34s         Checking existence of `"boardSignature" Any`
+    t =    16.36s Find the "boardSignature" Any
+    t =    16.40s Waiting 10.0s for "moves" Any to exist
+    t =    17.46s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    17.46s         Checking existence of `"moves" Any`
+    t =    17.48s Find the "moves" Any
+    t =    17.51s Terminate io.github.jve1814.betweenstops:29494
+    t =    18.61s Open io.github.jve1814.betweenstops
+2026-11-04 10:07:27.060 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:07:27.060 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    18.61s     Launch io.github.jve1814.betweenstops
+    t =    19.08s         Setting up automation session
+    t =    21.87s         Wait for io.github.jve1814.betweenstops to idle
+    t =    23.69s Waiting 10.0s for "stock" Any to exist
+    t =    24.70s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    24.71s         Checking existence of `"stock" Any`
+    t =    24.87s Checking existence of `"stock" Any`
+    t =    25.00s Checking existence of `"homeTitle" Any`
+    t =    26.52s Waiting 10.0s for "boardSignature" Any to exist
+    t =    27.57s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    27.57s         Checking existence of `"boardSignature" Any`
+    t =    27.66s Find the "boardSignature" Any
+    t =    27.72s Waiting 10.0s for "moves" Any to exist
+    t =    28.74s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    28.74s         Checking existence of `"moves" Any`
+    t =    28.78s Find the "moves" Any
+    t =    28.81s Tap "undo" Any
+    t =    28.81s     Wait for io.github.jve1814.betweenstops to idle
+    t =    28.82s     Find the "undo" Any
+    t =    29.03s     Check for interrupting elements affecting "undo" Button
+    t =    29.12s     Synthesize event
+    t =    29.44s     Wait for io.github.jve1814.betweenstops to idle
+    t =    29.45s Waiting 10.0s for "moves" Any to exist
+    t =    30.46s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    30.46s         Checking existence of `"moves" Any`
+    t =    30.50s Find the "moves" Any
+    t =    30.54s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testForceQuitMidGameRestoresTheExactBoard]' passed (30.780 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testHintShowsAMove]' started.
+    t =     0.00s Start Test at 2026-11-04 10:07:39.205
+    t =     0.06s Set Up
+    t =     0.06s Open io.github.jve1814.betweenstops
+    t =     0.06s     Launch io.github.jve1814.betweenstops
+    t =     0.06s         Terminate io.github.jve1814.betweenstops:30674
+2026-11-04 10:07:40.292 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:07:40.293 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.88s         Setting up automation session
+    t =     4.01s         Wait for io.github.jve1814.betweenstops to idle
+    t =     5.44s Waiting 10.0s for "game-klondike" Any to exist
+    t =     6.49s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     6.49s         Checking existence of `"game-klondike" Any`
+    t =     6.62s Tap "game-klondike" Any
+    t =     6.62s     Wait for io.github.jve1814.betweenstops to idle
+    t =     6.63s     Find the "game-klondike" Any
+    t =     6.76s     Check for interrupting elements affecting "game-klondike" Button
+    t =     6.84s     Synthesize event
+    t =     7.15s     Wait for io.github.jve1814.betweenstops to idle
+    t =     7.20s Waiting 10.0s for "stock" Any to exist
+    t =     8.22s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =     8.22s         Checking existence of `"stock" Any`
+    t =     8.29s Tap "hint" Any
+    t =     8.29s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.29s     Find the "hint" Any
+    t =     8.58s     Check for interrupting elements affecting "hint" Button
+    t =     8.65s     Synthesize event
+    t =     8.95s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.96s Waiting 4.0s for Any (First Match) to exist
+    t =     9.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.99s         Checking existence of `Any (First Match)`
+    t =    10.15s Waiting 10.0s for "card-6D" Any to exist
+    t =    11.18s     Checking `Expect predicate `existsNoRetry == 1` for object "card-6D" Any`
+    t =    11.18s         Checking existence of `"card-6D" Any`
+    t =    11.79s Find the "card-6D" Any
+    t =    12.32s Find the "card-7S" Any
+    t =    12.57s Waiting 10.0s for "moves" Any to exist
+    t =    13.59s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    13.60s         Checking existence of `"moves" Any`
+    t =    13.75s Find the "moves" Any
+    t =    13.96s Tap "card-6D" Button[0.50, 0.50]
+    t =    13.96s     Wait for io.github.jve1814.betweenstops to idle
+    t =    13.97s     Find the "card-6D" Button
+    t =    14.43s     Check for interrupting elements affecting "card-6D" Button
+    t =    14.55s     Synthesize event
+    t =    14.55s         Find the "card-6D" Button
+    t =    14.88s         Find the "card-6D" Button
+    t =    15.21s         Find the "card-6D" Button
+    t =    15.80s     Wait for io.github.jve1814.betweenstops to idle
+    t =    15.81s Waiting 10.0s for "moves" Any to exist
+    t =    16.86s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    16.86s         Checking existence of `"moves" Any`
+    t =    16.91s Find the "moves" Any
+    t =    16.97s Find the "card-6D" Any
+    t =    17.29s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testHintShowsAMove]' passed (17.522 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testHomeListsSolitaireAndOpensIt]' started.
+    t =     0.00s Start Test at 2026-11-04 10:07:56.728
+    t =     0.04s Set Up
+    t =     0.05s Open io.github.jve1814.betweenstops
+    t =     0.05s     Launch io.github.jve1814.betweenstops
+    t =     0.05s         Terminate io.github.jve1814.betweenstops:31433
+2026-11-04 10:07:57.948 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:07:57.948 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.99s         Setting up automation session
+    t =     4.52s         Wait for io.github.jve1814.betweenstops to idle
+    t =     6.36s Waiting 10.0s for "homeTitle" Any to exist
+    t =     7.41s     Checking `Expect predicate `existsNoRetry == 1` for object "homeTitle" Any`
+    t =     7.41s         Checking existence of `"homeTitle" Any`
+    t =     7.71s Checking existence of `"homeTitle" Any`
+    t =     7.95s Checking existence of `"game-testgame" Any`
+    t =     8.15s Waiting 10.0s for "game-klondike" Any to exist
+    t =     9.15s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     9.16s         Checking existence of `"game-klondike" Any`
+    t =     9.22s Tap "game-klondike" Any
+    t =     9.22s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.22s     Find the "game-klondike" Any
+    t =     9.29s     Check for interrupting elements affecting "game-klondike" Button
+    t =     9.35s     Synthesize event
+    t =     9.67s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.68s Waiting 10.0s for "stock" Any to exist
+    t =    10.70s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    10.70s         Checking existence of `"stock" Any`
+    t =    10.78s Checking existence of `"undo" Any`
+    t =    11.05s Checking existence of `"hint" Any`
+    t =    11.26s Checking existence of `"newGame" Any`
+    t =    11.52s Checking existence of `"moves" Any`
+    t =    11.55s Checking existence of `"timer" Any`
+    t =    11.59s Checking existence of `"back" Any`
+    t =    11.62s Checking existence of `"settings" Any`
+    t =    11.65s Checking existence of `"stock" Any`
+    t =    11.71s Tap "back" Any
+    t =    11.71s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.71s     Find the "back" Any
+    t =    11.75s     Check for interrupting elements affecting "back" Button
+    t =    11.81s     Synthesize event
+    t =    12.14s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.15s Waiting 10.0s for "homeTitle" Any to exist
+    t =    13.15s     Checking `Expect predicate `existsNoRetry == 1` for object "homeTitle" Any`
+    t =    13.16s         Checking existence of `"homeTitle" Any`
+    t =    13.23s Checking existence of `"homeTitle" Any`
+    t =    13.30s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testHomeListsSolitaireAndOpensIt]' passed (13.533 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testIllegalDragSnapsBack]' started.
+    t =     0.00s Start Test at 2026-11-04 10:08:10.262
+    t =     0.04s Set Up
+    t =     0.05s Open io.github.jve1814.betweenstops
+    t =     0.05s     Launch io.github.jve1814.betweenstops
+    t =     0.05s         Terminate io.github.jve1814.betweenstops:31851
+2026-11-04 10:08:11.373 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:08:11.373 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.93s         Setting up automation session
+    t =     3.89s         Wait for io.github.jve1814.betweenstops to idle
+    t =     5.72s Waiting 10.0s for "game-klondike" Any to exist
+    t =     6.73s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     6.73s         Checking existence of `"game-klondike" Any`
+    t =     7.95s Tap "game-klondike" Any
+    t =     7.95s     Wait for io.github.jve1814.betweenstops to idle
+    t =     7.97s     Find the "game-klondike" Any
+    t =     8.26s     Check for interrupting elements affecting "game-klondike" Button
+    t =     8.44s     Synthesize event
+    t =     8.78s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.99s Waiting 10.0s for "stock" Any to exist
+    t =    10.03s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    10.03s         Checking existence of `"stock" Any`
+    t =    10.15s Waiting 10.0s for "boardSignature" Any to exist
+    t =    11.18s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    11.18s         Checking existence of `"boardSignature" Any`
+    t =    11.26s Find the "boardSignature" Any
+    t =    11.32s Waiting 10.0s for "card-9D" Any to exist
+    t =    12.33s     Checking `Expect predicate `existsNoRetry == 1` for object "card-9D" Any`
+    t =    12.33s         Checking existence of `"card-9D" Any`
+    t =    12.64s Waiting 10.0s for "card-AD" Any to exist
+    t =    13.67s     Checking `Expect predicate `existsNoRetry == 1` for object "card-AD" Any`
+    t =    13.67s         Checking existence of `"card-AD" Any`
+    t =    13.86s Press "card-9D" Any for 0.2 seconds, drag to "card-AD" Any with velocity of 500.00 pixels per second, and then hold for 0.0 seconds
+    t =    13.86s     Wait for io.github.jve1814.betweenstops to idle
+    t =    13.87s     Find the "card-9D" Any
+    t =    14.15s     Check for interrupting elements affecting "card-9D" Button
+    t =    14.26s     Synthesize event
+    t =    14.26s         Find the "card-AD" Any
+    t =    14.46s         Compute first hitpoint
+    t =    14.47s         Compute second hitpoint
+    t =    15.45s     Wait for io.github.jve1814.betweenstops to idle
+    t =    15.46s Waiting 10.0s for "moves" Any to exist
+    t =    16.48s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    16.48s         Checking existence of `"moves" Any`
+    t =    16.51s Find the "moves" Any
+    t =    16.55s Waiting 10.0s for "boardSignature" Any to exist
+    t =    17.58s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    17.59s         Checking existence of `"boardSignature" Any`
+    t =    17.75s Find the "boardSignature" Any
+    t =    17.80s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testIllegalDragSnapsBack]' passed (18.041 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testLeftHandedLayoutPutsTheStockOnTheLeft]' started.
+    t =     0.00s Start Test at 2026-11-04 10:08:28.303
+    t =     0.05s Set Up
+    t =     0.05s Open io.github.jve1814.betweenstops
+    t =     0.06s     Launch io.github.jve1814.betweenstops
+    t =     0.06s         Terminate io.github.jve1814.betweenstops:32214
+2026-11-04 10:08:29.513 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:08:29.513 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.92s         Setting up automation session
+    t =     4.51s         Wait for io.github.jve1814.betweenstops to idle
+    t =     6.17s Waiting 10.0s for "game-klondike" Any to exist
+    t =     7.19s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     7.19s         Checking existence of `"game-klondike" Any`
+    t =     7.47s Tap "game-klondike" Any
+    t =     7.47s     Wait for io.github.jve1814.betweenstops to idle
+    t =     7.47s     Find the "game-klondike" Any
+    t =     7.55s     Check for interrupting elements affecting "game-klondike" Button
+    t =     7.62s     Synthesize event
+    t =     7.93s     Wait for io.github.jve1814.betweenstops to idle
+    t =     7.94s Waiting 10.0s for "stock" Any to exist
+    t =     8.97s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =     8.97s         Checking existence of `"stock" Any`
+    t =     9.04s Find the "stock" Any
+    t =     9.11s Find the Target Application 'io.github.jve1814.betweenstops'
+    t =     9.15s Tap "back" Any
+    t =     9.15s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.18s     Find the "back" Any
+    t =     9.21s     Check for interrupting elements affecting "back" Button
+    t =     9.28s     Synthesize event
+    t =     9.60s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.61s Waiting 10.0s for "settingsButton" Any to exist
+    t =    10.62s     Checking `Expect predicate `existsNoRetry == 1` for object "settingsButton" Any`
+    t =    10.63s         Checking existence of `"settingsButton" Any`
+    t =    10.68s Tap "settingsButton" Any
+    t =    10.68s     Wait for io.github.jve1814.betweenstops to idle
+    t =    10.68s     Find the "settingsButton" Any
+    t =    10.71s     Check for interrupting elements affecting "settingsButton" Button
+    t =    10.76s     Synthesize event
+    t =    11.06s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.52s Waiting 10.0s for "leftHanded" Any to exist
+    t =    12.52s     Checking `Expect predicate `existsNoRetry == 1` for object "leftHanded" Any`
+    t =    12.53s         Checking existence of `"leftHanded" Any`
+    t =    12.89s Tap "leftHanded" Any[0.92, 0.50]
+    t =    12.89s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.90s     Find the "leftHanded" Any
+    t =    13.44s     Check for interrupting elements affecting "leftHanded" Switch
+    t =    13.62s     Synthesize event
+    t =    13.62s         Find the "leftHanded" Switch
+    t =    14.01s         Find the "leftHanded" Switch
+    t =    14.42s         Find the "leftHanded" Switch
+    t =    15.14s     Wait for io.github.jve1814.betweenstops to idle
+    t =    16.39s Tap "done" Any
+    t =    16.39s     Wait for io.github.jve1814.betweenstops to idle
+    t =    16.40s     Find the "done" Any
+    t =    16.84s     Check for interrupting elements affecting "done" Other
+    t =    16.99s     Synthesize event
+    t =    17.35s     Wait for io.github.jve1814.betweenstops to idle
+    t =    18.14s Waiting 10.0s for "game-klondike" Any to exist
+    t =    19.16s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =    19.16s         Checking existence of `"game-klondike" Any`
+    t =    19.26s Tap "game-klondike" Any
+    t =    19.26s     Wait for io.github.jve1814.betweenstops to idle
+    t =    19.26s     Find the "game-klondike" Any
+    t =    19.31s     Check for interrupting elements affecting "game-klondike" Button
+    t =    19.38s     Synthesize event
+    t =    19.72s     Wait for io.github.jve1814.betweenstops to idle
+    t =    19.72s Waiting 10.0s for "stock" Any to exist
+    t =    20.78s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    20.78s         Checking existence of `"stock" Any`
+    t =    20.83s Find the "stock" Any
+    t =    20.91s Find the Target Application 'io.github.jve1814.betweenstops'
+    t =    20.95s Find the "undo" Any
+    t =    21.20s Find the "newGame" Any
+    t =    21.41s Tap "stock" Any[0.50, 0.50]
+    t =    21.41s     Wait for io.github.jve1814.betweenstops to idle
+    t =    21.42s     Find the "stock" Any
+    t =    21.46s     Check for interrupting elements affecting "stock" Button
+    t =    21.54s     Synthesize event
+    t =    21.55s         Find the "stock" Button
+    t =    21.65s         Find the "stock" Button
+    t =    21.80s         Find the "stock" Button
+    t =    22.13s     Wait for io.github.jve1814.betweenstops to idle
+    t =    22.13s Waiting 10.0s for "moves" Any to exist
+    t =    23.18s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    23.19s         Checking existence of `"moves" Any`
+    t =    23.23s Find the "moves" Any
+    t =    23.57s Added attachment named '10-left-handed-light'
+    t =    23.58s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testLeftHandedLayoutPutsTheStockOnTheLeft]' passed (23.857 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testNearlyFinishedGamePlaysThroughToTheWinScreen]' started.
+    t =     0.00s Start Test at 2026-11-04 10:08:52.165
+    t =     0.04s Set Up
+    t =     0.04s Open io.github.jve1814.betweenstops
+    t =     0.04s     Launch io.github.jve1814.betweenstops
+    t =     0.04s         Terminate io.github.jve1814.betweenstops:32992
+2026-11-04 10:08:53.314 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:08:53.314 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.13s         Setting up automation session
+    t =     4.63s         Wait for io.github.jve1814.betweenstops to idle
+    t =     6.47s Waiting 10.0s for "game-klondike" Any to exist
+    t =     7.51s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     7.52s         Checking existence of `"game-klondike" Any`
+    t =     7.72s Tap "game-klondike" Any
+    t =     7.72s     Wait for io.github.jve1814.betweenstops to idle
+    t =     7.73s     Find the "game-klondike" Any
+    t =     8.03s     Check for interrupting elements affecting "game-klondike" Button
+    t =     8.20s     Synthesize event
+    t =     8.52s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.61s Waiting 10.0s for "stock" Any to exist
+    t =     9.66s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =     9.66s         Checking existence of `"stock" Any`
+    t =     9.74s Checking existence of `"autoFinish" Any`
+    t =    10.32s Tap "stock" Any[0.50, 0.50]
+    t =    10.32s     Wait for io.github.jve1814.betweenstops to idle
+    t =    10.32s     Find the "stock" Any
+    t =    10.41s     Check for interrupting elements affecting "stock" Button
+    t =    10.47s     Synthesize event
+    t =    10.47s         Find the "stock" Button
+    t =    10.54s         Find the "stock" Button
+    t =    10.63s         Find the "stock" Button
+    t =    11.03s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.04s Waiting 10.0s for "card-QD" Any to exist
+    t =    12.05s     Checking `Expect predicate `existsNoRetry == 1` for object "card-QD" Any`
+    t =    12.05s         Checking existence of `"card-QD" Any`
+    t =    12.28s Tap "card-QD" Any[0.50, 0.50]
+    t =    12.28s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.29s     Find the "card-QD" Any
+    t =    12.48s     Check for interrupting elements affecting "card-QD" Button
+    t =    12.60s     Synthesize event
+    t =    12.60s         Find the "card-QD" Button
+    t =    12.94s         Find the "card-QD" Button
+    t =    13.34s         Find the "card-QD" Button
+    t =    14.06s     Wait for io.github.jve1814.betweenstops to idle
+    t =    14.06s Waiting 10.0s for "moves" Any to exist
+    t =    15.09s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    15.09s         Checking existence of `"moves" Any`
+    t =    15.15s Find the "moves" Any
+    t =    15.21s Waiting 10.0s for "autoFinish" Any to exist
+    t =    16.23s     Checking `Expect predicate `existsNoRetry == 1` for object "autoFinish" Any`
+    t =    16.24s         Checking existence of `"autoFinish" Any`
+    t =    16.61s Tap "autoFinish" Any
+    t =    16.61s     Wait for io.github.jve1814.betweenstops to idle
+    t =    16.62s     Find the "autoFinish" Any
+    t =    16.97s     Check for interrupting elements affecting "autoFinish" Button
+    t =    17.09s     Synthesize event
+    t =    17.40s     Wait for io.github.jve1814.betweenstops to idle
+    t =    17.54s Waiting 15.0s for "winScreen" Any to exist
+    t =    18.59s     Checking `Expect predicate `existsNoRetry == 1` for object "winScreen" Any`
+    t =    18.59s         Checking existence of `"winScreen" Any`
+    t =    18.91s Checking existence of `"winScreen" Any`
+    t =    19.19s Checking existence of `"You won!" StaticText`
+    t =    19.29s Waiting 10.0s for "boardSignature" Any to exist
+    t =    20.32s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    20.33s         Checking existence of `"boardSignature" Any`
+    t =    20.38s Find the "boardSignature" Any
+    t =    20.43s Tap "winHome" Any
+    t =    20.43s     Wait for io.github.jve1814.betweenstops to idle
+    t =    20.43s     Find the "winHome" Any
+    t =    20.95s     Check for interrupting elements affecting "winHome" Button
+    t =    21.07s     Synthesize event
+    t =    21.37s     Wait for io.github.jve1814.betweenstops to idle
+    t =    21.37s Waiting 10.0s for "statsButton" Any to exist
+    t =    22.39s     Checking `Expect predicate `existsNoRetry == 1` for object "statsButton" Any`
+    t =    22.39s         Checking existence of `"statsButton" Any`
+    t =    22.42s Tap "statsButton" Any
+    t =    22.42s     Wait for io.github.jve1814.betweenstops to idle
+    t =    22.42s     Find the "statsButton" Any
+    t =    22.46s     Check for interrupting elements affecting "statsButton" Button
+    t =    22.62s     Synthesize event
+    t =    22.94s     Wait for io.github.jve1814.betweenstops to idle
+    t =    23.26s Waiting 5.0s for Any (First Match) to exist
+    t =    24.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    24.31s         Checking existence of `Any (First Match)`
+    t =    24.49s Checking existence of `Any (First Match)`
+    t =    24.63s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testNearlyFinishedGamePlaysThroughToTheWinScreen]' passed (24.922 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsDark]' started.
+    t =     0.00s Start Test at 2026-11-04 10:09:17.093
+    t =     0.17s Set Up
+    t =     0.20s Open io.github.jve1814.betweenstops
+    t =     0.20s     Launch io.github.jve1814.betweenstops
+    t =     0.21s         Terminate io.github.jve1814.betweenstops:34165
+2026-11-04 10:09:18.320 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:09:18.321 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.11s         Setting up automation session
+    t =     3.90s         Wait for io.github.jve1814.betweenstops to idle
+    t =     5.59s Waiting 10.0s for "homeTitle" Any to exist
+    t =     6.63s     Checking `Expect predicate `existsNoRetry == 1` for object "homeTitle" Any`
+    t =     6.64s         Checking existence of `"homeTitle" Any`
+    t =     6.84s Waiting 10.0s for "game-klondike" Any to exist
+    t =     7.88s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     7.88s         Checking existence of `"game-klondike" Any`
+    t =     8.01s Tap "game-klondike" Any
+    t =     8.01s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.01s     Find the "game-klondike" Any
+    t =     8.12s     Check for interrupting elements affecting "game-klondike" Button
+    t =     9.21s     Synthesize event
+    t =     9.54s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.57s Waiting 10.0s for "stock" Any to exist
+    t =    10.59s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    10.59s         Checking existence of `"stock" Any`
+    t =    11.01s Added attachment named '02-game-dark'
+    t =    11.01s Tap "hint" Any
+    t =    11.01s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.02s     Find the "hint" Any
+    t =    11.78s     Check for interrupting elements affecting "hint" Button
+    t =    11.87s     Synthesize event
+    t =    12.21s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.22s Waiting 10.0s for "toast" Any to exist
+    t =    13.26s     Checking `Expect predicate `existsNoRetry == 1` for object "toast" Any`
+    t =    13.26s         Checking existence of `"toast" Any`
+    t =    14.16s Added attachment named '03-hint-dark'
+    t =    14.17s Tap "back" Any
+    t =    14.17s     Wait for io.github.jve1814.betweenstops to idle
+    t =    14.17s     Find the "back" Any
+    t =    14.26s     Check for interrupting elements affecting "back" Button
+    t =    14.41s     Synthesize event
+    t =    14.72s     Wait for io.github.jve1814.betweenstops to idle
+    t =    14.72s Waiting 10.0s for "homeTitle" Any to exist
+    t =    15.77s     Checking `Expect predicate `existsNoRetry == 1` for object "homeTitle" Any`
+    t =    15.77s         Checking existence of `"homeTitle" Any`
+    t =    16.11s Added attachment named '01-home-dark'
+    t =    16.11s Tap "settingsButton" Any
+    t =    16.11s     Wait for io.github.jve1814.betweenstops to idle
+    t =    16.11s     Find the "settingsButton" Any
+    t =    16.18s     Check for interrupting elements affecting "settingsButton" Button
+    t =    16.29s     Synthesize event
+    t =    16.62s     Wait for io.github.jve1814.betweenstops to idle
+    t =    17.02s Waiting 10.0s for "done" Any to exist
+    t =    18.10s     Checking `Expect predicate `existsNoRetry == 1` for object "done" Any`
+    t =    18.10s         Checking existence of `"done" Any`
+    t =    18.63s Added attachment named '06-settings-dark'
+    t =    18.64s Tap "done" Any
+    t =    18.65s     Wait for io.github.jve1814.betweenstops to idle
+    t =    18.65s     Find the "done" Any
+    t =    18.87s     Check for interrupting elements affecting "done" Other
+    t =    19.05s     Synthesize event
+    t =    19.37s     Wait for io.github.jve1814.betweenstops to idle
+    t =    20.16s Open io.github.jve1814.betweenstops
+    t =    20.17s     Launch io.github.jve1814.betweenstops
+    t =    20.17s         Terminate io.github.jve1814.betweenstops:34952
+2026-11-04 10:09:38.302 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:09:38.302 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    21.77s         Setting up automation session
+    t =    23.90s         Wait for io.github.jve1814.betweenstops to idle
+    t =    27.97s Waiting 10.0s for "game-klondike" Any to exist
+    t =    28.97s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =    28.97s         Checking existence of `"game-klondike" Any`
+    t =    29.12s Tap "game-klondike" Any
+    t =    29.12s     Wait for io.github.jve1814.betweenstops to idle
+    t =    29.13s     Find the "game-klondike" Any
+    t =    29.21s     Check for interrupting elements affecting "game-klondike" Button
+    t =    29.31s     Synthesize event
+    t =    29.62s     Wait for io.github.jve1814.betweenstops to idle
+    t =    29.70s Waiting 10.0s for "stock" Any to exist
+    t =    30.73s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    30.73s         Checking existence of `"stock" Any`
+    t =    30.84s Tap "stock" Any[0.50, 0.50]
+    t =    30.84s     Wait for io.github.jve1814.betweenstops to idle
+    t =    30.85s     Find the "stock" Any
+    t =    30.94s     Check for interrupting elements affecting "stock" Button
+    t =    31.03s     Synthesize event
+    t =    31.03s         Find the "stock" Button
+    t =    31.14s         Find the "stock" Button
+    t =    31.21s         Find the "stock" Button
+    t =    31.59s     Wait for io.github.jve1814.betweenstops to idle
+    t =    31.59s Waiting 10.0s for "card-QD" Any to exist
+    t =    32.64s     Checking `Expect predicate `existsNoRetry == 1` for object "card-QD" Any`
+    t =    32.64s         Checking existence of `"card-QD" Any`
+    t =    33.00s Tap "card-QD" Any[0.50, 0.50]
+    t =    33.00s     Wait for io.github.jve1814.betweenstops to idle
+    t =    33.01s     Find the "card-QD" Any
+    t =    33.33s     Check for interrupting elements affecting "card-QD" Button
+    t =    33.43s     Synthesize event
+    t =    33.43s         Find the "card-QD" Button
+    t =    33.72s         Find the "card-QD" Button
+    t =    34.21s         Find the "card-QD" Button
+    t =    34.81s     Wait for io.github.jve1814.betweenstops to idle
+    t =    34.81s Waiting 10.0s for "autoFinish" Any to exist
+    t =    35.85s     Checking `Expect predicate `existsNoRetry == 1` for object "autoFinish" Any`
+    t =    35.85s         Checking existence of `"autoFinish" Any`
+    t =    36.09s Tap "autoFinish" Any
+    t =    36.09s     Wait for io.github.jve1814.betweenstops to idle
+    t =    36.10s     Find the "autoFinish" Any
+    t =    36.46s     Check for interrupting elements affecting "autoFinish" Button
+    t =    36.55s     Synthesize event
+    t =    36.84s     Wait for io.github.jve1814.betweenstops to idle
+    t =    36.91s Waiting 15.0s for "winScreen" Any to exist
+    t =    37.99s     Checking `Expect predicate `existsNoRetry == 1` for object "winScreen" Any`
+    t =    37.99s         Checking existence of `"winScreen" Any`
+    t =    38.46s Added attachment named '04-win-dark'
+    t =    38.46s Tap "winNewGame" Any
+    t =    38.46s     Wait for io.github.jve1814.betweenstops to idle
+    t =    38.47s     Find the "winNewGame" Any
+    t =    39.07s     Check for interrupting elements affecting "winNewGame" Button
+    t =    39.22s     Synthesize event
+    t =    39.54s     Wait for io.github.jve1814.betweenstops to idle
+    t =    39.54s Waiting 10.0s for "stock" Any to exist
+    t =    40.55s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    40.55s         Checking existence of `"stock" Any`
+    t =    40.76s Added attachment named '05-new-deal-dark'
+    t =    40.77s Tap "stock" Any[0.50, 0.50]
+    t =    40.77s     Wait for io.github.jve1814.betweenstops to idle
+    t =    40.77s     Find the "stock" Any
+    t =    40.81s     Check for interrupting elements affecting "stock" Button
+    t =    40.89s     Synthesize event
+    t =    40.89s         Find the "stock" Button
+    t =    40.96s         Find the "stock" Button
+    t =    41.00s         Find the "stock" Button
+    t =    41.36s     Wait for io.github.jve1814.betweenstops to idle
+    t =    41.36s Tap "newGame" Any
+    t =    41.36s     Wait for io.github.jve1814.betweenstops to idle
+    t =    41.36s     Find the "newGame" Any
+    t =    41.57s     Check for interrupting elements affecting "newGame" Button
+    t =    41.63s     Synthesize event
+    t =    41.93s     Wait for io.github.jve1814.betweenstops to idle
+    t =    42.43s Waiting 5.0s for "New Deal" Button to exist
+    t =    43.44s     Checking `Expect predicate `existsNoRetry == 1` for object "New Deal" Button`
+    t =    43.44s         Checking existence of `"New Deal" Button`
+    t =    43.77s Added attachment named '08-confirm-new-deal-dark'
+    t =    43.78s Checking existence of `"Keep Playing" Button`
+    t =    43.85s Tap "Keep Playing" Button
+    t =    43.85s     Wait for io.github.jve1814.betweenstops to idle
+    t =    43.85s     Find the "Keep Playing" Button
+    t =    43.91s     Check for interrupting elements affecting "Keep Playing" Button
+    t =    43.98s     Synthesize event
+    t =    44.29s     Wait for io.github.jve1814.betweenstops to idle
+    t =    44.47s Waiting 5.0s for "New Deal" Button to not exist
+    t =    45.51s     Checking `Expect predicate `existsNoRetry == 0` for object "New Deal" Button`
+    t =    45.51s         Checking existence of `"New Deal" Button`
+    t =    45.55s Waiting 10.0s for "moves" Any to exist
+    t =    46.57s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    46.57s         Checking existence of `"moves" Any`
+    t =    46.61s Find the "moves" Any
+    t =    46.67s Tap "back" Any
+    t =    46.67s     Wait for io.github.jve1814.betweenstops to idle
+    t =    46.69s     Find the "back" Any
+    t =    46.73s     Check for interrupting elements affecting "back" Button
+    t =    46.79s     Synthesize event
+    t =    47.09s     Wait for io.github.jve1814.betweenstops to idle
+    t =    47.10s Waiting 10.0s for "statsButton" Any to exist
+    t =    48.13s     Checking `Expect predicate `existsNoRetry == 1` for object "statsButton" Any`
+    t =    48.13s         Checking existence of `"statsButton" Any`
+    t =    48.16s Tap "statsButton" Any
+    t =    48.16s     Wait for io.github.jve1814.betweenstops to idle
+    t =    48.17s     Find the "statsButton" Any
+    t =    48.20s     Check for interrupting elements affecting "statsButton" Button
+    t =    48.24s     Synthesize event
+    t =    48.54s     Wait for io.github.jve1814.betweenstops to idle
+    t =    48.67s Waiting 10.0s for "done" Any to exist
+    t =    49.70s     Checking `Expect predicate `existsNoRetry == 1` for object "done" Any`
+    t =    49.70s         Checking existence of `"done" Any`
+    t =    50.06s Added attachment named '07-stats-dark'
+    t =    50.06s Tap "done" Any
+    t =    50.06s     Wait for io.github.jve1814.betweenstops to idle
+    t =    50.07s     Find the "done" Any
+    t =    50.20s     Check for interrupting elements affecting "done" Other
+    t =    50.30s     Synthesize event
+    t =    50.60s     Wait for io.github.jve1814.betweenstops to idle
+    t =    51.39s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsDark]' passed (51.676 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsLargeText]' started.
+    t =     0.00s Start Test at 2026-11-04 10:10:08.769
+    t =     0.08s Set Up
+    t =     0.08s Open io.github.jve1814.betweenstops
+    t =     0.08s     Launch io.github.jve1814.betweenstops
+    t =     0.08s         Terminate io.github.jve1814.betweenstops:35724
+2026-11-04 10:10:09.904 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:10:09.904 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.99s         Setting up automation session
+    t =     4.31s         Wait for io.github.jve1814.betweenstops to idle
+    t =     6.09s Waiting 10.0s for "homeTitle" Any to exist
+    t =     7.11s     Checking `Expect predicate `existsNoRetry == 1` for object "homeTitle" Any`
+    t =     7.11s         Checking existence of `"homeTitle" Any`
+    t =     7.54s Added attachment named '20-large-text-home-light'
+    t =     7.54s Waiting 10.0s for "game-klondike" Any to exist
+    t =     8.58s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     8.58s         Checking existence of `"game-klondike" Any`
+    t =     8.66s Tap "game-klondike" Any
+    t =     8.66s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.67s     Find the "game-klondike" Any
+    t =     8.72s     Check for interrupting elements affecting "game-klondike" Button
+    t =     8.82s     Synthesize event
+    t =     9.13s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.19s Waiting 10.0s for "stock" Any to exist
+    t =    10.20s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    10.21s         Checking existence of `"stock" Any`
+    t =    10.50s Added attachment named '21-large-text-game-light'
+    t =    10.51s Tap "back" Any
+    t =    10.51s     Wait for io.github.jve1814.betweenstops to idle
+    t =    10.51s     Find the "back" Any
+    t =    10.54s     Check for interrupting elements affecting "back" Button
+    t =    10.63s     Synthesize event
+    t =    10.93s     Wait for io.github.jve1814.betweenstops to idle
+    t =    10.93s Waiting 10.0s for "statsButton" Any to exist
+    t =    12.01s     Checking `Expect predicate `existsNoRetry == 1` for object "statsButton" Any`
+    t =    12.01s         Checking existence of `"statsButton" Any`
+    t =    12.26s Tap "statsButton" Any
+    t =    12.26s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.27s     Find the "statsButton" Any
+    t =    12.29s     Check for interrupting elements affecting "statsButton" Button
+    t =    12.69s     Synthesize event
+    t =    13.01s     Wait for io.github.jve1814.betweenstops to idle
+    t =    13.25s Waiting 10.0s for "done" Any to exist
+    t =    14.26s     Checking `Expect predicate `existsNoRetry == 1` for object "done" Any`
+    t =    14.26s         Checking existence of `"done" Any`
+    t =    14.65s Added attachment named '22-large-text-stats-light'
+    t =    14.66s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsLargeText]' passed (14.928 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsLight]' started.
+    t =     0.00s Start Test at 2026-11-04 10:10:23.697
+    t =     0.05s Set Up
+    t =     0.05s Open io.github.jve1814.betweenstops
+    t =     0.06s     Launch io.github.jve1814.betweenstops
+    t =     0.06s         Terminate io.github.jve1814.betweenstops:37678
+2026-11-04 10:10:24.773 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:10:24.773 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.75s         Setting up automation session
+    t =     4.36s         Wait for io.github.jve1814.betweenstops to idle
+    t =     5.95s Waiting 10.0s for "homeTitle" Any to exist
+    t =     6.99s     Checking `Expect predicate `existsNoRetry == 1` for object "homeTitle" Any`
+    t =     6.99s         Checking existence of `"homeTitle" Any`
+    t =     7.07s Waiting 10.0s for "game-klondike" Any to exist
+    t =     8.11s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     8.12s         Checking existence of `"game-klondike" Any`
+    t =     8.16s Tap "game-klondike" Any
+    t =     8.16s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.17s     Find the "game-klondike" Any
+    t =     8.21s     Check for interrupting elements affecting "game-klondike" Button
+    t =     8.29s     Synthesize event
+    t =     8.60s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.62s Waiting 10.0s for "stock" Any to exist
+    t =     9.66s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =     9.66s         Checking existence of `"stock" Any`
+    t =     9.90s Added attachment named '02-game-light'
+    t =     9.91s Tap "hint" Any
+    t =     9.91s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.91s     Find the "hint" Any
+    t =    10.12s     Check for interrupting elements affecting "hint" Button
+    t =    10.29s     Synthesize event
+    t =    10.61s     Wait for io.github.jve1814.betweenstops to idle
+    t =    10.63s Waiting 10.0s for "toast" Any to exist
+    t =    11.67s     Checking `Expect predicate `existsNoRetry == 1` for object "toast" Any`
+    t =    11.67s         Checking existence of `"toast" Any`
+    t =    12.08s Added attachment named '03-hint-light'
+    t =    12.08s Tap "back" Any
+    t =    12.08s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.09s     Find the "back" Any
+    t =    12.11s     Check for interrupting elements affecting "back" Button
+    t =    12.21s     Synthesize event
+    t =    12.52s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.53s Waiting 10.0s for "homeTitle" Any to exist
+    t =    13.57s     Checking `Expect predicate `existsNoRetry == 1` for object "homeTitle" Any`
+    t =    13.57s         Checking existence of `"homeTitle" Any`
+    t =    13.81s Added attachment named '01-home-light'
+    t =    13.82s Tap "settingsButton" Any
+    t =    13.82s     Wait for io.github.jve1814.betweenstops to idle
+    t =    13.82s     Find the "settingsButton" Any
+    t =    13.86s     Check for interrupting elements affecting "settingsButton" Button
+    t =    13.90s     Synthesize event
+    t =    14.20s     Wait for io.github.jve1814.betweenstops to idle
+    t =    14.65s Waiting 10.0s for "done" Any to exist
+    t =    15.68s     Checking `Expect predicate `existsNoRetry == 1` for object "done" Any`
+    t =    15.68s         Checking existence of `"done" Any`
+    t =    16.51s Added attachment named '06-settings-light'
+    t =    16.51s Tap "done" Any
+    t =    16.51s     Wait for io.github.jve1814.betweenstops to idle
+    t =    16.52s     Find the "done" Any
+    t =    16.82s     Check for interrupting elements affecting "done" Other
+    t =    17.00s     Synthesize event
+    t =    17.32s     Wait for io.github.jve1814.betweenstops to idle
+    t =    18.11s Open io.github.jve1814.betweenstops
+    t =    18.11s     Launch io.github.jve1814.betweenstops
+    t =    18.11s         Terminate io.github.jve1814.betweenstops:38068
+2026-11-04 10:10:42.901 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:10:42.901 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    20.29s         Setting up automation session
+    t =    22.05s         Wait for io.github.jve1814.betweenstops to idle
+    t =    23.60s Waiting 10.0s for "game-klondike" Any to exist
+    t =    24.64s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =    24.64s         Checking existence of `"game-klondike" Any`
+    t =    24.81s Tap "game-klondike" Any
+    t =    24.81s     Wait for io.github.jve1814.betweenstops to idle
+    t =    24.81s     Find the "game-klondike" Any
+    t =    24.87s     Check for interrupting elements affecting "game-klondike" Button
+    t =    24.94s     Synthesize event
+    t =    25.24s     Wait for io.github.jve1814.betweenstops to idle
+    t =    25.30s Waiting 10.0s for "stock" Any to exist
+    t =    26.32s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    26.32s         Checking existence of `"stock" Any`
+    t =    26.38s Tap "stock" Any[0.50, 0.50]
+    t =    26.38s     Wait for io.github.jve1814.betweenstops to idle
+    t =    26.39s     Find the "stock" Any
+    t =    26.43s     Check for interrupting elements affecting "stock" Button
+    t =    26.56s     Synthesize event
+    t =    26.56s         Find the "stock" Button
+    t =    26.62s         Find the "stock" Button
+    t =    26.67s         Find the "stock" Button
+    t =    27.02s     Wait for io.github.jve1814.betweenstops to idle
+    t =    27.03s Waiting 10.0s for "card-QD" Any to exist
+    t =    28.06s     Checking `Expect predicate `existsNoRetry == 1` for object "card-QD" Any`
+    t =    28.06s         Checking existence of `"card-QD" Any`
+    t =    28.25s Tap "card-QD" Any[0.50, 0.50]
+    t =    28.25s     Wait for io.github.jve1814.betweenstops to idle
+    t =    28.25s     Find the "card-QD" Any
+    t =    28.41s     Check for interrupting elements affecting "card-QD" Button
+    t =    28.48s     Synthesize event
+    t =    28.48s         Find the "card-QD" Button
+    t =    28.76s         Find the "card-QD" Button
+    t =    29.00s         Find the "card-QD" Button
+    t =    29.49s     Wait for io.github.jve1814.betweenstops to idle
+    t =    29.49s Waiting 10.0s for "autoFinish" Any to exist
+    t =    30.52s     Checking `Expect predicate `existsNoRetry == 1` for object "autoFinish" Any`
+    t =    30.52s         Checking existence of `"autoFinish" Any`
+    t =    30.78s Tap "autoFinish" Any
+    t =    30.78s     Wait for io.github.jve1814.betweenstops to idle
+    t =    30.78s     Find the "autoFinish" Any
+    t =    31.00s     Check for interrupting elements affecting "autoFinish" Button
+    t =    31.10s     Synthesize event
+    t =    31.42s     Wait for io.github.jve1814.betweenstops to idle
+    t =    31.54s Waiting 15.0s for "winScreen" Any to exist
+    t =    32.57s     Checking `Expect predicate `existsNoRetry == 1` for object "winScreen" Any`
+    t =    32.57s         Checking existence of `"winScreen" Any`
+    t =    33.01s Added attachment named '04-win-light'
+    t =    33.01s Tap "winNewGame" Any
+    t =    33.01s     Wait for io.github.jve1814.betweenstops to idle
+    t =    33.02s     Find the "winNewGame" Any
+    t =    33.67s     Check for interrupting elements affecting "winNewGame" Button
+    t =    33.79s     Synthesize event
+    t =    34.12s     Wait for io.github.jve1814.betweenstops to idle
+    t =    34.13s Waiting 10.0s for "stock" Any to exist
+    t =    35.14s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =    35.14s         Checking existence of `"stock" Any`
+    t =    35.41s Added attachment named '05-new-deal-light'
+    t =    35.42s Tap "stock" Any[0.50, 0.50]
+    t =    35.42s     Wait for io.github.jve1814.betweenstops to idle
+    t =    35.42s     Find the "stock" Any
+    t =    35.51s     Check for interrupting elements affecting "stock" Button
+    t =    35.60s     Synthesize event
+    t =    35.60s         Find the "stock" Button
+    t =    35.76s         Find the "stock" Button
+    t =    35.84s         Find the "stock" Button
+    t =    36.23s     Wait for io.github.jve1814.betweenstops to idle
+    t =    36.23s Tap "newGame" Any
+    t =    36.23s     Wait for io.github.jve1814.betweenstops to idle
+    t =    36.24s     Find the "newGame" Any
+    t =    37.40s     Check for interrupting elements affecting "newGame" Button
+    t =    37.52s     Synthesize event
+    t =    37.83s     Wait for io.github.jve1814.betweenstops to idle
+    t =    38.24s Waiting 5.0s for "New Deal" Button to exist
+    t =    39.28s     Checking `Expect predicate `existsNoRetry == 1` for object "New Deal" Button`
+    t =    39.28s         Checking existence of `"New Deal" Button`
+    t =    39.58s Added attachment named '08-confirm-new-deal-light'
+    t =    39.58s Checking existence of `"Keep Playing" Button`
+    t =    39.70s Tap "Keep Playing" Button
+    t =    39.70s     Wait for io.github.jve1814.betweenstops to idle
+    t =    39.71s     Find the "Keep Playing" Button
+    t =    39.77s     Check for interrupting elements affecting "Keep Playing" Button
+    t =    39.89s     Synthesize event
+    t =    40.20s     Wait for io.github.jve1814.betweenstops to idle
+    t =    40.38s Waiting 5.0s for "New Deal" Button to not exist
+    t =    41.40s     Checking `Expect predicate `existsNoRetry == 0` for object "New Deal" Button`
+    t =    41.41s         Checking existence of `"New Deal" Button`
+    t =    41.49s Waiting 10.0s for "moves" Any to exist
+    t =    42.50s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    42.50s         Checking existence of `"moves" Any`
+    t =    42.57s Find the "moves" Any
+    t =    42.63s Tap "back" Any
+    t =    42.63s     Wait for io.github.jve1814.betweenstops to idle
+    t =    42.63s     Find the "back" Any
+    t =    42.72s     Check for interrupting elements affecting "back" Button
+    t =    42.81s     Synthesize event
+    t =    43.14s     Wait for io.github.jve1814.betweenstops to idle
+    t =    43.14s Waiting 10.0s for "statsButton" Any to exist
+    t =    44.17s     Checking `Expect predicate `existsNoRetry == 1` for object "statsButton" Any`
+    t =    44.17s         Checking existence of `"statsButton" Any`
+    t =    44.23s Tap "statsButton" Any
+    t =    44.23s     Wait for io.github.jve1814.betweenstops to idle
+    t =    44.23s     Find the "statsButton" Any
+    t =    44.30s     Check for interrupting elements affecting "statsButton" Button
+    t =    44.38s     Synthesize event
+    t =    44.68s     Wait for io.github.jve1814.betweenstops to idle
+    t =    44.78s Waiting 10.0s for "done" Any to exist
+    t =    45.80s     Checking `Expect predicate `existsNoRetry == 1` for object "done" Any`
+    t =    45.80s         Checking existence of `"done" Any`
+    t =    46.58s Added attachment named '07-stats-light'
+    t =    46.58s Tap "done" Any
+    t =    46.58s     Wait for io.github.jve1814.betweenstops to idle
+    t =    46.59s     Find the "done" Any
+    t =    46.89s     Check for interrupting elements affecting "done" Other
+    t =    46.98s     Synthesize event
+    t =    47.31s     Wait for io.github.jve1814.betweenstops to idle
+    t =    48.06s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsLight]' passed (48.360 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testTappingACardPlaysItsBestMove]' started.
+    t =     0.00s Start Test at 2026-11-04 10:11:12.059
+    t =     0.04s Set Up
+    t =     0.04s Open io.github.jve1814.betweenstops
+    t =     0.04s     Launch io.github.jve1814.betweenstops
+    t =     0.04s         Terminate io.github.jve1814.betweenstops:38665
+2026-11-04 10:11:13.144 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:11:13.144 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.94s         Setting up automation session
+    t =     3.86s         Wait for io.github.jve1814.betweenstops to idle
+    t =     5.53s Waiting 10.0s for "game-klondike" Any to exist
+    t =     6.57s     Checking `Expect predicate `existsNoRetry == 1` for object "game-klondike" Any`
+    t =     6.57s         Checking existence of `"game-klondike" Any`
+    t =     6.72s Tap "game-klondike" Any
+    t =     6.72s     Wait for io.github.jve1814.betweenstops to idle
+    t =     6.72s     Find the "game-klondike" Any
+    t =     6.83s     Check for interrupting elements affecting "game-klondike" Button
+    t =     6.93s     Synthesize event
+    t =     7.25s     Wait for io.github.jve1814.betweenstops to idle
+    t =     7.27s Waiting 10.0s for "stock" Any to exist
+    t =     8.30s     Checking `Expect predicate `existsNoRetry == 1` for object "stock" Any`
+    t =     8.30s         Checking existence of `"stock" Any`
+    t =     8.71s Waiting 10.0s for "card-6D" Any to exist
+    t =     9.73s     Checking `Expect predicate `existsNoRetry == 1` for object "card-6D" Any`
+    t =     9.73s         Checking existence of `"card-6D" Any`
+    t =    10.06s Waiting 10.0s for "card-7S" Any to exist
+    t =    11.07s     Checking `Expect predicate `existsNoRetry == 1` for object "card-7S" Any`
+    t =    11.07s         Checking existence of `"card-7S" Any`
+    t =    11.26s Tap "card-6D" Any[0.50, 0.50]
+    t =    11.26s     Wait for io.github.jve1814.betweenstops to idle
+    t =    11.27s     Find the "card-6D" Any
+    t =    11.59s     Check for interrupting elements affecting "card-6D" Button
+    t =    11.70s     Synthesize event
+    t =    11.70s         Find the "card-6D" Button
+    t =    11.98s         Find the "card-6D" Button
+    t =    12.26s         Find the "card-6D" Button
+    t =    12.92s     Wait for io.github.jve1814.betweenstops to idle
+    t =    12.93s Waiting 10.0s for "moves" Any to exist
+    t =    13.96s     Checking `Expect predicate `existsNoRetry == 1` for object "moves" Any`
+    t =    13.96s         Checking existence of `"moves" Any`
+    t =    14.03s Find the "moves" Any
+    t =    14.09s Waiting 10.0s for "boardSignature" Any to exist
+    t =    15.12s     Checking `Expect predicate `existsNoRetry == 1` for object "boardSignature" Any`
+    t =    15.12s         Checking existence of `"boardSignature" Any`
+    t =    15.15s Find the "boardSignature" Any
+    t =    15.21s Find the "card-6D" Button
+    t =    15.50s Find the "card-7S" Any
+    t =    15.68s Find the "card-6D" Button
+    t =    15.96s Find the "card-7S" Button
+    t =    16.15s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testTappingACardPlaysItsBestMove]' passed (16.404 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testTestOnlyGameAppearsOnHomeAndOpens]' started.
+    t =     0.00s Start Test at 2026-11-04 10:11:28.463
+    t =     0.04s Set Up
+    t =     0.04s Open io.github.jve1814.betweenstops
+    t =     0.04s     Launch io.github.jve1814.betweenstops
+    t =     0.04s         Terminate io.github.jve1814.betweenstops:40343
+2026-11-04 10:11:29.678 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-04 10:11:29.678 xcodebuild[21027:62854] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.64s         Setting up automation session
+    t =     4.32s         Wait for io.github.jve1814.betweenstops to idle
+    t =     6.13s Waiting 10.0s for "game-testgame" Any to exist
+    t =     7.15s     Checking `Expect predicate `existsNoRetry == 1` for object "game-testgame" Any`
+    t =     7.15s         Checking existence of `"game-testgame" Any`
+    t =     7.51s Checking existence of `"game-klondike" Any`
+    t =     7.83s Added attachment named '30-test-game-on-home-light'
+    t =     7.83s Tap "game-testgame" Any
+    t =     7.83s     Wait for io.github.jve1814.betweenstops to idle
+    t =     7.84s     Find the "game-testgame" Any
+    t =     7.90s     Check for interrupting elements affecting "game-testgame" Button
+    t =     7.97s     Synthesize event
+    t =     8.27s     Wait for io.github.jve1814.betweenstops to idle
+    t =     8.27s Waiting 10.0s for "testGameTitle" Any to exist
+    t =     9.29s     Checking `Expect predicate `existsNoRetry == 1` for object "testGameTitle" Any`
+    t =     9.29s         Checking existence of `"testGameTitle" Any`
+    t =     9.31s Checking existence of `"testGameTitle" Any`
+    t =     9.49s Added attachment named '31-test-game-open-light'
+    t =     9.49s Tap "testGameTap" Any
+    t =     9.49s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.50s     Find the "testGameTap" Any
+    t =     9.52s     Check for interrupting elements affecting "testGameTap" Button
+    t =     9.57s     Synthesize event
+    t =     9.87s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.88s Find the "testGameCount" Any
+    t =     9.91s Tap "back" Any
+    t =     9.91s     Wait for io.github.jve1814.betweenstops to idle
+    t =     9.91s     Find the "back" Any
+    t =    10.17s     Check for interrupting elements affecting "back" Button
+    t =    10.24s     Synthesize event
+    t =    10.60s     Wait for io.github.jve1814.betweenstops to idle
+    t =    10.61s Waiting 10.0s for "game-testgame" Any to exist
+    t =    11.65s     Checking `Expect predicate `existsNoRetry == 1` for object "game-testgame" Any`
+    t =    11.65s         Checking existence of `"game-testgame" Any`
+    t =    11.72s Checking existence of `"game-testgame" Any`
+    t =    11.76s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testTestOnlyGameAppearsOnHomeAndOpens]' passed (11.988 seconds).
+Test Suite 'BetweenStopsUITests' passed at 2026-11-04 10:11:40.451.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 378.417 (378.437) seconds
+Test Suite 'BetweenStopsUITests.xctest' passed at 2026-11-04 10:11:40.452.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 378.417 (378.438) seconds
+Test Suite 'All tests' passed at 2026-11-04 10:11:40.452.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 378.417 (378.440) seconds
+2026-11-04 10:11:41.990 xcodebuild[21027:62854] [MT] IDETestOperationsObserverDebug: 436.549 elapsed -- Testing started completed.
+2026-11-04 10:11:41.990 xcodebuild[21027:62854] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-04 10:11:41.990 xcodebuild[21027:62854] [MT] IDETestOperationsObserverDebug: 436.549 sec, +436.549 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/play/play/build/Tests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

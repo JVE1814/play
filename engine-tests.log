@@ -1,0 +1,196 @@
+Building for debugging...
+[0/7] /Users/runner/work/play/play/Packages/KlondikeEngine/.build/arm64-apple-macosx/debug/KlondikeEnginePackageTests.derived/runner.swift
+[1/7] Write sources
+[4/7] Write swift-version-7974D3F7F03D5E95.txt
+[6/14] Emitting module KlondikeEngine
+[7/14] Compiling KlondikeEngine Assist.swift
+[8/14] Compiling KlondikeEngine Board.swift
+[9/14] Compiling KlondikeEngine Card.swift
+[10/14] Compiling KlondikeEngine Fixtures.swift
+[11/14] Compiling KlondikeEngine Integrity.swift
+[12/14] Compiling KlondikeEngine KlondikeGame.swift
+[13/16] Compiling KlondikeEngine Move.swift
+[14/16] Compiling KlondikeEngine SeededGenerator.swift
+[15/22] Emitting module KlondikeEngineTests
+[16/24] Compiling KlondikeEngineTests UndoTests.swift
+[17/24] Compiling KlondikeEngineTests WinTests.swift
+[18/24] Compiling KlondikeEngineTests AssistTests.swift
+[19/24] Compiling KlondikeEngineTests DealTests.swift
+[20/24] Compiling KlondikeEngineTests InvariantTests.swift
+[21/24] Compiling KlondikeEngineTests MoveRuleTests.swift
+[22/24] Compiling KlondikeEngineTests TestSupport.swift
+[23/26] Emitting module KlondikeEnginePackageTests
+[24/26] Compiling KlondikeEnginePackageTests runner.swift
+[24/26] Write Objects.LinkFileList
+[25/26] Linking KlondikeEnginePackageTests
+Build complete! (46.52s)
+Test Suite 'All tests' started at 2026-11-04 09:58:22.063.
+Test Suite 'KlondikeEnginePackageTests.xctest' started at 2026-11-04 09:58:22.070.
+Test Suite 'AssistTests' started at 2026-11-04 09:58:22.070.
+Test Case '-[KlondikeEngineTests.AssistTests testAidsOnlyEverSuggestLegalMoves]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testAidsOnlyEverSuggestLegalMoves]' passed (50.442 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testFollowingHintsWinsSomeGames]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testFollowingHintsWinsSomeGames]' passed (19.894 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testHintIgnoresPointlessMoves]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testHintIgnoresPointlessMoves]' passed (0.276 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testHintIsNilWhenNothingUsefulRemains]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testHintIsNilWhenNothingUsefulRemains]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testHintPrefersFoundationThenRevealingACard]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testHintPrefersFoundationThenRevealingACard]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testHintSuggestsTheStockWhenAPlayableCardIsThere]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testHintSuggestsTheStockWhenAPlayableCardIsThere]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTapDoesNotShuffleAKingBetweenEmptyColumns]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTapDoesNotShuffleAKingBetweenEmptyColumns]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTapFallsBackToANeighbouringCardInTheSameColumn]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTapFallsBackToANeighbouringCardInTheSameColumn]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTappingABuriedWasteCardPlaysTheTopOne]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTappingABuriedWasteCardPlaysTheTopOne]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTappingAFaceDownCardDoesNothing]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTappingAFaceDownCardDoesNothing]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTappingAnAceSendsItToTheFirstEmptyFoundation]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTappingAnAceSendsItToTheFirstEmptyFoundation]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTappingARunMovesTheWholeRun]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTappingARunMovesTheWholeRun]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTappingBelowAColumnActsOnItsTopCard]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTappingBelowAColumnActsOnItsTopCard]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTappingTheStockDrawsThenRedeals]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTappingTheStockDrawsThenRedeals]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTapPrefersAMoveThatRevealsACard]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTapPrefersAMoveThatRevealsACard]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTapPrefersTheFoundation]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTapPrefersTheFoundation]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.AssistTests testTapWithNoLegalMoveReturnsNil]' started.
+Test Case '-[KlondikeEngineTests.AssistTests testTapWithNoLegalMoveReturnsNil]' passed (0.001 seconds).
+Test Suite 'AssistTests' passed at 2026-11-04 09:59:32.699.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 70.621 (70.629) seconds
+Test Suite 'DealTests' started at 2026-11-04 09:59:32.700.
+Test Case '-[KlondikeEngineTests.DealTests testBoundedRandomStaysInRangeAndCoversIt]' started.
+Test Case '-[KlondikeEngineTests.DealTests testBoundedRandomStaysInRangeAndCoversIt]' passed (0.049 seconds).
+Test Case '-[KlondikeEngineTests.DealTests testCardCodesAndNames]' started.
+Test Case '-[KlondikeEngineTests.DealTests testCardCodesAndNames]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.DealTests testDealForSeedIsStableAcrossPlatformsAndReleases]' started.
+Test Case '-[KlondikeEngineTests.DealTests testDealForSeedIsStableAcrossPlatformsAndReleases]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.DealTests testDealHasStandardLayout]' started.
+Test Case '-[KlondikeEngineTests.DealTests testDealHasStandardLayout]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.DealTests testDifferentSeedsGiveDifferentDeals]' started.
+Test Case '-[KlondikeEngineTests.DealTests testDifferentSeedsGiveDifferentDeals]' passed (0.017 seconds).
+Test Case '-[KlondikeEngineTests.DealTests testSameSeedGivesSameDeal]' started.
+Test Case '-[KlondikeEngineTests.DealTests testSameSeedGivesSameDeal]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.DealTests testSplitMixMatchesReferenceSequence]' started.
+Test Case '-[KlondikeEngineTests.DealTests testSplitMixMatchesReferenceSequence]' passed (0.004 seconds).
+Test Suite 'DealTests' passed at 2026-11-04 09:59:32.777.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.074 (0.078) seconds
+Test Suite 'InvariantTests' started at 2026-11-04 09:59:32.777.
+Test Case '-[KlondikeEngineTests.InvariantTests testCardsEncodeAsSmallIntegers]' started.
+Test Case '-[KlondikeEngineTests.InvariantTests testCardsEncodeAsSmallIntegers]' passed (0.042 seconds).
+Test Case '-[KlondikeEngineTests.InvariantTests testIntegrityCheckCatchesCorruption]' started.
+Test Case '-[KlondikeEngineTests.InvariantTests testIntegrityCheckCatchesCorruption]' passed (0.006 seconds).
+Test Case '-[KlondikeEngineTests.InvariantTests testOneThousandSeededRandomGamesAlwaysKeepExactly52UniqueCards]' started.
+Test Case '-[KlondikeEngineTests.InvariantTests testOneThousandSeededRandomGamesAlwaysKeepExactly52UniqueCards]' passed (83.040 seconds).
+Test Case '-[KlondikeEngineTests.InvariantTests testSavedGamesRoundTripExactly]' started.
+Test Case '-[KlondikeEngineTests.InvariantTests testSavedGamesRoundTripExactly]' passed (0.086 seconds).
+Test Suite 'InvariantTests' passed at 2026-11-04 10:00:55.953.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 83.174 (83.176) seconds
+Test Suite 'MoveRuleTests' started at 2026-11-04 10:00:55.953.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testAceStartsAnEmptyFoundation]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testAceStartsAnEmptyFoundation]' passed (0.003 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testCannotDrawFromEmptyStock]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testCannotDrawFromEmptyStock]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testCannotPlaceOnAFaceDownCard]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testCannotPlaceOnAFaceDownCard]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testCardsCannotMoveBetweenFoundations]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testCardsCannotMoveBetweenFoundations]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testColumnBuildsDownInAlternatingColours]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testColumnBuildsDownInAlternatingColours]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testDrawOneTurnsOneCard]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testDrawOneTurnsOneCard]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testDrawThreeTurnsThreeCardsWithTheThirdOnTop]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testDrawThreeTurnsThreeCardsWithTheThirdOnTop]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testDrawThreeWithFewerCardsLeftTurnsWhatIsThere]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testDrawThreeWithFewerCardsLeftTurnsWhatIsThere]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testFaceDownCardsCannotBeLifted]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testFaceDownCardsCannotBeLifted]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testFoundationBuildsUpInSuitOneRankAtATime]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testFoundationBuildsUpInSuitOneRankAtATime]' passed (0.007 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testFoundationCardCanComeBackToAColumn]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testFoundationCardCanComeBackToAColumn]' passed (0.005 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testIllegalMoveChangesNothing]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testIllegalMoveChangesNothing]' passed (0.002 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testKingStartsAnEmptyColumn]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testKingStartsAnEmptyColumn]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testLegalMovesMatchesBruteForce]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testLegalMovesMatchesBruteForce]' passed (8.683 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testMalformedMovesAreIllegal]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testMalformedMovesAreIllegal]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testMovingTheLastFaceUpCardTurnsUpTheNextOne]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testMovingTheLastFaceUpCardTurnsUpTheNextOne]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testOnlyAnAceStartsAFoundation]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testOnlyAnAceStartsAFoundation]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testOnlyOneCardAtATimeGoesToAFoundation]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testOnlyOneCardAtATimeGoesToAFoundation]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testOnlyTheTopWasteCardPlays]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testOnlyTheTopWasteCardPlays]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testPartOfARunCanMove]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testPartOfARunCanMove]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testRedealRequiresEmptyStockAndSomeWaste]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testRedealRequiresEmptyStockAndSomeWaste]' passed (0.004 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testRedealsAreUnlimitedInBothDrawModes]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testRedealsAreUnlimitedInBothDrawModes]' passed (0.014 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testRedealTurnsTheWasteBackOverInOriginalOrder]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testRedealTurnsTheWasteBackOverInOriginalOrder]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testRunsOfFaceUpCardsMoveTogether]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testRunsOfFaceUpCardsMoveTogether]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.MoveRuleTests testWasteCardPlaysToColumnAndFoundation]' started.
+Test Case '-[KlondikeEngineTests.MoveRuleTests testWasteCardPlaysToColumnAndFoundation]' passed (0.000 seconds).
+Test Suite 'MoveRuleTests' passed at 2026-11-04 10:01:04.701.
+	 Executed 25 tests, with 0 failures (0 unexpected) in 8.731 (8.748) seconds
+Test Suite 'UndoTests' started at 2026-11-04 10:01:04.701.
+Test Case '-[KlondikeEngineTests.UndoTests testMoveCountFollowsHistory]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testMoveCountFollowsHistory]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.UndoTests testNothingToUndoOnAFreshDeal]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testNothingToUndoOnAFreshDeal]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.UndoTests testUndoDrawInBothModes]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testUndoDrawInBothModes]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.UndoTests testUndoFoundationMoves]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testUndoFoundationMoves]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.UndoTests testUndoIsUnlimited]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testUndoIsUnlimited]' passed (0.769 seconds).
+Test Case '-[KlondikeEngineTests.UndoTests testUndoRedeal]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testUndoRedeal]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.UndoTests testUndoShortDrawThree]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testUndoShortDrawThree]' passed (0.004 seconds).
+Test Case '-[KlondikeEngineTests.UndoTests testUndoTurnsTheRevealedCardBackDown]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testUndoTurnsTheRevealedCardBackDown]' passed (0.002 seconds).
+Test Case '-[KlondikeEngineTests.UndoTests testUndoWasteToColumn]' started.
+Test Case '-[KlondikeEngineTests.UndoTests testUndoWasteToColumn]' passed (0.000 seconds).
+Test Suite 'UndoTests' passed at 2026-11-04 10:01:05.485.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.777 (0.783) seconds
+Test Suite 'WinTests' started at 2026-11-04 10:01:05.485.
+Test Case '-[KlondikeEngineTests.WinTests testAutoFinishAlwaysSucceedsInDrawOneWhenEverythingIsFaceUp]' started.
+Test Case '-[KlondikeEngineTests.WinTests testAutoFinishAlwaysSucceedsInDrawOneWhenEverythingIsFaceUp]' passed (14.591 seconds).
+Test Case '-[KlondikeEngineTests.WinTests testAutoFinishBecomesAvailableOnceEverythingIsFaceUp]' started.
+Test Case '-[KlondikeEngineTests.WinTests testAutoFinishBecomesAvailableOnceEverythingIsFaceUp]' passed (0.003 seconds).
+Test Case '-[KlondikeEngineTests.WinTests testAutoFinishCyclesTheWasteInDrawOne]' started.
+Test Case '-[KlondikeEngineTests.WinTests testAutoFinishCyclesTheWasteInDrawOne]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.WinTests testAutoFinishUnavailableWhileCardsAreFaceDownInColumns]' started.
+Test Case '-[KlondikeEngineTests.WinTests testAutoFinishUnavailableWhileCardsAreFaceDownInColumns]' passed (0.001 seconds).
+Test Case '-[KlondikeEngineTests.WinTests testFreshDealIsNotWon]' started.
+Test Case '-[KlondikeEngineTests.WinTests testFreshDealIsNotWon]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.WinTests testNearlyWonFixtureIsALegalPositionForEverySeed]' started.
+Test Case '-[KlondikeEngineTests.WinTests testNearlyWonFixtureIsALegalPositionForEverySeed]' passed (0.006 seconds).
+Test Case '-[KlondikeEngineTests.WinTests testNearlyWonGameCanBePlayedToVictoryByTapping]' started.
+Test Case '-[KlondikeEngineTests.WinTests testNearlyWonGameCanBePlayedToVictoryByTapping]' passed (0.006 seconds).
+Test Case '-[KlondikeEngineTests.WinTests testNotWonWithOneCardOutstanding]' started.
+Test Case '-[KlondikeEngineTests.WinTests testNotWonWithOneCardOutstanding]' passed (0.000 seconds).
+Test Case '-[KlondikeEngineTests.WinTests testWinWhenEveryFoundationIsComplete]' started.
+Test Case '-[KlondikeEngineTests.WinTests testWinWhenEveryFoundationIsComplete]' passed (0.000 seconds).
+Test Suite 'WinTests' passed at 2026-11-04 10:01:20.096.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 14.608 (14.611) seconds
+Test Suite 'KlondikeEnginePackageTests.xctest' passed at 2026-11-04 10:01:20.096.
+	 Executed 71 tests, with 0 failures (0 unexpected) in 177.986 (178.025) seconds
+Test Suite 'All tests' passed at 2026-11-04 10:01:20.096.
+	 Executed 71 tests, with 0 failures (0 unexpected) in 177.986 (178.033) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

@@ -1,0 +1,21 @@
+Networking APIs in Swift sources:
+  none found
+Remote package dependencies (Package.swift, project.yml):
+  none found (all packages are local paths)
+Other dependency managers:
+  none found (no CocoaPods, Carthage or resolved remote packages)
+Imports used by the engine (must be Foundation only):
+   8 import Foundation
+All imports across the app:
+   1 import AVFoundation
+   1 import BetweenStops
+   1 import CoreGraphics
+  14 import Foundation
+  15 import KlondikeEngine
+   4 import PackageDescription
+  17 import PlayKit
+   2 import Solitaire
+  17 import SwiftUI
+   1 import TestGame
+   3 import UIKit
+  11 import XCTest
