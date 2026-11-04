@@ -61,13 +61,17 @@ xcodebuild test -project BetweenStops.xcodeproj -scheme BetweenStops \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max'
 ```
 
-The UI tests play a near-finished game to the win screen, force-quit mid-game and check that the
-exact board comes back, open the test-only game from the home screen, run an accessibility audit,
-and capture screenshots of every screen in light mode, dark mode and large text.
+The UI tests cover tapping and dragging cards, undo, hints, Draw 3 and the left-handed layout.
+They also play a near-finished game to the win screen, force-quit mid-game and check that the
+exact board and undo history come back, open the test-only game from the home screen, run an
+accessibility audit, and capture screenshots of every screen in light mode, dark mode and large text.
 
 **CI** runs everything on each push to `main`: `ci/run.sh` on a macOS runner, with results
 published to the `ci-results` branch (`totals.txt`, `failures.txt`, `test-results.txt`, logs and
 `screenshots/`). Add `[skip ci]` to a commit message when no build is needed.
+
+**App Store screenshots:** `tools/update_store_screenshots.sh` copies the latest CI screenshots
+(6.9", 1320 × 2868) into `docs/app-store/screenshots/`.
 
 **Source audit:** `bash ci/audit.sh` fails if any networking API or third-party dependency
 appears, and checks that the engine imports only Foundation.

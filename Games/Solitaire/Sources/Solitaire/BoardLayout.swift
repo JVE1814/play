@@ -60,12 +60,13 @@ public struct BoardLayout {
         CGPoint(x: columnX(leftHanded ? 3 + foundation : foundation), y: bottomRowY)
     }
 
-    /// Horizontal step between fanned waste cards (Draw 3).
-    var wasteStep: CGFloat { (card.width * 0.36).rounded() }
+    /// Horizontal step between fanned waste cards (Draw 3): as wide as possible, so the rank of
+    /// every fanned card stays readable, without touching the foundations.
+    public var wasteStep: CGFloat { min(card.width * 0.5, (card.width + 2 * gap - 4) / 2).rounded(.down) }
 
     /// Centre of the waste card in fan slot `slot` (0 = deepest shown) when `shown` cards are fanned.
     /// The top card always sits next to the stock; older cards fan out towards the foundations.
-    func wasteCenter(slot: Int, shown: Int) -> CGPoint {
+    public func wasteCenter(slot: Int, shown: Int) -> CGPoint {
         let fromTop = CGFloat(max(0, shown - 1 - slot))
         let topX = columnX(leftHanded ? 1 : 5)
         let x = leftHanded ? topX + fromTop * wasteStep : topX - fromTop * wasteStep

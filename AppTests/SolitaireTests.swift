@@ -168,6 +168,20 @@ final class SolitaireTests: XCTestCase {
         }
     }
 
+    func testDrawThreeFanShowsRanksWithoutTouchingTheFoundations() {
+        for width in [375.0, 402.0, 440.0] {
+            for leftHanded in [false, true] {
+                let layout = BoardLayout(size: CGSize(width: width, height: 640), leftHanded: leftHanded)
+                XCTAssertGreaterThanOrEqual(layout.wasteStep, layout.card.width * 0.45, "rank visible")
+                let deepest = layout.wasteCenter(slot: 0, shown: 3).x
+                let nearestFoundation = layout.foundationCenter(leftHanded ? 0 : 3).x
+                XCTAssertGreaterThanOrEqual(abs(deepest - nearestFoundation), layout.card.width + 2, "no overlap at \(width)")
+                let top = layout.wasteCenter(slot: 2, shown: 3).x
+                XCTAssertGreaterThanOrEqual(abs(layout.stockCenter.x - top), layout.card.width, "stock stays clear")
+            }
+        }
+    }
+
     func testLeftHandedLayoutMirrorsTheBottomRow() {
         let right = BoardLayout(size: CGSize(width: 402, height: 640), leftHanded: false)
         let left = BoardLayout(size: CGSize(width: 402, height: 640), leftHanded: true)
