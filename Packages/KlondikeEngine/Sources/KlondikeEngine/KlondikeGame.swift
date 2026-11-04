@@ -1,0 +1,173 @@
+import Foundation
+
+/// A game of Klondike: the board, the draw mode and the full move history (for unlimited undo).
+public struct KlondikeGame: Hashable, Codable, Sendable {
+    public private(set) var board: Board
+    public let drawMode: DrawMode
+    /// The seed the game was dealt from, or nil for hand-built positions.
+    public let seed: UInt64?
+    public private(set) var history: [MoveRecord]
+
+    /// Deal a new game from `seed`. The same seed always gives the same deal.
+    public init(seed: UInt64, drawMode: DrawMode = .one) {
+        self.board = Board(seed: seed)
+        self.drawMode = drawMode
+        self.seed = seed
+        self.history = []
+    }
+
+    /// Start from an arbitrary position (used for fixtures and tests).
+    public init(board: Board, drawMode: DrawMode = .one, seed: UInt64? = nil) {
+        self.board = board
+        self.drawMode = drawMode
+        self.seed = seed
+        self.history = []
+    }
+
+    // MARK: Convenience accessors
+
+    public var stock: [Card] { board.stock }
+    public var waste: [Card] { board.waste }
+    public var foundations: [[Card]] { board.foundations }
+    public var tableau: [TableauColumn] { board.tableau }
+    public var isWon: Bool { board.isWon }
+    public var moveCount: Int { history.count }
+    public var canUndo: Bool { !history.isEmpty }
+    /// How many times the waste has been turned back into the stock.
+    public var redealCount: Int { history.filter { $0.move == .recycle }.count }
+
+    // MARK: Rules
+
+    public func isLegal(_ move: Move) -> Bool {
+        switch move {
+        case .draw:
+            return !board.stock.isEmpty
+        case .recycle:
+            return board.stock.isEmpty && !board.waste.isEmpty
+        case let .transfer(from, to, count):
+            guard from != to, let cards = board.movableCards(from: from, count: count), let first = cards.first else {
+                return false
+            }
+            switch to {
+            case .foundation(let f):
+                if case .foundation = from { return false }
+                return count == 1 && board.canPlace(first, onFoundation: f)
+            case .tableau(let t):
+                return board.canPlace(first, onTableau: t)
+            case .stock, .waste:
+                return false
+            }
+        }
+    }
+
+    /// Every legal move in the current position, in a deterministic order.
+    public func legalMoves() -> [Move] {
+        var moves: [Move] = []
+        if isLegal(.draw) { moves.append(.draw) }
+        if isLegal(.recycle) { moves.append(.recycle) }
+        var sources: [(Pile, Int)] = []
+        if !board.waste.isEmpty { sources.append((.waste, 1)) }
+        for t in Board.columnIndices {
+            let visible = board.tableau[t].visible.count
+            if visible > 0 {
+                for count in 1...visible { sources.append((.tableau(t), count)) }
+            }
+        }
+        for f in Board.foundationIndices where !board.foundations[f].isEmpty {
+            sources.append((.foundation(f), 1))
+        }
+        for (from, count) in sources {
+            for f in Board.foundationIndices {
+                let move = Move.transfer(from: from, to: .foundation(f), count: count)
+                if isLegal(move) { moves.append(move) }
+            }
+            for t in Board.columnIndices {
+                let move = Move.transfer(from: from, to: .tableau(t), count: count)
+                if isLegal(move) { moves.append(move) }
+            }
+        }
+        return moves
+    }
+
+    /// Make a move. Returns false (and changes nothing) if the move is illegal.
+    @discardableResult
+    public mutating func perform(_ move: Move) -> Bool {
+        guard isLegal(move) else { return false }
+        switch move {
+        case .draw:
+            let n = min(drawMode.rawValue, board.stock.count)
+            for _ in 0..<n { board.waste.append(board.stock.removeLast()) }
+            history.append(MoveRecord(move: move, revealedCard: false, cardCount: n))
+        case .recycle:
+            let n = board.waste.count
+            board.stock = board.waste.reversed()
+            board.waste = []
+            history.append(MoveRecord(move: move, revealedCard: false, cardCount: n))
+        case let .transfer(from, to, count):
+            let cards = removeCards(count, from: from)
+            addCards(cards, to: to)
+            var revealed = false
+            if case .tableau(let t) = from, board.tableau[t].visible.isEmpty, !board.tableau[t].hidden.isEmpty {
+                board.tableau[t].visible.append(board.tableau[t].hidden.removeLast())
+                revealed = true
+            }
+            history.append(MoveRecord(move: move, revealedCard: revealed, cardCount: count))
+        }
+        return true
+    }
+
+    /// Take back the last move, restoring the board exactly. Returns false if there is nothing to undo.
+    @discardableResult
+    public mutating func undo() -> Bool {
+        guard let record = history.popLast() else { return false }
+        switch record.move {
+        case .draw:
+            for _ in 0..<record.cardCount { board.stock.append(board.waste.removeLast()) }
+        case .recycle:
+            board.waste = board.stock.reversed()
+            board.stock = []
+        case let .transfer(from, to, count):
+            if record.revealedCard, case .tableau(let t) = from {
+                board.tableau[t].hidden.append(board.tableau[t].visible.removeLast())
+            }
+            let cards = removeCards(count, from: to)
+            addCards(cards, to: from)
+        }
+        return true
+    }
+
+    /// Take back every move, returning to the deal.
+    public mutating func undoAll() {
+        while undo() {}
+    }
+
+    private mutating func removeCards(_ count: Int, from pile: Pile) -> [Card] {
+        switch pile {
+        case .stock:
+            let cards = Array(board.stock.suffix(count))
+            board.stock.removeLast(count)
+            return cards
+        case .waste:
+            let cards = Array(board.waste.suffix(count))
+            board.waste.removeLast(count)
+            return cards
+        case .foundation(let f):
+            let cards = Array(board.foundations[f].suffix(count))
+            board.foundations[f].removeLast(count)
+            return cards
+        case .tableau(let t):
+            let cards = Array(board.tableau[t].visible.suffix(count))
+            board.tableau[t].visible.removeLast(count)
+            return cards
+        }
+    }
+
+    private mutating func addCards(_ cards: [Card], to pile: Pile) {
+        switch pile {
+        case .stock: board.stock += cards
+        case .waste: board.waste += cards
+        case .foundation(let f): board.foundations[f] += cards
+        case .tableau(let t): board.tableau[t].visible += cards
+        }
+    }
+}

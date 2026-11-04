@@ -1,0 +1,9 @@
+// Signing and identity. These are the only values you need to change to build for your own
+// iPhone or submit to the App Store under your Apple Developer account.
+//
+// APP_BUNDLE_ID        A reverse-DNS id you own, e.g. com.yourname.betweenstops. It must match
+//                      the App ID you create in App Store Connect.
+// APP_DEVELOPMENT_TEAM Your 10-character Team ID (developer.apple.com > Account > Membership).
+//                      Leave empty to build for the simulator only.
+APP_BUNDLE_ID = io.github.jve1814.betweenstops
+APP_DEVELOPMENT_TEAM =
