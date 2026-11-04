@@ -1,0 +1,35 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ci
+  cancel-in-progress: true
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and test
+        shell: bash
+        run: |
+          mkdir -p ci-output
+          test ! -f ci/run.sh || bash ci/run.sh 2>&1 | tee ci-output/log.txt
+      - name: Publish results
+        if: always()
+        shell: bash
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p ci-output
+          cd "$(mktemp -d)"
+          cp -R "$GITHUB_WORKSPACE/ci-output/." .
+          echo "$GITHUB_SHA" > SHA
+          git init -q -b ci-results
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "$GITHUB_SHA"
+          git push -f "https://x-access-token:$TOKEN@github.com/$GITHUB_REPOSITORY.git" ci-results
