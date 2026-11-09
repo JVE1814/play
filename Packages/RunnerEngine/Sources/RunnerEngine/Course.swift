@@ -114,6 +114,12 @@ public struct Coin: Codable, Equatable, Sendable {
 
     /// Where a coin sits for a runner on the ground.
     public static let usualHeight = 0.9
+
+    public init(lane: Int, position: Double, height: Double = Coin.usualHeight) {
+        self.lane = lane
+        self.position = position
+        self.height = height
+    }
 }
 
 /// A power-up lying on the course.
@@ -130,6 +136,12 @@ public struct Pickup: Codable, Equatable, Sendable {
     public let position: Double
 
     public static let height = 1.0
+
+    public init(kind: Kind, lane: Int, position: Double) {
+        self.kind = kind
+        self.lane = lane
+        self.position = position
+    }
 }
 
 /// How the run speeds up and the course tightens with distance.

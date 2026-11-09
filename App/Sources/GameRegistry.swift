@@ -1,6 +1,7 @@
 import Archery
 import Bubbles
 import PlayKit
+import Runner
 import Solitaire
 #if DEBUG
 import TestGame
@@ -16,6 +17,7 @@ enum GameRegistry {
             SolitaireModule(),
             BubblesModule(),
             ArcheryModule(),
+            RunnerModule(),
         ]
         #if DEBUG
         // Test-only placeholder, never compiled into release builds.

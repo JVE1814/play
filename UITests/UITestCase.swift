@@ -31,7 +31,8 @@ class UITestCase: XCTestCase {
     func waitFor(_ identifier: String, timeout: TimeInterval = 10,
                  file: StaticString = #filePath, line: UInt = #line) -> XCUIElement {
         let found = element(identifier)
-        XCTAssertTrue(found.waitForExistence(timeout: timeout), "\(identifier) did not appear", file: file, line: line)
+        // Looking first: waiting for something that is already there still takes a second.
+        XCTAssertTrue(found.exists || found.waitForExistence(timeout: timeout), "\(identifier) did not appear", file: file, line: line)
         return found
     }
 

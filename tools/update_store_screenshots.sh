@@ -18,6 +18,7 @@ copy 54-archery-night-light 6-archery-night
 copy 04-win-light 7-win
 copy 50-home-three-games-light 8-home
 copy 41-bubbles-aim-dark 9-dark
+copy 61-runner-run-light 10-runner
 mkdir -p "$OUT"
 rm -f "$OUT"/*.png
 mv "$NEW"/*.png "$OUT"/

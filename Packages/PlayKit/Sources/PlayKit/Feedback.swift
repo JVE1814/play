@@ -16,6 +16,14 @@ public enum FeedbackEvent: String, CaseIterable, Sendable {
     case release
     /// A shot struck home: an arrow into the target.
     case hit
+    /// Something small was picked up.
+    case coin
+    /// A leap off the ground.
+    case jump
+    /// Running into something: the end of a run.
+    case crash
+    /// A power-up was picked up.
+    case powerUp
 }
 
 /// Plays sounds (off by default) and light haptics (on by default) according to `AppSettings`.
@@ -48,7 +56,10 @@ public final class Feedback {
         case .invalid: notification.notificationOccurred(.warning)
         case .win: notification.notificationOccurred(.success)
         case .release: rigid.impactOccurred(intensity: 0.8)
-        case .hit: medium.impactOccurred(intensity: 0.9)
+        case .hit, .powerUp: medium.impactOccurred(intensity: 0.9)
+        case .coin: soft.impactOccurred(intensity: 0.35)
+        case .jump: light.impactOccurred(intensity: 0.6)
+        case .crash: notification.notificationOccurred(.error)
         }
     }
 

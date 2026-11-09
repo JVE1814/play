@@ -264,3 +264,46 @@ worth a look before you submit are marked **review**.
     inside the fixed limit; the first run of this refactor passed every test it reached but
     was stopped with four UI tests to go, on a runner whose app launches were a fifth slower.
     `ci/run.sh` reads the job's limit from the workflow, so the two cannot drift apart.
+
+## Runner
+
+74. **The fourth game is an endless runner on a pier.** Three lanes, swipe left or right to
+    change lane, up to jump, down to slide. The setting is the collection's own: a wooden pier
+    running out to sea, a lighthouse, a runner in a yellow hoodie with a rucksack and a bobble
+    hat. Obstacles say what to do by their shape: a low red and white barrier is jumped, a
+    yellow and black beam at head height is slid under, crates are gone round, a shipping
+    container is a long wall, a barrel rolls towards you and is jumped.
+75. **Every course can be run, and no lane is a dead end.** The course is laid row by row from
+    a seed. Each row keeps one lane runnable, that lane moves at most one lane per row, nothing
+    long is put across it, nothing stands where a barrel rolls in, and while a container splits
+    the pier down the middle both sides stay open. A bot that looks 1.3 seconds ahead runs
+    every tested course for three kilometres. An earlier version passed the first rule and
+    still trapped that bot behind a container: hence the last one.
+76. **Difficulty comes from speed and spacing, set with bots.** The run speeds up from 9.5 to
+    about 22 metres a second and the rows close from 1.4 to 0.64 seconds apart, which is still
+    longer than a jump. Bots that see less far and hesitate stand in for people: the newcomer
+    bot's middle run is about 430 metres (40 seconds), the regular's about 1,300.
+77. **The run moves in fixed steps of 1/120 second and is not published.** The same seed and
+    the same moves give the same run at any frame rate. The session plays it forward sixty
+    times a second for sounds, the score and the end; the pier draws from a copy played up to
+    the frame's own time, so what is seen never waits. The score and coins are published by a
+    small object of their own, so only the readouts follow them.
+78. **A goal makes a run a win or a loss.** Statistics count wins, and an endless game has
+    none, so each run is after a score: the first rung of a ladder (250, 500, 750, 1,000 ...)
+    above the best so far. Reaching it is a win. A metre is a point and a coin five.
+79. **Leaving pauses; coming back waits for a tap, then a moment more.** A run saves every two
+    seconds and whenever it stops, so a force quit costs two seconds at most and comes back
+    paused. After the tap the run stands still for a second and a half.
+80. **The first runs are coached.** Until a run has scored 100, the course opens with three
+    easy rows (go round, jump, slide) and says which swipe each needs.
+81. **Sunset in light mode, a moonlit night in dark mode.** As with Archery's venues the scene
+    keeps its own light, here one for each appearance. Reduce Motion stops the twinkling,
+    drifting, bobbing and shaking; the course itself still comes towards the runner.
+82. **In UI tests the run's clock stands still and each touch moves it on half a second.** A
+    pier that redraws every frame never lets the test runner see an idle app (decision 63's
+    lesson), and a real-time game cannot be asserted on. Prepared runs (`-scenario`) give a
+    dead end to crash into, a jump for the screenshot, and a finished run.
+83. **Four new sounds**: a coin, a jump, a crash and a power-up, synthesised like the others.
+84. **UI tests look before they wait.** `waitForExistence` takes a second even for something
+    already on screen, and the suite asks hundreds of times. With a fourth game's tests the
+    job would not have fitted its 30 minutes otherwise.

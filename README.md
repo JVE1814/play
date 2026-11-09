@@ -1,8 +1,9 @@
 # Between Stops
 
 An offline collection of quick games for iPhone, built for one-handed play in short sessions on
-a train. It has three games: **Solitaire** (Klondike), **Bubbles**, a bubble shooter with
-2,000 levels, and **Archery**, 30 levels of target archery from 10 to 90 metres.
+a train. It has four games: **Solitaire** (Klondike), **Bubbles**, a bubble shooter with
+2,000 levels, **Archery**, 30 levels of target archery from 10 to 90 metres, and **Runner**,
+an endless run down a pier.
 
 - Native Swift and SwiftUI, iPhone, portrait, iOS 17+.
 - No network code, accounts, ads, analytics or tracking. No third-party runtime dependencies.
@@ -24,6 +25,8 @@ a train. It has three games: **Solitaire** (Klondike), **Bubbles**, a bubble sho
 | `Games/Bubbles/` | The Bubbles game module (SwiftUI) built on that engine. |
 | `Packages/ArcheryEngine/` | Target archery engine. Imports only Foundation. Ten-ring faces with line-cutter scoring and three-spot targets, gusty crosswind followed through each flight, sight sway, sliding and swinging targets, timed ends, and the 30 levels, whose star scores come from expert and novice bots (`swift run -c release archery-calibrate` prints how they score). |
 | `Games/Archery/` | The Archery game module (SwiftUI): the range drawn in a Canvas, drawing and aiming, the target camera, levels by venue. |
+| `Packages/RunnerEngine/` | Endless runner engine. Imports only Foundation. A course laid row by row from a seed (barriers, beams, crates, containers, rolling barrels, coins, a magnet and a shield), the runner's lanes, jumps and slides in fixed time steps, and bots: one proves every course can be run, weaker ones set the difficulty (`swift run -c release runner-calibrate` prints how far they get). |
+| `Games/Runner/` | The Runner game module (SwiftUI): the pier drawn in a Canvas at sunset or by night, swipes, goals, the coached first run. |
 | `Games/TestGame/` | A tiny debug-only game: the smallest example of one, and proof that adding a game needs no home screen changes. |
 | `AppTests/`, `UITests/` | Unit tests and UI tests (including screenshot capture). |
 | `ci/` | `run.sh` (the CI pipeline), `engine_tests.sh` (the rules engines' tests), `audit.sh` (no networking or third-party code), `lib.sh` (what those share, including how the engines are found), `release.sh` (archive and upload). |
@@ -54,6 +57,7 @@ Run `xcodegen generate` again after adding or removing files or packages.
 cd Packages/KlondikeEngine && swift test
 cd Packages/BubbleEngine && swift test
 cd Packages/ArcheryEngine && swift test
+cd Packages/RunnerEngine && swift test
 # or, on Linux or any machine with Docker:
 docker run --rm -v "$PWD/Packages/BubbleEngine":/pkg -w /pkg swift:6.3 swift test
 ```
@@ -69,6 +73,12 @@ drift through the flight, sway, sliding and swinging targets, timed ends and sav
 play every level with an expert and a novice bot: the expert must pass every level, newcomers
 must be able to pass each one with a few tries, and each venue must be harder than the last.
 
+The Runner tests cover lanes, jumps, slides and their timing, every kind of obstacle, coins, the
+magnet and the shield, and saving mid-run. They also check the laid course: no row walls the
+pier in, no lane is a dead end, nothing stands where a barrel rolls in, and it gets harder with
+distance. A bot that looks 1.3 seconds ahead must run every course for three kilometres, and
+standing still must never get far.
+
 **App unit and UI tests** (needs Xcode):
 
 ```sh
@@ -77,7 +87,8 @@ xcodebuild test -project BetweenStops.xcodeproj -scheme BetweenStops \
 ```
 
 The UI tests cover tapping and dragging cards, undo, hints, Draw 3 and the left-handed layout,
-aiming and shooting in Bubbles, and drawing, shooting and finishing levels in Archery.
+aiming and shooting in Bubbles, drawing, shooting and finishing levels in Archery, and starting,
+swiping, pausing and crashing in Runner.
 They also play a near-finished game to the win screen, force-quit mid-game and check that the
 exact board and undo history come back, open the test-only game from the home screen, run an
 accessibility audit, and capture screenshots of every screen in light mode, dark mode and large text.
@@ -129,4 +140,6 @@ best move, and swipe up or down to pick a destination). The suits have four dist
 color is never needed. Dynamic Type is supported, along with light and dark mode, Reduce Motion
 (no slides or shakes), and large touch targets. In Archery, VoiceOver aims the sight one ring at
 a time (swipe up or down, or the Aim actions), says where it points and what the wind is doing,
-and shoots with a double-tap. Score chips show the number as well as the ring's colour.
+and shoots with a double-tap. Score chips show the number as well as the ring's colour. In Runner,
+the pier takes swipes directly under VoiceOver, has the four moves as actions, and says what is
+coming in the runner's lane.

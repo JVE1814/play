@@ -74,4 +74,25 @@ for i in range(int(RATE * 0.05)):
     level += 0.25 * (random.uniform(-1, 1) - level)  # a simple low-pass keeps it soft
     crunch.append(level * math.exp(-90 * i / RATE) * 1.6)
 write("hit", mix((thump, 0), (crunch, 0)))
+# A coin picked up: two bright notes, the second a fifth above.
+write("coin", mix((tone(1318.5, 0.07, decay=38, harmonics=(1, 0.25)), 0),
+                  (tone(1975.5, 0.13, decay=26, harmonics=(1, 0.2)), int(RATE * 0.045))))
+# A jump: a short tone that slides up an octave.
+jump = []
+for i in range(int(RATE * 0.16)):
+    t = i / RATE
+    phase = 2 * math.pi * (250 * t + 250 * t * t / 0.32)
+    jump.append(min(1.0, t / 0.005) * math.sin(math.pi * t / 0.16) * (math.sin(phase) + 0.2 * math.sin(2 * phase)))
+write("jump", jump)
+# Running into something: a heavy thud under a burst of clatter.
+thud = tone(64, 0.3, decay=13, harmonics=(1, 0.5, 0.2), attack=0.001)
+clatter = []
+level = 0.0
+for i in range(int(RATE * 0.2)):
+    level += 0.45 * (random.uniform(-1, 1) - level)
+    clatter.append(level * math.exp(-22 * i / RATE) * 1.3)
+write("crash", mix((thud, 0), (clatter, 0)))
+# A power-up: three quick rising notes.
+write("powerUp", pad(mix(*[(tone(f, 0.18, decay=14, harmonics=(1, 0.3)), int(RATE * 0.06 * k))
+                          for k, f in enumerate([659.25, 880.0, 1318.5])]), int(RATE * 0.34)))
 print("wrote sounds to", os.path.abspath(OUT))
