@@ -144,7 +144,8 @@ final class ArcheryTests: XCTestCase {
         XCTAssertEqual(stats.played, 1)
         XCTAssertEqual(stats.won, 0)
         XCTAssertFalse(s.progress.isUnlocked(2))
-        XCTAssertEqual(s.progress.bestScore(for: 1), s.round.score)
+        XCTAssertEqual(s.round.score, 0, "the sight was still on the straw beside the face")
+        XCTAssertNil(s.progress.bestScore(for: 1), "no points is not a best score")
         let attempt = s.round.attempt
         s.retry()
         XCTAssertEqual(s.round.attempt, attempt + 1, "every attempt meets new conditions")

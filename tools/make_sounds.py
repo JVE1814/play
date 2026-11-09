@@ -57,4 +57,21 @@ notes = [523.25, 659.25, 783.99, 1046.5]
 write("win", pad(mix(*[(tone(f, 0.35, decay=9), int(RATE * 0.09 * k)) for k, f in enumerate(notes)]), int(RATE * 0.7)))
 # A tiny tick for buttons.
 write("tap", tone(880, 0.04, decay=90, harmonics=(1,)))
+# A bowstring let go: a low plucked twang whose pitch settles as it rings, over a soft whoosh.
+twang = []
+for i in range(int(RATE * 0.22)):
+    t = i / RATE
+    phase = 2 * math.pi * 98 * (t + 0.35 * (1 - math.exp(-40 * t)) / 40)
+    env = min(1.0, t / 0.002) * math.exp(-16 * t)
+    twang.append(env * (math.sin(phase) + 0.5 * math.sin(2 * phase) + 0.25 * math.sin(3 * phase) + 0.12 * math.sin(5 * phase)))
+whoosh = [random.uniform(-1, 1) * math.sin(math.pi * i / (RATE * 0.12)) ** 2 * 0.18 for i in range(int(RATE * 0.12))]
+write("release", mix((twang, 0), (whoosh, 0)))
+# An arrow into straw: a dull low thump with a short, muffled crunch.
+thump = tone(82, 0.16, decay=28, harmonics=(1, 0.45, 0.15), attack=0.001)
+crunch = []
+level = 0.0
+for i in range(int(RATE * 0.05)):
+    level += 0.25 * (random.uniform(-1, 1) - level)  # a simple low-pass keeps it soft
+    crunch.append(level * math.exp(-90 * i / RATE) * 1.6)
+write("hit", mix((thump, 0), (crunch, 0)))
 print("wrote sounds to", os.path.abspath(OUT))

@@ -85,12 +85,13 @@ struct RangeView: View {
     private func aimGesture(camera: RangeCamera) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                if let last = lastTouch {
+                // Draw at once, or as soon as the last arrow lands if the thumb is still down.
+                if !session.isDrawing {
+                    if session.canDraw { session.beginDraw() }
+                } else if let last = lastTouch {
                     let gain = preferences.aimGain / Double(camera.pointsPerMetre)
                     let delta = Vec2(Double(value.location.x - last.x) * gain, -Double(value.location.y - last.y) * gain)
                     session.moveAim(by: delta, limit: camera.aimLimit)
-                } else {
-                    session.beginDraw()
                 }
                 lastTouch = value.location
             }
@@ -170,7 +171,7 @@ struct WindGauge: View {
                 Image(systemName: "wind")
                 Image(systemName: speed >= 0 ? "arrow.right" : "arrow.left")
                     .opacity(calm ? 0 : 1)
-                Text(String(format: "%.1f m/s", abs(speed)))
+                Text(calm ? "Calm" : String(format: "%.1f m/s", abs(speed)))
                     .monospacedDigit()
             }
             .font(Typography.label)

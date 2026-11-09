@@ -220,6 +220,8 @@ struct RangePainter {
 
     private func distanceLines(_ context: inout GraphicsContext, near: Double) {
         var lastLabel: CGFloat = .infinity
+        // Clear of the floodlight tower at night.
+        let labelX: CGFloat = venue.isNight ? w * 0.04 + 12 : 10
         for metres in stride(from: 10.0, to: distance - 2, by: 10) where metres > near {
             let y = cam.groundY(atDepth: metres)
             let width = min(3, max(0.6, cam.scale(atDepth: metres) * 0.05))
@@ -231,7 +233,7 @@ struct RangePainter {
                 let label = Text("\(Int(metres)) m")
                     .font(.system(size: 10, weight: .bold, design: .rounded))
                     .foregroundStyle(venue.label)
-                context.draw(label, at: CGPoint(x: 10, y: y - 2), anchor: .bottomLeading)
+                context.draw(label, at: CGPoint(x: labelX, y: y - 2), anchor: .bottomLeading)
                 lastLabel = y
             }
         }
@@ -740,14 +742,6 @@ struct RangePainter {
         bar.stroke(line(barStart, barEnd), with: .color(Color(hex: 0x2A2C33)), style: StrokeStyle(lineWidth: 6, lineCap: .round))
         bar.stroke(line(CGPoint(x: barStart.x, y: barY - 1.5), CGPoint(x: barEnd.x, y: barY - 1.5)),
                    with: .color(.white.opacity(0.18)), lineWidth: 1)
-        // The arrow point resting on the shelf, just inside the window.
-        let rest = CGPoint(x: inner - side * 4, y: s.y + h * 0.15)
-        var point = Path()
-        point.move(to: CGPoint(x: rest.x, y: rest.y - 9))
-        point.addLine(to: CGPoint(x: rest.x + 4, y: rest.y + 3))
-        point.addLine(to: CGPoint(x: rest.x - 4, y: rest.y + 3))
-        point.closeSubpath()
-        layer.fill(point, with: .color(Color(hex: 0xC9CDD6)))
     }
 
     private func reticle(_ context: inout GraphicsContext) {

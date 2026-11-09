@@ -288,7 +288,7 @@ public final class ArcherySession: ObservableObject {
         guard round.status == .playing, let shot = round.shoot(aim: sight) else { return }
         updateRunClock(now)
         save()
-        context.feedback.play(.tap)
+        context.feedback.play(.release)
         let path = FlightPath(distance: round.level.distance, impact: shot.hit.point, targetOffset: shot.targetOffset,
                               drift: shot.drift, mirrored: preferences.leftHanded)
         guard animationsEnabled else {
@@ -312,7 +312,8 @@ public final class ArcherySession: ObservableObject {
         flight = nil
         landedArrows = min(round.shots.count, arrow + 1)
         landing = Landing(arrow: arrow, shot: shot, date: now)
-        context.feedback.play(shot.hit.inBoss && shot.score > 0 ? .place : .invalid)
+        // A thunk whenever the arrow goes into the boss; a miss that flies past just goes quiet.
+        context.feedback.play(shot.hit.inBoss ? .hit : .invalid)
         announce(describe(shot))
         checkFinished(at: now)
     }

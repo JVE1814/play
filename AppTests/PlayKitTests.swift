@@ -86,7 +86,10 @@ final class PlayKitTests: XCTestCase {
     func testFeedbackPlaysEveryEventWithSoundOn() {
         let env = TestEnvironment()
         env.settings.soundEnabled = true
-        for event in FeedbackEvent.allCases { env.feedback.play(event) }
+        for event in FeedbackEvent.allCases {
+            XCTAssertNotNil(Feedback.soundURL(for: event), "\(event) has a sound")
+            env.feedback.play(event)
+        }
     }
 
     func testLaunchOptionsParsing() {
