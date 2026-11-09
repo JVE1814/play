@@ -147,9 +147,9 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
         case .draw:
             return (0...board.waste.count).contains(record.cardCount)
         case .recycle:
-            return true
+            return board.waste.isEmpty && board.stock.count == record.cardCount
         case let .transfer(from, to, count):
-            guard from != to, count >= 0, let moved = faceUpCount(in: to), moved >= count,
+            guard from != to, count >= 1, let moved = faceUpCount(in: to), moved >= count,
                   let source = faceUpCount(in: from) else { return false }
             if record.revealedCard, case .tableau = from { return source > 0 }
             return true

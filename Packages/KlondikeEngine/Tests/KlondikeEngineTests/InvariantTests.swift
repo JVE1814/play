@@ -59,6 +59,8 @@ final class InvariantTests: XCTestCase {
             MoveRecord(move: .transfer(from: .waste, to: .foundation(9), count: 1), revealedCard: false, cardCount: 1),
             MoveRecord(move: .transfer(from: .tableau(-1), to: .tableau(1), count: 1), revealedCard: false, cardCount: 1),
             MoveRecord(move: .transfer(from: .tableau(1), to: .tableau(1), count: 1), revealedCard: true, cardCount: 1),
+            MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 0), revealedCard: false, cardCount: 0),
+            MoveRecord(move: .recycle, revealedCard: false, cardCount: 5),
             MoveRecord(move: .draw, revealedCard: false, cardCount: 3),
             MoveRecord(move: .draw, revealedCard: false, cardCount: -1),
         ]

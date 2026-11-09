@@ -17,7 +17,7 @@ public struct LevelProgress: Codable, Equatable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        unlocked = try container.decode(Int.self, forKey: .unlocked)
+        unlocked = max(1, try container.decode(Int.self, forKey: .unlocked))
         stars = try container.decode([UInt8].self, forKey: .stars)
         best = try container.decodeIfPresent([Int].self, forKey: .best) ?? []
     }

@@ -69,6 +69,8 @@ final class PlayKitTests: XCTestCase {
         XCTAssertEqual(progress.unlocked, 3)
         XCTAssertEqual(progress.stars(for: 2), 1)
         XCTAssertNil(progress.bestScore(for: 1))
+        let damaged = try JSONDecoder().decode(LevelProgress.self, from: Data(#"{"unlocked":0,"stars":[]}"#.utf8))
+        XCTAssertTrue(damaged.isUnlocked(1), "level 1 can always be played")
     }
 
     func testOpenGameIsRemembered() {
