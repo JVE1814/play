@@ -62,6 +62,11 @@ public final class ArcherySession: ObservableObject {
     private var elapsedBeforeRun: TimeInterval
     private var runStartedAt: Date?
     private var isOnScreen = false
+    /// Something the app shows (Settings) is covering the game.
+    private var isCovered = false
+    /// The display clock when it was paused after the last arrow, so a moving target carries
+    /// on from where it was rather than jumping back to the moment the end finished.
+    private var heldClock: Double?
     /// The level clock at a moment of real time, while the level is on screen. Between syncs the
     /// clock runs on from here. It keeps running after the last arrow so a moving target keeps
     /// moving behind the result.
@@ -119,6 +124,10 @@ public final class ArcherySession: ObservableObject {
         showsResult = initial.isOver
         showingTip = initial.shots.isEmpty && !initial.isOver && demoDraw == nil
         draw = demoDraw
+        if round.isOver && !resultRecorded {
+            // The app closed while the last arrow was in the air: record the end now.
+            checkFinished(at: Date(), quietly: true)
+        }
         save()
     }
 
@@ -215,9 +224,29 @@ public final class ArcherySession: ObservableObject {
 
     public func setOnScreen(_ visible: Bool) {
         isOnScreen = visible
-        if !visible, draw != nil, draw?.frozenHeld == nil { draw = nil }
+        if !visible {
+            if draw != nil, draw?.frozenHeld == nil { draw = nil }
+            settleFlight(at: Date())
+        }
         updateClock()
         save()
+    }
+
+    /// Settings (or anything else the app shows) covers the game: the clock pauses.
+    public func setCovered(_ covered: Bool) {
+        guard isCovered != covered else { return }
+        isCovered = covered
+        if covered, draw?.frozenHeld == nil { cancelDraw() }
+        updateClock()
+        save()
+    }
+
+    /// Lands an arrow still in the air at once, so leaving, restarting or closing the app never
+    /// loses it (or the end it finishes).
+    private func settleFlight(at now: Date) {
+        guard let flight else { return }
+        flightTask?.cancel()
+        land(flight.shot, arrow: flight.arrow, at: now, quietly: true)
     }
 
     public func leave() {
@@ -254,7 +283,11 @@ public final class ArcherySession: ObservableObject {
         guard draw?.frozenHeld == nil, draw != nil else { return }
         aim = Vec2(min(limit.x, max(-limit.x, aim.x + delta.x)), min(limit.y, max(-limit.y, aim.y + delta.y)))
         aimHistory.append((now, aim))
-        aimHistory.removeAll { now.timeIntervalSince($0.date) > 0.5 }
+        // Keep the newest sample older than half a second too: after a still hold it is the
+        // aim the release filter falls back to.
+        if let stale = aimHistory.lastIndex(where: { now.timeIntervalSince($0.date) > 0.5 }), stale > 0 {
+            aimHistory.removeFirst(stale)
+        }
     }
 
     /// Thumb up: loose the arrow, or let the bow down if it wasn't fully drawn.
@@ -308,15 +341,18 @@ public final class ArcherySession: ObservableObject {
         }
     }
 
-    private func land(_ shot: Shot, arrow: Int, at now: Date) {
+    private func land(_ shot: Shot, arrow: Int, at now: Date, quietly: Bool = false) {
         flight = nil
         landedArrows = min(round.shots.count, arrow + 1)
         landing = Landing(arrow: arrow, shot: shot, date: now)
-        // A thunk whenever the arrow goes into the boss; a miss that flies past just goes quiet.
-        context.feedback.play(shot.hit.inBoss ? .hit : .invalid)
-        announce(describe(shot))
-        if let advice = coaching(for: shot) { show(notice: advice) }
-        checkFinished(at: now)
+        if !quietly {
+            // A thunk whenever the arrow goes into the boss; a miss that flies past just goes quiet.
+            context.feedback.play(shot.hit.inBoss ? .hit : .invalid)
+            let advice = coaching(for: shot)
+            announce(describe(shot) + (advice.map { " " + $0 } ?? ""))
+            if let advice { show(notice: advice) }
+        }
+        checkFinished(at: now, quietly: quietly)
     }
 
     /// In the first three venues, a word on what the wind or a moving target did to the arrow,
@@ -365,11 +401,41 @@ public final class ArcherySession: ObservableObject {
         shoot(sight: aim + round.sway(held: Self.spokenHold, strength: preferences.swayStrength), at: now)
     }
 
+    /// Names for the faces of a three-spot target, top to bottom.
+    static func spotName(_ index: Int, of count: Int) -> String {
+        count == 3 ? ["top", "middle", "bottom"][index] : "spot \(index + 1)"
+    }
+
+    /// The face nearest the sight.
+    private var nearestSpot: Int {
+        let spots = round.level.layout.spots
+        return spots.indices.min { spots[$0].center.distance(to: aim) < spots[$1].center.distance(to: aim) } ?? 0
+    }
+
+    /// Moves the sight to the middle of the next face that has no arrow yet (three-spot targets).
+    public func aimAtNextFreeSpot() {
+        guard isPlaying, round.level.layout.spots.count > 1 else { return }
+        let spots = round.level.layout.spots
+        let free = spots.indices.filter { !round.usedSpots.contains($0) }
+        guard !free.isEmpty else { return }
+        let next = free.first { $0 > nearestSpot } ?? free[0]
+        aim = spots[next].center
+        showingTip = false
+    }
+
     /// The sight, wind and arrows, in words.
     public func spokenStatus(at date: Date = Date()) -> String {
         var parts: [String] = []
-        let offset = aim - round.level.layout.spots[0].center
-        parts.append(describeSight(offset))
+        let spots = round.level.layout.spots
+        let spot = nearestSpot
+        if spots.count > 1 {
+            let free = spots.indices.filter { !round.usedSpots.contains($0) }.map { Self.spotName($0, of: spots.count) }
+            parts.append("On the \(Self.spotName(spot, of: spots.count)) spot.")
+            parts.append(describeSight(aim - spots[spot].center))
+            parts.append(free.isEmpty ? "Every spot has an arrow." : "Free: " + free.joined(separator: ", ") + ".")
+        } else {
+            parts.append(describeSight(aim - spots[0].center))
+        }
         parts.append("Wind " + Self.spokenWind(round.windSpeed(at: clock(at: date))) + ".")
         if round.level.motion.isMoving { parts.append("The target is moving.") }
         parts.append("\(displayedArrowsLeft) \(displayedArrowsLeft == 1 ? "arrow" : "arrows") left.")
@@ -394,6 +460,8 @@ public final class ArcherySession: ObservableObject {
     /// Starts a fresh attempt at `level` (if unlocked). Leaving a level unfinished is not a loss.
     public func start(level number: Int) {
         guard progress.isUnlocked(number) else { return }
+        // An end that is already decided (its last arrow still in the air) is recorded first.
+        settleFlight(at: Date())
         flightTask?.cancel()
         resultTask?.cancel()
         fullDrawTask?.cancel()
@@ -414,6 +482,7 @@ public final class ArcherySession: ObservableObject {
         showingLevels = false
         showingTip = true
         notice = nil
+        heldClock = nil
         updateClock()
         save()
         context.feedback.play(.draw)
@@ -424,6 +493,7 @@ public final class ArcherySession: ObservableObject {
 
     /// Restart from the toolbar: asks first if arrows have been shot.
     public func requestRestart() {
+        guard flight == nil else { return }  // let the arrow land first
         if round.status == .playing && !round.shots.isEmpty {
             confirmingRestart = true
         } else {
@@ -437,7 +507,9 @@ public final class ArcherySession: ObservableObject {
 
     // MARK: Internals
 
-    private func checkFinished(at now: Date) {
+    /// Records the end once every arrow has landed (or the time ran out): progress, statistics
+    /// and the result. `quietly` skips sounds and announcements (the app is closing or restarting).
+    private func checkFinished(at now: Date, quietly: Bool = false) {
         guard round.isOver, landedArrows >= round.shots.count, flight == nil, !resultRecorded else { return }
         cancelDraw()
         resultRecorded = true
@@ -446,15 +518,19 @@ public final class ArcherySession: ObservableObject {
         progress.record(level: round.level.number, score: score, stars: round.stars)
         if round.passed {
             context.stats.recordWin(gameID: context.gameID, time: elapsedBeforeRun, moves: round.arrowsShot)
-            context.feedback.play(.win)
-            announce("Level complete with \(score) points and \(round.stars) star\(round.stars == 1 ? "" : "s").")
+            if !quietly {
+                context.feedback.play(.win)
+                announce("Level complete with \(score) points and \(round.stars) star\(round.stars == 1 ? "" : "s").")
+            }
         } else {
             context.stats.recordLoss(gameID: context.gameID)
-            context.feedback.play(.invalid)
-            announce(round.timedOut ? "Out of time with \(score) points." : "\(score) points. Not quite enough for a star.")
+            if !quietly {
+                context.feedback.play(.invalid)
+                announce(round.timedOut ? "Out of time with \(score) points." : "\(score) points. Not quite enough for a star.")
+            }
         }
         save()
-        guard animationsEnabled else {
+        guard animationsEnabled && !quietly else {
             showsResult = true
             return
         }
@@ -465,9 +541,12 @@ public final class ArcherySession: ObservableObject {
         }
     }
 
+    /// The level is in view and nothing covers it.
+    private var isVisible: Bool { isOnScreen && !showingLevels && !isCovered }
+
     private func updateClock(_ now: Date = Date()) {
-        if isOnScreen && !showingLevels {
-            if clockAnchor == nil { clockAnchor = (round.clock, now) }
+        if isVisible {
+            if clockAnchor == nil { clockAnchor = (heldClock ?? round.clock, now) }
             startTicking()
         } else {
             stopClock(now)
@@ -491,6 +570,7 @@ public final class ArcherySession: ObservableObject {
 
     private func stopClock(_ now: Date = Date()) {
         syncClock(now)
+        if round.status != .playing, let anchor = clockAnchor { heldClock = anchor.clock }
         clockAnchor = nil
         tickTask?.cancel()
         tickTask = nil
@@ -517,7 +597,7 @@ public final class ArcherySession: ObservableObject {
     /// The statistics clock: runs while the level is on screen, from the first draw to the end.
     private func updateRunClock(_ now: Date = Date()) {
         let started = !round.shots.isEmpty || draw != nil || elapsedBeforeRun > 0
-        let shouldRun = isOnScreen && started && !resultRecorded
+        let shouldRun = isVisible && started && !resultRecorded
         if shouldRun, runStartedAt == nil {
             runStartedAt = now
         } else if !shouldRun, let start = runStartedAt {

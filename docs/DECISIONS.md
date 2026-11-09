@@ -194,8 +194,11 @@ worth a look before you submit are marked **review**.
 55. **Every attempt meets different conditions.** The gust cycle and a moving target's phase
     shift by the golden angle on each attempt, so a level can't be beaten by memorising one gust.
 56. **Each arrow is saved the moment it is released**, before it lands, so a force quit
-    mid-flight loses nothing. The level clock (which drives the wind and moving targets) is
-    saved too, and only runs while the game is on screen.
+    mid-flight loses nothing. An end decided by an arrow still in the air is recorded however it
+    is interrupted: leaving lands the arrow at once, Restart waits for it, choosing another level
+    records the end first, and a relaunch records an end the app closed on. The level clock
+    (which drives the wind and moving targets) is saved too, and only runs while the game is on
+    screen and nothing covers it.
 57. **One star passes a level and unlocks the next.** Finishing without a star counts as a loss
     in Statistics. Restarting or leaving a level does not.
 58. **Battery:** the range redraws at 30 frames a second when idle and 60 while the bow is
@@ -223,3 +226,14 @@ worth a look before you submit are marked **review**.
     booted). Run after the UI tests they added nearly four minutes to a job that, with three
     games, was close to its 30-minute limit; built on every core alongside them, they slowed
     the UI tests by over two minutes. Decision 45 still applies: release mode with testability.
+65. **Settings pauses the game's clock.** Settings opens as a sheet over the game, so the
+    game's view never disappears. `GameContext.isCovered` tells the game it is covered, and
+    Archery pauses its level clock (and any countdown) as it does in the background.
+66. **CI downloads XcodeGen's prebuilt release** (falling back to Homebrew), which takes seconds
+    where `brew install` took up to five minutes.
+67. **review: An independent multi-agent review of Archery** (four reviewers by area, each
+    finding challenged by a skeptic) confirmed 21 defects, all fixed with tests where they can
+    be tested: ends lost when the last arrow was interrupted, the release filter failing after a
+    still hold, Settings not pausing the clock, the swinging target dipping instead of rising,
+    VoiceOver on three-spot faces, a 75-second timer shown as 0:59, gusts on level 5 and swirling
+    wind on level 8 before those levels introduce them, and several drawing details.

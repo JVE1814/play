@@ -28,26 +28,36 @@ struct RangeView: View {
                         var context = context
                         RangePainter(f: frame).paint(&context)
                     }
+                    // Inside the timeline, so the spoken wind follows the gusts.
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Range, \(Int(session.level.distance)) metres")
+                    .accessibilityValue(session.spokenStatus(at: timeline.date))
+                    .accessibilityHint("Swipe up or down to aim left or right, double-tap to shoot. More aiming in the actions.")
+                    .accessibilityAdjustableAction { direction in
+                        switch direction {
+                        case .increment: session.nudgeAim(x: 1, y: 0)
+                        case .decrement: session.nudgeAim(x: -1, y: 0)
+                        @unknown default: break
+                        }
+                    }
+                    .accessibilityAction { session.shootFromAccessibility() }
+                    .accessibilityAction(named: "Aim up") { session.nudgeAim(x: 0, y: 1) }
+                    .accessibilityAction(named: "Aim down") { session.nudgeAim(x: 0, y: -1) }
+                    .accessibilityAction(named: "Aim left") { session.nudgeAim(x: -1, y: 0) }
+                    .accessibilityAction(named: "Aim right") { session.nudgeAim(x: 1, y: 0) }
+                    .accessibilityActions {
+                        if session.level.layout.spots.count > 1 {
+                            Button("Next free spot") { session.aimAtNextFreeSpot() }
+                        }
+                    }
+                    .accessibilityIdentifier("range")
                 }
                 .contentShape(Rectangle())
                 .gesture(aimGesture(camera: camera))
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Range, \(Int(session.level.distance)) metres")
-                .accessibilityValue(session.spokenStatus())
-                .accessibilityHint("Swipe up or down to aim left or right, double-tap to shoot. More aiming in the actions.")
-                .accessibilityAdjustableAction { direction in
-                    switch direction {
-                    case .increment: session.nudgeAim(x: 1, y: 0)
-                    case .decrement: session.nudgeAim(x: -1, y: 0)
-                    @unknown default: break
-                    }
+                // A thumb held down while the last arrow flew draws as soon as it lands.
+                .onChange(of: session.canDraw) { _, canDraw in
+                    if canDraw && lastTouch != nil { session.beginDraw() }
                 }
-                .accessibilityAction { session.shootFromAccessibility() }
-                .accessibilityAction(named: "Aim up") { session.nudgeAim(x: 0, y: 1) }
-                .accessibilityAction(named: "Aim down") { session.nudgeAim(x: 0, y: -1) }
-                .accessibilityAction(named: "Aim left") { session.nudgeAim(x: -1, y: 0) }
-                .accessibilityAction(named: "Aim right") { session.nudgeAim(x: 1, y: 0) }
-                .accessibilityIdentifier("range")
 
                 // The wind reading updates four times a second; it needs no more.
                 Group {
@@ -233,7 +243,7 @@ struct TimerChip: View {
     var body: some View {
         let whole = Int(seconds.rounded(.up))
         let urgent = running && seconds <= 5
-        HUDChip(systemImage: running ? "stopwatch.fill" : "stopwatch", text: String(format: "0:%02d", min(59, whole)),
+        HUDChip(systemImage: running ? "stopwatch.fill" : "stopwatch", text: String(format: "%d:%02d", whole / 60, whole % 60),
                 tint: urgent ? Color(hex: 0xFF8A7A) : .white)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Time left")
@@ -280,7 +290,7 @@ struct ScoreCard: View {
     private func spokenValue(_ shots: [Shot]) -> String {
         let left = session.displayedArrowsLeft
         var parts: [String] = []
-        if !shots.isEmpty { parts.append(shots.map(\.hit.label).joined(separator: ", ")) }
+        if !shots.isEmpty { parts.append(shots.map(\.hit.spokenLabel).joined(separator: ", ")) }
         parts.append("\(left) \(left == 1 ? "arrow" : "arrows") left")
         parts.append("total \(session.displayedScore) of \(session.level.maxScore)")
         return parts.joined(separator: ". ")
@@ -359,7 +369,7 @@ struct TargetCamera: View {
         .shadow(color: .black.opacity(0.25), radius: 4, y: 2)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Target camera")
-        .accessibilityValue(shots.map(\.hit.label).joined(separator: ", "))
+        .accessibilityValue(shots.map(\.hit.spokenLabel).joined(separator: ", "))
         .accessibilityIdentifier("targetCam")
     }
 }

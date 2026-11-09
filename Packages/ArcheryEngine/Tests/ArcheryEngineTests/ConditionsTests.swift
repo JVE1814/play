@@ -58,7 +58,13 @@ final class ConditionsTests: XCTestCase {
         let end = motion.offset(at: 1)
         XCTAssertEqual(middle, Vec2(0, 0))
         XCTAssertEqual(end.x, 1.5 * sin(0.3), accuracy: 1e-9)
-        XCTAssertLessThan(end.y, 0, "the bottom of the arc is the rest position")
+        XCTAssertEqual(end.y, 1.5 * (1 - cos(0.3)), accuracy: 1e-9, "the bottom of the arc is the rest position")
+        // Two parallel ropes from fixed pivots keep their length all the way through the swing.
+        for i in 0...20 {
+            let offset = motion.offset(at: Double(i) * 0.2)
+            let rope = Vec2(offset.x, 1.5 - offset.y).length
+            XCTAssertEqual(rope, 1.5, accuracy: 1e-9)
+        }
     }
 
     func testSwayIsZeroWhileDrawingAndEasesIn() {

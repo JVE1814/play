@@ -61,6 +61,7 @@ struct ArcheryScreen: View {
         .onDisappear { session.setOnScreen(false) }
         .onChange(of: scenePhase) { _, phase in session.setOnScreen(phase == .active) }
         .onChange(of: reduceMotion) { _, _ in session.animationsEnabled = animate }
+        .onReceive(context.$isCovered) { session.setCovered($0) }
     }
 
     private var toolbar: some View {
@@ -75,6 +76,7 @@ struct ArcheryScreen: View {
             ToolbarButton("Restart", systemImage: "arrow.counterclockwise", identifier: "restart") {
                 session.requestRestart()
             }
+            .disabled(session.flight != nil)
         }
         .padding(.horizontal, Theme.Space.m)
         .padding(.top, Theme.Space.xs)
@@ -138,6 +140,8 @@ struct ArcheryResultOverlay: View {
             }
             .padding(Theme.Space.l)
         }
+        // VoiceOver stays in the result until it is dismissed.
+        .accessibilityAddTraits(.isModal)
     }
 
     private var round: ArcheryRound { session.round }
@@ -188,7 +192,8 @@ struct ArcheryResultOverlay: View {
                 }
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Arrows: " + round.shots.map(\.hit.label).joined(separator: ", "))
+            .accessibilityLabel("Arrows: " + (round.shots.map(\.hit.spokenLabel)
+                + Array(repeating: "not shot", count: max(0, round.level.arrows - round.shots.count))).joined(separator: ", "))
             HStack(spacing: Theme.Space.s) {
                 StatValue("Score", value: "\(round.score) of \(round.maxScore)")
                 StatValue("X count", value: "\(round.xCount)")

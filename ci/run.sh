@@ -76,8 +76,18 @@ xcrun simctl boot "$UDID"
 DESTINATION="platform=iOS Simulator,id=$UDID"
 
 step "Generate Xcode project with XcodeGen"
+# The prebuilt release downloads in seconds; `brew install` took up to five minutes.
 if ! command -v xcodegen >/dev/null; then
-  HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 brew install xcodegen > "$OUT/brew.log" 2>&1
+  mkdir -p "$BUILD/xcodegen"
+  if curl -fsSL --retry 3 -o "$BUILD/xcodegen.zip" \
+       https://github.com/yonaskolb/XcodeGen/releases/latest/download/xcodegen.zip \
+     && unzip -q -o "$BUILD/xcodegen.zip" -d "$BUILD/xcodegen" \
+     && "$BUILD/xcodegen/xcodegen/bin/xcodegen" --version > /dev/null 2>&1; then
+    export PATH="$BUILD/xcodegen/xcodegen/bin:$PATH"
+  else
+    echo "release download failed; installing with Homebrew"
+    HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 brew install xcodegen > "$OUT/brew.log" 2>&1
+  fi
 fi
 xcodegen --version
 if ! xcodegen generate --spec project.yml > "$OUT/xcodegen.log" 2>&1; then

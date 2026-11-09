@@ -17,7 +17,15 @@ struct ScoreChip: View {
             .frame(width: size, height: size)
             .background(Circle().fill(colors.fill))
             .overlay(Circle().strokeBorder(Color.black.opacity(0.25), lineWidth: 1))
-            .accessibilityLabel(hit.label == "M" ? "Miss" : hit.label)
+            .accessibilityLabel(hit.spokenLabel)
+    }
+}
+
+extension Hit {
+    /// What VoiceOver says: the number, "X", or "Miss" (rather than the letter M).
+    var spokenLabel: String {
+        if isX { return "X" }
+        return ring == 0 ? "Miss" : "\(ring)"
     }
 }
 

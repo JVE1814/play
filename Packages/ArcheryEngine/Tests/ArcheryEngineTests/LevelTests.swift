@@ -50,6 +50,9 @@ final class LevelTests: XCTestCase {
         let firstWind = levels.first { !$0.wind.isCalm }!
         XCTAssertEqual(firstWind.feature, "Wind")
         XCTAssertEqual(levels.first { $0.wind.gust > 0.9 }?.feature, "Gusts")
+        XCTAssertEqual(levels.first { $0.summary.contains("gusty") }?.feature, "Gusts", "no gusts before they are new")
+        XCTAssertEqual(levels.first { !$0.wind.isCalm && abs($0.wind.gust) > abs($0.wind.base) }?.feature,
+                       "Swirling wind", "the wind only changes sides once that is the new idea")
         XCTAssertEqual(levels.first { $0.timeLimit != nil }?.feature, "Time limit")
         let firstMoving = levels.first { $0.motion.isMoving }!
         XCTAssertEqual(firstMoving.feature, "Moving target")

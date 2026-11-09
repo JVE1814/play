@@ -31,7 +31,10 @@ final class AppModel: ObservableObject {
         didSet { appState.openGameID = openGameID }
     }
 
-    @Published var showingSettings = false
+    /// Settings opens over the game too; the game is told so it can pause its clock.
+    @Published var showingSettings = false {
+        didSet { contexts.values.forEach { $0.setCovered(showingSettings) } }
+    }
     @Published var showingStats = false
 
     init(options: LaunchOptions = .current, storage: Storage? = nil, defaults: UserDefaults = .standard) {

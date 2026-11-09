@@ -63,7 +63,8 @@ public enum Motion: Hashable, Codable, Sendable {
     case still
     /// Slides from side to side on a rail, `amplitude` metres each way.
     case slide(amplitude: Double, period: Double)
-    /// Hangs from a frame on ropes `length` metres long and swings `angle` radians each way.
+    /// Hangs from a frame on ropes `length` metres long and swings `angle` radians each way,
+    /// rising a little at each end of the swing like any pendulum.
     case swing(length: Double, angle: Double, period: Double)
 
     /// Offset from the rest position at `time` seconds into the level.
@@ -75,7 +76,7 @@ public enum Motion: Hashable, Codable, Sendable {
             return Vec2(amplitude * sin(2 * .pi * time / period + phase), 0)
         case .swing(let length, let angle, let period):
             let theta = angle * sin(2 * .pi * time / period + phase)
-            return Vec2(length * sin(theta), -length * (1 - cos(theta)))
+            return Vec2(length * sin(theta), length * (1 - cos(theta)))
         }
     }
 

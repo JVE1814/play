@@ -121,7 +121,7 @@ public enum LevelCatalog {
         make(4, "Other Side", distance: 20, arrows: 3, wind: Wind(base: -1.8), sway: 1.0, stars: [22, 25, 27],
              tip: "Now it blows from the right. Aim right of the gold."),
         make(5, "Smaller Face", distance: 20, layout: .single(.full80), arrows: 4,
-             wind: Wind(base: 1.2, gust: 0.6, period: 9), sway: 1.0, stars: [30, 34, 36], feature: "80 cm face",
+             wind: Wind(base: 1.2), sway: 1.0, stars: [30, 34, 36], feature: "80 cm face",
              tip: "An 80 cm face: every ring is a third narrower."),
         make(6, "Three Spots", distance: 18, layout: .threeSpots(size: 0.6), arrows: 3,
              wind: Wind(base: -1.0), sway: 1.0, stars: [22, 25, 27], feature: "Three spots",
@@ -130,7 +130,7 @@ public enum LevelCatalog {
         // Meadow, midday: further, gustier, and the first clock and moving target.
         make(7, "Thirty Metres", distance: 30, arrows: 4, wind: Wind(base: 1.8), sway: 1.0, stars: [30, 34, 36],
              tip: "At 30 metres the same breeze carries an arrow much further."),
-        make(8, "Gusts", distance: 30, arrows: 4, wind: Wind(base: 1.2, gust: 1.8, period: 7), sway: 1.0,
+        make(8, "Gusts", distance: 30, arrows: 4, wind: Wind(base: 1.6, gust: 1.4, period: 7), sway: 1.0,
              stars: [30, 34, 36], feature: "Gusts",
              tip: "The wind comes and goes. Watch the flag and let go in a lull."),
         make(9, "Against the Clock", distance: 25, arrows: 3, wind: Wind(base: -1.3), sway: 1.0, time: 20,
@@ -149,7 +149,7 @@ public enum LevelCatalog {
         // Lakeside, afternoon: swinging targets and wind that changes sides.
         make(13, "Across the Water", distance: 50, arrows: 4, wind: Wind(base: 2.0, gust: 1.0, period: 9),
              sway: 1.1, stars: [28, 33, 36],
-             tip: "Fifty metres across the lake. The breeze off the water is steady but strong."),
+             tip: "Fifty metres on the lake shore. The breeze off the water is strong, and it gusts: watch the flag."),
         make(14, "The Swing", distance: 30, arrows: 3, motion: .swing(length: 1.4, angle: 0.32, period: 3.4),
              sway: 1.0, stars: [21, 25, 27], feature: "Swinging target",
              tip: "Hung on ropes, the target swings. It is slowest at the ends of each swing."),

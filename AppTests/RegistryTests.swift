@@ -27,6 +27,17 @@ final class RegistryTests: XCTestCase {
         XCTAssertNil(AppModel(options: LaunchOptions(), storage: env.storage, defaults: env.defaults).openGameID)
     }
 
+    func testOpeningSettingsTellsTheGamesTheyAreCovered() {
+        let env = TestEnvironment()
+        let model = AppModel(options: LaunchOptions(), storage: env.storage, defaults: env.defaults)
+        let context = model.context(for: model.games[2])
+        XCTAssertFalse(context.isCovered)
+        model.showingSettings = true
+        XCTAssertTrue(context.isCovered)
+        model.showingSettings = false
+        XCTAssertFalse(context.isCovered)
+    }
+
     func testEveryGameProvidesItsViews() {
         let env = TestEnvironment()
         let model = AppModel(options: TestEnvironment.options(["-includeTestGames"]), storage: env.storage,

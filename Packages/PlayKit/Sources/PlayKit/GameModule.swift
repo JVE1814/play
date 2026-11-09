@@ -33,7 +33,7 @@ extension GameModule {
 /// Everything a game may use from the app: its save slot, statistics, preferences,
 /// shared settings, feedback and navigation. One context exists per game per launch.
 @MainActor
-public final class GameContext {
+public final class GameContext: ObservableObject {
     public let gameID: String
     public let accent: Accent
     public let saveSlot: SaveSlot
@@ -45,6 +45,10 @@ public final class GameContext {
     private let exitAction: () -> Void
     private let settingsAction: () -> Void
     private var sharedObjects: [ObjectIdentifier: AnyObject] = [:]
+
+    /// True while something the app shows (such as the Settings sheet) covers the game. Games
+    /// with a clock pause it, as they do when the app goes to the background.
+    @Published public private(set) var isCovered = false
 
     public init(
         gameID: String,
@@ -75,6 +79,11 @@ public final class GameContext {
 
     /// Show the shared Settings screen.
     public func openSettings() { settingsAction() }
+
+    /// Called by the app when it covers or uncovers the game.
+    public func setCovered(_ covered: Bool) {
+        if isCovered != covered { isCovered = covered }
+    }
 
     /// This game's statistics.
     public var gameStats: GameStats { stats.stats(for: gameID) }

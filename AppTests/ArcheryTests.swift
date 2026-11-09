@@ -100,6 +100,86 @@ final class ArcheryTests: XCTestCase {
         XCTAssertEqual(s.aim.x, 0.2, accuracy: 1e-9)
     }
 
+    func testAFlickAfterAStillHoldIsIgnoredToo() throws {
+        let env = TestEnvironment()
+        let s = session(env)
+        let start = Date()
+        s.beginDraw(at: start)
+        // No movement for well over half a second, then the thumb nudges as it lifts.
+        s.moveAim(by: Vec2(0.3, 0), limit: Vec2(1, 1), at: start.addingTimeInterval(1.47))
+        s.release(at: start.addingTimeInterval(1.5))
+        let shot = try XCTUnwrap(s.round.shots.first)
+        XCTAssertEqual(shot.aim.x, 0, accuracy: 0.03, "shot where the sight rested, not where the lift nudged it")
+    }
+
+    func testClosingTheAppWhileTheLastArrowFliesStillRecordsTheEnd() {
+        let env = TestEnvironment()
+        let s = session(env, ["-scenario", "archeryNearWin"])
+        s.animationsEnabled = true
+        shoot(s)
+        XCTAssertNotNil(s.flight, "the last arrow is in the air")
+        XCTAssertTrue(s.round.isOver)
+        // Force quit now: the next launch finds a finished end that was never recorded.
+        let relaunched = session(env)
+        XCTAssertTrue(relaunched.showsResult)
+        XCTAssertEqual(relaunched.progress.stars(for: 1), 3)
+        XCTAssertTrue(relaunched.progress.isUnlocked(2), "Next Level works")
+        XCTAssertEqual(env.stats.stats(for: "archery").won, 1)
+    }
+
+    func testLeavingWhileTheLastArrowFliesLandsItAndRecordsTheEnd() {
+        let env = TestEnvironment()
+        let s = session(env, ["-scenario", "archeryNearWin"])
+        s.animationsEnabled = true
+        shoot(s)
+        s.setOnScreen(false)
+        XCTAssertNil(s.flight)
+        XCTAssertEqual(s.landedArrows, 3)
+        XCTAssertEqual(env.stats.stats(for: "archery").won, 1)
+        XCTAssertEqual(session(env).progress.stars(for: 1), 3, "saved too")
+    }
+
+    func testRestartWaitsForAFlyingArrowAndAChosenLevelRecordsTheEndFirst() {
+        let env = TestEnvironment()
+        let s = session(env, ["-scenario", "archeryNearWin"])
+        s.animationsEnabled = true
+        shoot(s)
+        s.requestRestart()
+        XCTAssertNotNil(s.flight, "restart waits for the arrow to land")
+        XCTAssertEqual(s.round.shots.count, 3)
+        s.start(level: 1)
+        XCTAssertTrue(s.round.shots.isEmpty)
+        XCTAssertEqual(env.stats.stats(for: "archery").won, 1, "the finished end still counts")
+        XCTAssertEqual(s.progress.stars(for: 1), 3)
+    }
+
+    func testSettingsOverTheGamePausesTheClock() throws {
+        let env = TestEnvironment()
+        let s = session(env, ["-level", "9"])
+        let start = Date()
+        shoot(s, at: start)
+        s.setCovered(true)
+        let left = try XCTUnwrap(s.timeLeft(at: start.addingTimeInterval(60)))
+        XCTAssertGreaterThan(left, 15, "no time passes behind Settings")
+        s.beginDraw(at: start.addingTimeInterval(60))
+        XCTAssertFalse(s.round.isOver)
+        s.setCovered(false)
+        XCTAssertFalse(s.round.isOver)
+    }
+
+    func testVoiceOverFindsTheSpotsOnAThreeSpotFace() {
+        let env = TestEnvironment()
+        let s = session(env, ["-level", "6"])
+        XCTAssertTrue(s.spokenStatus().hasPrefix("On the top spot. Sight on the centre. Free: top, middle, bottom."),
+                      s.spokenStatus())
+        s.shootFromAccessibility()
+        s.aimAtNextFreeSpot()
+        XCTAssertTrue(s.spokenStatus().hasPrefix("On the middle spot. Sight on the centre. Free: middle, bottom."),
+                      s.spokenStatus())
+        s.nudgeAim(x: 1, y: 0)
+        XCTAssertTrue(s.spokenStatus().contains("On the middle spot. Sight 3 centimetres right."), s.spokenStatus())
+    }
+
     func testEveryArrowIsSavedSoARelaunchRestoresTheEnd() {
         let env = TestEnvironment()
         let first = session(env, ["-level", "7"])

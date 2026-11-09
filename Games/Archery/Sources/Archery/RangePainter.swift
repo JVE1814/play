@@ -99,12 +99,14 @@ struct RangePainter {
         context.fill(Path(ellipseIn: CGRect(x: center.x - r * 5, y: center.y - r * 5, width: r * 10, height: r * 10)),
                      with: .radialGradient(Gradient(colors: [sun.glow, sun.glow.opacity(0)]), center: center,
                                            startRadius: r * 0.8, endRadius: r * 5))
-        context.fill(Path(ellipseIn: CGRect(x: center.x - r, y: center.y - r, width: r * 2, height: r * 2)),
-                     with: .color(sun.color))
+        let disc = Path(ellipseIn: CGRect(x: center.x - r, y: center.y - r, width: r * 2, height: r * 2))
+        context.fill(disc, with: .color(sun.color))
         if venue.isNight {
-            // A crescent: the dark side of the moon covers most of the disc.
+            // A crescent: the dark side of the moon covers most of the disc (and only the disc).
+            var moon = context
+            moon.clip(to: disc)
             let cover = CGRect(x: center.x - r * 0.62, y: center.y - r * 1.12, width: r * 2, height: r * 2)
-            context.fill(Path(ellipseIn: cover), with: .color(venue.skyMiddle))
+            moon.fill(Path(ellipseIn: cover), with: .color(venue.skyMiddle))
         }
     }
 
@@ -376,6 +378,14 @@ struct RangePainter {
         stuckArrows(&context, shake: jolt)
     }
 
+    /// The boss on screen, where it is now.
+    private func bossRect(shake: CGFloat) -> CGRect {
+        let half = f.level.layout.bossSize / 2
+        let topLeft = onBoss(Vec2(-half, half), shake: shake)
+        let bottomRight = onBoss(Vec2(half, -half), shake: shake)
+        return CGRect(x: topLeft.x, y: topLeft.y, width: bottomRight.x - topLeft.x, height: bottomRight.y - topLeft.y)
+    }
+
     private var isSliding: Bool {
         if case .slide = f.level.motion { return true }
         return false
@@ -479,10 +489,12 @@ struct RangePainter {
                        lineWidth: max(1, ppm * 0.022))
         let speed = windNow
         let strength = min(1, abs(speed) / 4.5)
-        let lift = 0.2 + 1.32 * strength  // radians from hanging straight down
-        let sign = speed >= 0 ? 1.0 : -1.0
-        let direction = Vec2(sin(lift) * sign, -cos(lift))
-        let normal = Vec2(-direction.y, direction.x) * (-sign)
+        // Which way it streams, eased through calm so the flag swings across the pole (edge on
+        // for a moment) rather than flipping when the wind changes sides.
+        let side = max(-1, min(1, speed / 0.4))
+        let angle = (0.2 + 1.32 * strength) * side  // radians from hanging straight down
+        let direction = Vec2(sin(angle), -cos(angle))
+        let normal = Vec2(-cos(angle) * side, -abs(sin(angle)))
         let length = 0.32
         let depth = 0.2
         let flutterSpeed = 1.6 + 2.6 * strength
@@ -572,9 +584,15 @@ struct RangePainter {
         let tipPoint = cam.project(tip)
         let tailPoint = cam.project(tailWorld)
         let trailStart = cam.project(position(max(0, s - 0.07)))
-        context.stroke(line(trailStart, tipPoint), with: .color(.white.opacity(0.28 * fade)),
-                       style: StrokeStyle(lineWidth: 1, lineCap: .round))
-        drawArrowBack(&context, tip: tipPoint, tail: tailPoint,
+        // Past the target plane a miss is behind the boss, so the boss hides it.
+        var layer = context
+        if s > 1 {
+            let boss = bossRect(shake: 0)
+            layer.clip(to: Path(boss.insetBy(dx: -1, dy: -1)), options: .inverse)
+        }
+        layer.stroke(line(trailStart, tipPoint), with: .color(.white.opacity(0.28 * fade)),
+                     style: StrokeStyle(lineWidth: 1, lineCap: .round))
+        drawArrowBack(&layer, tip: tipPoint, tail: tailPoint,
                       vane: min(46, max(2.6, cam.scale(atDepth: tailWorld.z) * 0.05)),
                       shaft: min(7, max(1.1, cam.scale(atDepth: tip.z) * 0.008)),
                       color: ArcheryStyle.fletching(flight.arrow), opacity: fade)
@@ -631,7 +649,7 @@ struct RangePainter {
             var y = CGFloat(y0) * h * 0.8 + 6
             switch venue.particle {
             case .seeds:
-                y -= CGFloat((f.time * 5 * depth).truncatingRemainder(dividingBy: Double(h * 0.8)))
+                y -= CGFloat(f.time * 5 * depth)  // rising; wrapped below
             case .moths:
                 x = w / 2 + CGFloat(sin(f.time * 1.7 * depth + phase)) * w * 0.3 + CGFloat(sin(f.time * 5.3 + phase)) * 6
                 y = cam.onTarget(.zero).y - ppm * 0.6 + CGFloat(cos(f.time * 1.3 * depth + phase)) * h * 0.18
