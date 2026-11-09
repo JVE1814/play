@@ -169,6 +169,20 @@ final class ArcheryTests: XCTestCase {
         XCTAssertEqual(env.stats.stats(for: "archery").played, 1)
     }
 
+    func testEarlyLevelsSayWhatTheWindDid() throws {
+        let env = TestEnvironment()
+        let s = session(env, ["-level", "7"])
+        shoot(s)
+        let shot = try XCTUnwrap(s.round.shots.first)
+        XCTAssertGreaterThan(shot.drift, 0.1, "1.8 m/s from the left at 30 m")
+        let notice = try XCTUnwrap(s.notice)
+        XCTAssertTrue(notice.hasPrefix("The wind carried it \(Int((shot.drift * 100).rounded())) cm to the right."), notice)
+        XCTAssertTrue(notice.hasSuffix("Aim a little further left."), notice)
+        let calm = session(TestEnvironment())
+        shoot(calm)
+        XCTAssertNil(calm.notice, "nothing to say in still air")
+    }
+
     func testRestartAsksOnlyOnceArrowsAreShot() {
         let env = TestEnvironment()
         let s = session(env)

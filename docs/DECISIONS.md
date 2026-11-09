@@ -207,3 +207,10 @@ worth a look before you submit are marked **review**.
     flag flutter, drifting particles and the bow rising into view.
 60. **The venues keep their own light in dark mode**, because each is a time of day. They are
     dimmed by 12% in dark mode, except the night venue, which is already dark.
+61. **Archery sounds like archery.** Two feedback events were added to PlayKit for it: `release`
+    (a low bowstring twang with a rigid haptic tap) and `hit` (a thunk into straw with a firmer
+    haptic). Like the other sounds they are synthesized by `tools/make_sounds.py` and play only
+    when sound is on. Drawing to full draw uses the existing soft swish.
+62. **The first three venues coach you.** After each arrow in levels 1 to 18, a short note says
+    how far the wind carried it, or how far a moving target travelled while it flew, and which
+    way to adjust if the arrow landed off centre. Later venues trust you to read it yourself.

@@ -112,7 +112,7 @@ public enum LevelCatalog {
     public static let all: [Level] = [
         // Practice Field, morning: learn to aim, hold and read a breeze.
         make(1, "First Arrows", distance: 10, arrows: 3, sway: 0.4, stars: [15, 21, 27],
-             tip: "Touch and hold anywhere to draw. Slide to put the sight on the gold, then let go."),
+             tip: "Three arrows at ten metres. Put the sight on the gold: the yellow middle scores 9 and 10."),
         make(2, "Hold Steady", distance: 15, arrows: 3, sway: 1.0, stars: [18, 23, 27], feature: "Sway",
              tip: "The sight drifts. It settles just after full draw, then your arms tire, so don't hold too long."),
         make(3, "A Light Breeze", distance: 18, arrows: 3, wind: Wind(base: 1.4), sway: 1.0,

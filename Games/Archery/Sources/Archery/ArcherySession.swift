@@ -315,7 +315,32 @@ public final class ArcherySession: ObservableObject {
         // A thunk whenever the arrow goes into the boss; a miss that flies past just goes quiet.
         context.feedback.play(shot.hit.inBoss ? .hit : .invalid)
         announce(describe(shot))
+        if let advice = coaching(for: shot) { show(notice: advice) }
         checkFinished(at: now)
+    }
+
+    /// In the first three venues, a word on what the wind or a moving target did to the arrow,
+    /// and which way to adjust if it landed off centre.
+    func coaching(for shot: Shot) -> String? {
+        let level = round.level
+        guard level.number <= 18, shot.hit.inBoss, !round.isOver else { return nil }
+        let ring = level.layout.largestFace.ringWidth
+        let aimedAt = level.layout.spots[shot.hit.spot ?? 0].center
+        let miss = shot.hit.point.x - aimedAt.x
+        func centimetres(_ metres: Double) -> Int { Int((abs(metres) * 100).rounded()) }
+        let travel = shot.targetOffset.x - round.targetOffset(at: shot.release).x
+        if level.motion.isMoving, abs(travel) > ring {
+            let behind = miss * travel < 0 && abs(miss) > ring
+            return "The target moved \(centimetres(travel)) cm while the arrow flew."
+                + (behind ? " Aim further ahead of it." : "")
+        }
+        if abs(shot.drift) > ring {
+            let way = shot.drift > 0 ? "right" : "left"
+            let downwind = miss * shot.drift > 0 && abs(miss) > ring
+            return "The wind carried it \(centimetres(shot.drift)) cm to the \(way)."
+                + (downwind ? " Aim a little further \(shot.drift > 0 ? "left" : "right")." : "")
+        }
+        return nil
     }
 
     // MARK: VoiceOver
@@ -511,7 +536,7 @@ public final class ArcherySession: ObservableObject {
         notice = text
         noticeTask?.cancel()
         noticeTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 2_600_000_000)
+            try? await Task.sleep(nanoseconds: 3_400_000_000)
             guard !Task.isCancelled else { return }
             self?.notice = nil
         }
