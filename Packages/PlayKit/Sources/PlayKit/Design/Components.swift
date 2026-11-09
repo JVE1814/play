@@ -1,14 +1,10 @@
 import SwiftUI
 
 /// Flat button on a game table. Uses the game's accent from the environment.
-public struct TableButtonStyle: ButtonStyle {
-    public var prominent: Bool
+struct TableButtonStyle: ButtonStyle {
+    var prominent = false
 
-    public init(prominent: Bool = false) {
-        self.prominent = prominent
-    }
-
-    public func makeBody(configuration: Configuration) -> some View {
+    func makeBody(configuration: Configuration) -> some View {
         StyledTableButton(configuration: configuration, prominent: prominent)
     }
 
@@ -70,20 +66,13 @@ public struct ToolbarButton: View {
 }
 
 /// A round icon-only button for the top bar.
-public struct IconButton: View {
+struct IconButton: View {
     let systemImage: String
     let label: String
     let identifier: String
     let action: () -> Void
 
-    public init(systemImage: String, label: String, identifier: String, action: @escaping () -> Void) {
-        self.systemImage = systemImage
-        self.label = label
-        self.identifier = identifier
-        self.action = action
-    }
-
-    public var body: some View {
+    var body: some View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.system(size: 18, weight: .bold))
@@ -93,31 +82,6 @@ public struct IconButton: View {
         .buttonStyle(TableButtonStyle())
         .accessibilityLabel(label)
         .accessibilityIdentifier(identifier)
-    }
-}
-
-/// Standard game top bar: back to the game list, a centre slot, and settings.
-public struct GameTopBar<Center: View>: View {
-    let onBack: () -> Void
-    let onSettings: () -> Void
-    let center: Center
-
-    public init(onBack: @escaping () -> Void, onSettings: @escaping () -> Void, @ViewBuilder center: () -> Center) {
-        self.onBack = onBack
-        self.onSettings = onSettings
-        self.center = center()
-    }
-
-    public var body: some View {
-        HStack(spacing: Theme.Space.m) {
-            IconButton(systemImage: "chevron.left", label: "Games", identifier: "back", action: onBack)
-            Spacer(minLength: 0)
-            center
-            Spacer(minLength: 0)
-            IconButton(systemImage: "gearshape.fill", label: "Settings", identifier: "settings", action: onSettings)
-        }
-        .padding(.horizontal, Theme.Space.m)
-        .padding(.vertical, Theme.Space.xs)
     }
 }
 

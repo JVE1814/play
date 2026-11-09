@@ -17,18 +17,18 @@ a train. It has three games: **Solitaire** (Klondike), **Bubbles**, a bubble sho
 | `project.yml` | XcodeGen spec. The Xcode project is generated from it and not committed. |
 | `Config/Signing.xcconfig` | **Bundle ID and team.** The only file to edit to sign the app. |
 | `App/` | The app target: entry point, home, settings, statistics, `GameRegistry.swift`, assets, privacy manifest. |
-| `Packages/PlayKit/` | Shared code: the `GameModule` protocol and `GameContext`, design tokens and components, save slots, statistics, settings, haptics and sound. |
+| `Packages/PlayKit/` | Shared code: the `GameModule` protocol and `GameContext`, the screen every game is played in, the level kit (progress, level list, result buttons), design tokens and components, save slots, statistics, settings, haptics and sound. |
 | `Packages/KlondikeEngine/` | Klondike rules engine. Imports only Foundation. Seeded deals, every move rule, unlimited undo and redeals, hints, tap-to-move, auto-finish. |
 | `Games/Solitaire/` | The Solitaire game module (SwiftUI) built on the engine. |
 | `Packages/BubbleEngine/` | Bubble shooter rules engine. Imports only Foundation. Hex grid, shot tracing with wall bounces, matches, falling bubbles, stones, bombs, and 2,000 generated levels whose shot limits were set by a bot that cleared every one (`swift run -c release bubble-par` regenerates the table). |
 | `Games/Bubbles/` | The Bubbles game module (SwiftUI) built on that engine. |
 | `Packages/ArcheryEngine/` | Target archery engine. Imports only Foundation. Ten-ring faces with line-cutter scoring and three-spot targets, gusty crosswind followed through each flight, sight sway, sliding and swinging targets, timed ends, and the 30 levels, whose star scores come from expert and novice bots (`swift run -c release archery-calibrate` prints how they score). |
 | `Games/Archery/` | The Archery game module (SwiftUI): the range drawn in a Canvas, drawing and aiming, the target camera, levels by venue. |
-| `Games/TestGame/` | A tiny debug-only game that proves adding a game needs no home screen changes. |
+| `Games/TestGame/` | A tiny debug-only game: the smallest example of one, and proof that adding a game needs no home screen changes. |
 | `AppTests/`, `UITests/` | Unit tests and UI tests (including screenshot capture). |
-| `ci/` | `run.sh` (the CI pipeline), `audit.sh` (no networking or third-party code), `release.sh` (archive and upload). |
+| `ci/` | `run.sh` (the CI pipeline), `engine_tests.sh` (the rules engines' tests), `audit.sh` (no networking or third-party code), `release.sh` (archive and upload). |
 | `docs/` | Decisions, release steps, App Store listing, privacy policy and screenshots. |
-| `tools/` | Scripts that draw the icon and synthesize the sounds. |
+| `tools/` | Scripts that draw the icon, synthesize the sounds and fetch the App Store screenshots from CI. |
 
 ## Build
 
@@ -58,13 +58,13 @@ cd Packages/ArcheryEngine && swift test
 docker run --rm -v "$PWD/Packages/BubbleEngine":/pkg -w /pkg swift:6.3 swift test
 ```
 
-The Klondike tests (71) cover every move rule, undo, redeals, win detection, hints, tap-to-move,
+The Klondike tests cover every move rule, undo, redeals, win detection, hints, tap-to-move,
 auto-finish, saving, and 1,000 seeded random games that must always hold exactly 52 unique cards.
-The Bubbles tests (30) cover the geometry, shot paths and bounces, matching, falling bubbles,
+The Bubbles tests cover the geometry, shot paths and bounces, matching, falling bubbles,
 stones, bombs, the bubble queue and saving. They also check that all 2,000 levels are
 well-formed, different and calibrated, and that the bot still clears a spread of levels within
 their shot limits.
-The Archery tests (40) cover ring scoring and line cutters, three-spot targets, wind and gusts,
+The Archery tests cover ring scoring and line cutters, three-spot targets, wind and gusts,
 drift through the flight, sway, sliding and swinging targets, timed ends and saving. They also
 play every level with an expert and a novice bot: the expert must pass every level, newcomers
 must be able to pass each one with a few tries, and each venue must be harder than the last.
@@ -94,51 +94,24 @@ appears, and checks that every engine imports only Foundation.
 
 ## Add a new game
 
-1. **Create a package** under `Games/YourGame/` with a `Package.swift` that depends on
-   `../../Packages/PlayKit` (copy `Games/TestGame/Package.swift`). Keep its rules in their own
-   Foundation-only package if they are non-trivial, like `KlondikeEngine`.
-2. **Conform to `GameModule`:**
+`Games/TestGame` is the smallest complete game: copy it and change it.
 
-   ```swift
-   import PlayKit
-   import SwiftUI
-
-   public struct YourGameModule: GameModule {
-       public init() {}
-       public var id: String { "yourgame" }          // stable forever: keys saves and stats
-       public var title: String { "Your Game" }
-       public var tagline: String { "One line for the home screen" }
-       public var accent: Accent { .coral }          // pick from the shared palette in Theme.swift
-
-       @MainActor public func makeIcon() -> AnyView { AnyView(YourIcon()) }
-       @MainActor public func makeGameView(context: GameContext) -> AnyView {
-           AnyView(YourGameScreen(context: context))
-       }
-       // Optional: makeSettingsSection(context:) and statusLine(context:)
-   }
-   ```
-
-   Inside the game, use the `GameContext`:
-   - `context.saveSlot.save(state)` after every move and `context.saveSlot.load(State.self)` at
-     start, which gives resume after a force quit for free.
-   - `context.stats.recordWin(gameID:time:moves:)` and `recordLoss(gameID:)` for statistics.
-   - `context.feedback.play(.place)` for haptics and sound, which respect the user's settings.
-   - `context.preferences` for game-specific settings.
-   - `context.exit()` to go home, and `context.openSettings()` to show settings.
-   - Shared components: `GameTopBar`, `ToolbarButton`, `Toast`, `SettingsPanel` rows,
-     `Typography`, `Theme`.
-3. **Register it:** add the package to `packages:` and the app target's `dependencies:` in
-   `project.yml`, then add one line to `App/Sources/GameRegistry.swift`:
-
-   ```swift
-   var games: [any GameModule] = [
-       SolitaireModule(),
-       BubblesModule(),
-       ArcheryModule(),
-       YourGameModule(),
-   ]
-   ```
-
+1. **Create a package** under `Games/YourGame/` that depends on `../../Packages/PlayKit`. Keep
+   its rules in their own Foundation-only package under `Packages/` if they are non-trivial,
+   named `…Engine` so CI tests and audits it.
+2. **Write the three pieces** `TestGameModule.swift` shows:
+   - a `GameModule`: the id (stable forever: it keys saves and statistics), title, tagline,
+     accent, icon and game view, and optionally settings rows and a status line for the home tile;
+   - a `GameSession`: the game in progress. It saves through `context.saveSlot` after every
+     change (which gives resume after a force quit), records results with
+     `context.recordWin(time:)` and `context.recordLoss()`, plays `context.feedback`, and is told
+     by `setInView` when to run its clock;
+   - a screen built on `GameScreen`, which supplies the top bar, toolbar, result overlay and
+     lifecycle. A game played level by level conforms to `LevelSession` and gets the level
+     list, result buttons and restart question from `LevelViews.swift`.
+3. **Register it:** add the package to `packages:` and to the app target's `dependencies:` in
+   `project.yml` (and to the test target's, if `AppTests` will import it), then add one line to
+   `App/Sources/GameRegistry.swift`.
 4. Run `xcodegen generate`. The game now appears on the home screen, in Settings (if it has
    settings) and in Statistics.
 

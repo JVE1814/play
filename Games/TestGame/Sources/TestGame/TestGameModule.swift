@@ -1,7 +1,8 @@
 import PlayKit
 import SwiftUI
 
-/// A counter "game". It uses the shared protocol, design tokens and save slot like a real game.
+/// A counter "game", and the smallest example of one: a module, a session and a screen built
+/// from the shared pieces, with its state saved after every change.
 public struct TestGameModule: GameModule {
     public init() {}
 
@@ -33,46 +34,50 @@ struct TestGameSave: Codable {
     var taps: Int
 }
 
-struct TestGameScreen: View {
+@MainActor
+final class TestGameSession: ObservableObject, GameSession {
     let context: GameContext
-    @State private var taps: Int
+    @Published private(set) var taps: Int
 
     init(context: GameContext) {
         self.context = context
-        _taps = State(initialValue: context.saveSlot.load(TestGameSave.self)?.taps ?? 0)
+        taps = context.saveSlot.load(TestGameSave.self)?.taps ?? 0
+    }
+
+    var signature: String { "taps:\(taps)" }
+    var showsResult: Bool { false }
+
+    func setInView(_ inView: Bool) {}
+
+    func tap() {
+        taps += 1
+        context.saveSlot.save(TestGameSave(taps: taps))
+        context.feedback.play(.tap)
+    }
+}
+
+struct TestGameScreen: View {
+    @StateObject private var session: TestGameSession
+
+    init(context: GameContext) {
+        _session = StateObject(wrappedValue: TestGameSession(context: context))
     }
 
     var body: some View {
-        VStack(spacing: Theme.Space.xl) {
-            GameTopBar(onBack: { context.exit() }, onSettings: { context.openSettings() }) {
-                Text("Test Game")
-                    .font(Typography.headline)
-                    .foregroundStyle(context.accent.onTable)
-                    .accessibilityIdentifier("testGameTitle")
-            }
-            Spacer()
-            Text("\(taps)")
+        GameScreen(session: session) {
+            Readout("Taps", value: "\(session.taps)", identifier: "testGameCount")
+        } table: {
+            Text("Test Game")
                 .font(Typography.display)
-                .monospacedDigit()
-                .foregroundStyle(context.accent.onTable)
-                .accessibilityLabel("Taps")
-                .accessibilityValue("\(taps)")
-                .accessibilityIdentifier("testGameCount")
-            Button {
-                taps += 1
-                context.saveSlot.save(TestGameSave(taps: taps))
-                context.feedback.play(.tap)
-            } label: {
-                Text("Tap")
-                    .font(Typography.headline)
-                    .frame(maxWidth: .infinity, minHeight: Theme.minTouchTarget + 8)
+                .foregroundStyle(session.context.accent.onTable)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityIdentifier("testGameTitle")
+        } tools: {
+            ToolbarButton("Tap", systemImage: "hand.tap.fill", identifier: "testGameTap", prominent: true) {
+                session.tap()
             }
-            .buttonStyle(TableButtonStyle(prominent: true))
-            .padding(.horizontal, Theme.Space.xxl)
-            .accessibilityIdentifier("testGameTap")
-            Spacer()
+        } result: {
+            EmptyView()
         }
-        .background(context.accent.table.ignoresSafeArea())
-        .environment(\.accent, context.accent)
     }
 }

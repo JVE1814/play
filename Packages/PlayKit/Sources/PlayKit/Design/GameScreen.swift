@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The frame every game is played in: top bar with the game's readouts, the table, a
-/// thumb-height toolbar, and the result panel over it all.
+/// The frame every game is played in: a top bar (back to the game list, the game's readouts,
+/// Settings), the table, a thumb-height toolbar, and the result panel over it all.
 ///
 /// It also tells the session when the game is in view: on screen, in the foreground, and not
 /// covered by Settings or by anything the game says obscures it.
@@ -36,13 +36,21 @@ public struct GameScreen<Session: GameSession, Readouts: View, Table: View, Tool
         let animate = !reduceMotion && !context.options.disableAnimations
         let inView = appeared && scenePhase == .active && !context.isCovered && !obscured
         VStack(spacing: 0) {
-            GameTopBar(onBack: { session.leave() }, onSettings: { context.openSettings() }) {
+            HStack(spacing: Theme.Space.m) {
+                IconButton(systemImage: "chevron.left", label: "Games", identifier: "back") { session.leave() }
+                Spacer(minLength: 0)
                 HStack(spacing: Theme.Space.xl) {
                     readouts
                 }
                 .foregroundStyle(context.accent.onTable)
                 .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+                Spacer(minLength: 0)
+                IconButton(systemImage: "gearshape.fill", label: "Settings", identifier: "settings") {
+                    context.openSettings()
+                }
             }
+            .padding(.horizontal, Theme.Space.m)
+            .padding(.vertical, Theme.Space.xs)
             if context.options.showBoardSignature {
                 Text(session.signature)
                     .font(.system(size: 6))
