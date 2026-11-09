@@ -112,7 +112,7 @@ final class BetweenStopsUITests: UITestCase {
         XCTAssertEqual(signature(), board)
         XCTAssertEqual(moves(), "4")
         element("undo").tap()                // the undo history survived too
-        XCTAssertEqual(moves(), "3")
+        XCTAssertEqual(moves(), "3", "undo enabled: \(element("undo").isEnabled), board: \(signature())")
     }
 
     func testTestOnlyGameAppearsOnHomeAndOpens() {
