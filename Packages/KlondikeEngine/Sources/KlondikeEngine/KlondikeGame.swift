@@ -118,10 +118,12 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
         return true
     }
 
-    /// Take back the last move, restoring the board exactly. Returns false if there is nothing to undo.
+    /// Take back the last move, restoring the board exactly. Returns false if there is nothing to
+    /// undo, or if the last move is not one this board could have come from (a damaged save).
     @discardableResult
     public mutating func undo() -> Bool {
-        guard let record = history.popLast() else { return false }
+        guard let record = history.last, canTakeBack(record) else { return false }
+        history.removeLast()
         switch record.move {
         case .draw:
             for _ in 0..<record.cardCount { board.stock.append(board.waste.removeLast()) }
@@ -136,6 +138,32 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
             addCards(cards, to: from)
         }
         return true
+    }
+
+    /// Whether the board holds the cards `record` says it moved. Always true of a game's own
+    /// history; a save that was damaged on disk may claim anything.
+    private func canTakeBack(_ record: MoveRecord) -> Bool {
+        switch record.move {
+        case .draw:
+            return (0...board.waste.count).contains(record.cardCount)
+        case .recycle:
+            return true
+        case let .transfer(from, to, count):
+            guard count >= 0, let moved = faceUpCount(in: to), moved >= count,
+                  let source = faceUpCount(in: from) else { return false }
+            if record.revealedCard, case .tableau = from { return source > 0 }
+            return true
+        }
+    }
+
+    /// The face-up cards in `pile`, or nil if the board has no such pile.
+    private func faceUpCount(in pile: Pile) -> Int? {
+        switch pile {
+        case .stock: return 0
+        case .waste: return board.waste.count
+        case .foundation(let f): return board.foundations.indices.contains(f) ? board.foundations[f].count : nil
+        case .tableau(let t): return board.tableau.indices.contains(t) ? board.tableau[t].visible.count : nil
+        }
     }
 
     public mutating func undoAll() {

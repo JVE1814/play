@@ -50,6 +50,29 @@ final class InvariantTests: XCTestCase {
         XCTAssertThrowsError(try JSONDecoder().decode([Card].self, from: Data("[52]".utf8)))
     }
 
+    /// A save damaged on disk can still decode. Its history is checked by undoing it, which must
+    /// report the damage rather than crash on it.
+    func testAHistoryTheBoardCouldNotHaveComeFromIsCaught() throws {
+        struct Save: Encodable {
+            let board: Board
+            let drawMode: DrawMode
+            let history: [MoveRecord]
+        }
+        let impossible = [
+            MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 40), revealedCard: false, cardCount: 40),
+            MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 1), revealedCard: true, cardCount: 1),
+            MoveRecord(move: .transfer(from: .waste, to: .foundation(9), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .transfer(from: .tableau(-1), to: .tableau(1), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .draw, revealedCard: false, cardCount: 3),
+            MoveRecord(move: .draw, revealedCard: false, cardCount: -1),
+        ]
+        for record in impossible {
+            let data = try JSONEncoder().encode(Save(board: Board(seed: 4), drawMode: .one, history: [record]))
+            let game = try JSONDecoder().decode(KlondikeGame.self, from: data)
+            XCTAssertFalse(game.integrityProblems.isEmpty, "\(record)")
+        }
+    }
+
     func testIntegrityCheckCatchesCorruption() {
         let good = KlondikeGame(seed: 4).board
         XCTAssertEqual(good.integrityProblems, [])

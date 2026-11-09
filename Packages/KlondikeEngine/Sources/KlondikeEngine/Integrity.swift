@@ -40,6 +40,7 @@ extension KlondikeGame {
         // Replaying the undo stack must lead somewhere legal without errors.
         var copy = self
         copy.undoAll()
+        if copy.canUndo { problems.append("the history holds a move this board could not have come from") }
         problems += copy.board.integrityProblems.map { "after undoing all moves: \($0)" }
         return problems
     }
