@@ -29,18 +29,30 @@ public struct BoardLayout {
     public let tableauBottom: CGFloat
     public let bottomRowY: CGFloat
 
-    public static let columns = 7
+    /// A card's height over its width.
+    static let cardAspect: CGFloat = 1.4
+    private static let columns = CGFloat(Board.columnCount)
+
+    /// Drawing order. Each pile stacks upwards from its base; a card on the move is drawn above
+    /// every pile, and a dragged one above that.
+    enum Layer {
+        static let waste = 100.0
+        static let foundation = 200.0
+        static let tableau = 300.0
+        static let moving = 1000.0
+        static let dragged = 2000.0
+    }
 
     public init(size: CGSize, leftHanded: Bool) {
         self.size = size
         self.leftHanded = leftHanded
         margin = 8
         gap = max(4, (size.width * 0.012).rounded())
-        let fitWidth = (size.width - 2 * margin - CGFloat(Self.columns - 1) * gap) / CGFloat(Self.columns)
+        let fitWidth = (size.width - 2 * margin - (Self.columns - 1) * gap) / Self.columns
         // Never let the bottom row plus a full column overflow short screens.
-        let fitHeight = max(30, (size.height - 2 * margin) / 6.2) / 1.4
+        let fitHeight = max(30, (size.height - 2 * margin) / 6.2) / Self.cardAspect
         let width = max(30, min(fitWidth, fitHeight, 96)).rounded(.down)
-        card = CGSize(width: width, height: (width * 1.4).rounded())
+        card = CGSize(width: width, height: (width * Self.cardAspect).rounded())
         bottomRowY = size.height - margin - card.height / 2
         tableauTop = margin
         tableauBottom = bottomRowY - card.height / 2 - gap * 2
@@ -49,15 +61,24 @@ public struct BoardLayout {
     // MARK: Columns and slots
 
     public func columnX(_ column: Int) -> CGFloat {
-        let total = CGFloat(Self.columns) * card.width + CGFloat(Self.columns - 1) * gap
+        let total = Self.columns * card.width + (Self.columns - 1) * gap
         let origin = (size.width - total) / 2
         return origin + card.width / 2 + CGFloat(column) * (card.width + gap)
     }
 
-    public var stockCenter: CGPoint { CGPoint(x: columnX(leftHanded ? 0 : 6), y: bottomRowY) }
+    /// The bottom row and the margin under it. Anything floating over the table sits above
+    /// this, so it never hides a card you need.
+    var bottomRowHeight: CGFloat { card.height + margin }
+
+    // The bottom row has a slot under each column. The stock takes the one at the thumb's edge
+    // and the waste the one beside it; the foundations fill the far end, always left to right.
+    private var lastSlot: Int { Board.columnCount - 1 }
+
+    public var stockCenter: CGPoint { CGPoint(x: columnX(leftHanded ? 0 : lastSlot), y: bottomRowY) }
 
     public func foundationCenter(_ foundation: Int) -> CGPoint {
-        CGPoint(x: columnX(leftHanded ? 3 + foundation : foundation), y: bottomRowY)
+        let first = leftHanded ? Board.columnCount - Board.foundationCount : 0
+        return CGPoint(x: columnX(first + foundation), y: bottomRowY)
     }
 
     /// Horizontal step between fanned waste cards (Draw 3): as wide as possible, so the rank of
@@ -68,7 +89,7 @@ public struct BoardLayout {
     /// The top card always sits next to the stock; older cards fan out towards the foundations.
     public func wasteCenter(slot: Int, shown: Int) -> CGPoint {
         let fromTop = CGFloat(max(0, shown - 1 - slot))
-        let topX = columnX(leftHanded ? 1 : 5)
+        let topX = columnX(leftHanded ? 1 : lastSlot - 1)
         let x = leftHanded ? topX + fromTop * wasteStep : topX - fromTop * wasteStep
         return CGPoint(x: x, y: bottomRowY)
     }
@@ -108,17 +129,17 @@ public struct BoardLayout {
             result.append(CardPlacement(card: card, center: stockCenter, faceUp: false, pile: .stock, index: i,
                                         zIndex: Double(i)))
         }
-        let shown = game.drawMode == .three ? min(3, game.waste.count) : min(1, game.waste.count)
+        let shown = min(game.drawMode.rawValue, game.waste.count)
         for (i, card) in game.waste.enumerated() {
             let fromTop = game.waste.count - 1 - i
             let slot = max(0, shown - 1 - fromTop)
             result.append(CardPlacement(card: card, center: wasteCenter(slot: slot, shown: shown), faceUp: true,
-                                        pile: .waste, index: i, zIndex: 100 + Double(i)))
+                                        pile: .waste, index: i, zIndex: Layer.waste + Double(i)))
         }
         for (f, foundation) in game.foundations.enumerated() {
             for (i, card) in foundation.enumerated() {
                 result.append(CardPlacement(card: card, center: foundationCenter(f), faceUp: true,
-                                            pile: .foundation(f), index: i, zIndex: 200 + Double(i)))
+                                            pile: .foundation(f), index: i, zIndex: Layer.foundation + Double(i)))
             }
         }
         for (t, column) in game.tableau.enumerated() {
@@ -127,14 +148,14 @@ public struct BoardLayout {
             var y = top.y
             for (i, card) in column.hidden.enumerated() {
                 result.append(CardPlacement(card: card, center: CGPoint(x: top.x, y: y), faceUp: false,
-                                            pile: .tableau(t), index: i, zIndex: 300 + Double(i)))
+                                            pile: .tableau(t), index: i, zIndex: Layer.tableau + Double(i)))
                 y += down
             }
             for (i, card) in column.visible.enumerated() {
                 if i > 0 { y += up }
                 result.append(CardPlacement(card: card, center: CGPoint(x: top.x, y: y), faceUp: true,
                                             pile: .tableau(t), index: column.hidden.count + i,
-                                            zIndex: 300 + Double(column.hidden.count + i)))
+                                            zIndex: Layer.tableau + Double(column.hidden.count + i)))
             }
         }
         return result
@@ -142,7 +163,8 @@ public struct BoardLayout {
 
     // MARK: Drag and drop
 
-    /// The area that accepts a drop on `pile`. Columns accept drops anywhere along their height.
+    /// The area that accepts a drop (or, for a column, a tap) on `pile`. Columns take them
+    /// anywhere along their height, down to just above the bottom row.
     func dropZone(for pile: Pile) -> CGRect {
         switch pile {
         case .tableau(let t):
@@ -157,14 +179,9 @@ public struct BoardLayout {
         }
     }
 
-    /// The column tap area, from the top of the table down to just above the bottom row.
-    func columnZone(_ column: Int) -> CGRect { dropZone(for: .tableau(column)) }
-
-    /// The best legal destination for cards dropped at `location` with the moving card at `cardRect`.
-    func dropTarget(from source: Pile, count: Int, location: CGPoint, cardRect: CGRect, game: KlondikeGame) -> Pile? {
-        var candidates: [Pile] = (0..<7).map { Pile.tableau($0) }
-        if count == 1 { candidates += (0..<4).map { Pile.foundation($0) } }
-        let legal = candidates.filter { $0 != source && game.isLegal(.transfer(from: source, to: $0, count: count)) }
+    /// Which of the `legal` destinations a drop lands on: the one under the finger at `location`,
+    /// or else the one the moving card at `cardRect` overlaps most.
+    func dropTarget(among legal: [Pile], location: CGPoint, cardRect: CGRect) -> Pile? {
         if let hit = legal.first(where: { dropZone(for: $0).contains(location) }) { return hit }
         var best: (pile: Pile, area: CGFloat)?
         for pile in legal {

@@ -5,10 +5,9 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var settings: AppSettings
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
+        SheetPage("Settings") {
             ScrollView {
                 VStack(alignment: .leading, spacing: Theme.Space.xl) {
                     SettingsPanel("General") {
@@ -44,15 +43,6 @@ struct SettingsView: View {
                     }
                 }
                 .padding(Theme.Space.l)
-            }
-            .background(Theme.background.ignoresSafeArea())
-            .navigationTitle("Settings")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                        .font(Typography.headline)
-                        .accessibilityIdentifier("done")
-                }
             }
         }
     }

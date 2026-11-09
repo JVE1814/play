@@ -30,9 +30,14 @@ public struct BubbleGame: Hashable, Codable, Sendable {
 
     /// Starts an attempt at `level`. Each attempt deals its own bubble queue.
     public init(level: Level, attempt: Int = 0) {
-        self.init(grid: level.grid, palette: level.palette, shotLimit: level.shotLimit, par: level.par,
-                  seed: level.seed ^ (UInt64(attempt) &* 0xA076_1D64_78BD_642F) ^ 0x5851_F42D_4C95_7F2D,
-                  levelNumber: level.number)
+        let layout = level.layout
+        self.init(grid: layout.grid, palette: layout.palette, shotLimit: level.shotLimit, par: level.par,
+                  seed: Self.queueSeed(for: layout, attempt: attempt), levelNumber: layout.number)
+    }
+
+    /// The seed of the bubble queue for an attempt at a layout. Par was set on attempt 0's queue.
+    static func queueSeed(for layout: LevelLayout, attempt: Int = 0) -> UInt64 {
+        layout.seed ^ (UInt64(attempt) &* 0xA076_1D64_78BD_642F) ^ 0x5851_F42D_4C95_7F2D
     }
 
     /// A hand-built position (tests, tutorials, UI test scenarios).

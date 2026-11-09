@@ -86,7 +86,7 @@ public struct Board: Hashable, Codable, Sendable {
             }
         }
         // The rest of the deck is the stock; deck order is preserved (last = top).
-        self.init(stock: Array(deck[next...]), waste: [], foundations: Array(repeating: [], count: 4), tableau: columns)
+        self.init(stock: Array(deck[next...]), waste: [], foundations: Array(repeating: [], count: Board.foundationCount), tableau: columns)
     }
 
     /// Every card on the board, in a fixed pile order.
@@ -154,8 +154,18 @@ public struct Board: Hashable, Codable, Sendable {
         return top.isRed != card.isRed && card.rank == top.rank - 1
     }
 
-    static let foundationIndices = 0..<foundationCount
-    static let columnIndices = 0..<columnCount
+    public static let foundationIndices = 0..<foundationCount
+    public static let columnIndices = 0..<columnCount
+
+    /// The card on top of `pile`: the next to draw from the stock, the playable one elsewhere.
+    public func topCard(of pile: Pile) -> Card? {
+        switch pile {
+        case .stock: return stock.last
+        case .waste: return waste.last
+        case .foundation(let f): return foundations[f].last
+        case .tableau(let t): return tableau[t].top
+        }
+    }
 
     /// A compact, human-readable, deterministic description of the whole board.
     /// Face-down cards are shown in lowercase. Used by tests to compare boards exactly.

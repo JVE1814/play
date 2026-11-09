@@ -34,7 +34,7 @@ struct BoardView: View {
         ZStack(alignment: .topLeading) {
             foundationSlots
             stockSlot
-            ForEach(0..<BoardLayout.columns, id: \.self) { column in
+            ForEach(Board.columnIndices, id: \.self) { column in
                 columnZone(column)
             }
             ForEach(placements) { placement in
@@ -55,7 +55,7 @@ struct BoardView: View {
     // MARK: Slots
 
     private var foundationSlots: some View {
-        ForEach(0..<4, id: \.self) { f in
+        ForEach(Board.foundationIndices, id: \.self) { f in
             SlotView(size: layout.card, label: "A", highlighted: session.hintedPile == .foundation(f))
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("Empty foundation")
@@ -89,7 +89,7 @@ struct BoardView: View {
     }
 
     private func columnZone(_ column: Int) -> some View {
-        let zone = layout.columnZone(column)
+        let zone = layout.dropZone(for: .tableau(column))
         let isEmpty = session.game.tableau[column].isEmpty
         return ZStack(alignment: .top) {
             Rectangle()
@@ -116,7 +116,7 @@ struct BoardView: View {
         let offset = dragged ? (drag?.translation ?? .zero) : .zero
         let shakes = CGFloat(session.rejections[placement.card] ?? 0)
         let raised = session.recentlyMoved.contains(placement.card)
-        let z = dragged ? 2000 + placement.zIndex : (raised ? 1000 + placement.zIndex : placement.zIndex)
+        let z = placement.zIndex + (dragged ? BoardLayout.Layer.dragged : raised ? BoardLayout.Layer.moving : 0)
         return CardView(card: placement.card, faceUp: placement.faceUp, size: layout.card, highlighted: highlighted)
             .scaleEffect(dragged ? 1.05 : 1)
             .modifier(ShakeEffect(animatableData: animate ? shakes : 0))
@@ -128,14 +128,12 @@ struct BoardView: View {
             .zIndex(z)
     }
 
-    private var canInteract: Bool { !session.isAutoFinishing && !session.game.isWon }
-
     private func cardGesture(_ placement: CardPlacement) -> some Gesture {
         DragGesture(minimumDistance: 0, coordinateSpace: CoordinateSpace.named(Self.space))
             .updating($touching) { _, state, _ in state = true }
             .onChanged { value in
                 if drag == nil {
-                    guard distance(value.translation) > Self.tapSlop, canInteract,
+                    guard distance(value.translation) > Self.tapSlop, session.canPlay,
                           let lift = liftable(placement),
                           let cards = session.game.board.movableCards(from: lift.source, count: lift.count) else { return }
                     drag = DragState(source: lift.source, count: lift.count, cards: cards, translation: value.translation)
@@ -144,7 +142,7 @@ struct BoardView: View {
                 }
             }
             .onEnded { value in
-                if distance(value.translation) > Self.tapSlop, canInteract, let lift = liftable(placement) {
+                if distance(value.translation) > Self.tapSlop, session.canPlay, let lift = liftable(placement) {
                     endDrag(source: lift.source, count: lift.count, placement: placement,
                             translation: value.translation, location: value.location)
                 } else {
@@ -162,7 +160,8 @@ struct BoardView: View {
         let center = CGPoint(x: placement.center.x + translation.width, y: placement.center.y + translation.height)
         let rect = CGRect(x: center.x - layout.card.width / 2, y: center.y - layout.card.height / 2,
                           width: layout.card.width, height: layout.card.height)
-        let target = layout.dropTarget(from: source, count: count, location: location, cardRect: rect, game: session.game)
+        let target = layout.dropTarget(among: session.game.destinations(from: source, count: count),
+                                       location: location, cardRect: rect)
         if let target, session.drop(from: source, count: count, onto: target) {
             drag = nil
         } else {
@@ -172,21 +171,17 @@ struct BoardView: View {
         }
     }
 
-    /// The pile and card count that would be lifted by touching this card, if any.
+    /// The pile and card count that would be lifted by touching this card, if any: the top card
+    /// of the waste or a foundation, or a face-up column card with the cards on it.
     private func liftable(_ placement: CardPlacement) -> (source: Pile, count: Int)? {
-        let game = session.game
+        let board = session.game.board
         switch placement.pile {
         case .stock:
             return nil
-        case .waste:
-            if placement.index != game.waste.count - 1 { return nil }
-            return (source: Pile.waste, count: 1)
-        case .foundation(let f):
-            if placement.index != game.foundations[f].count - 1 { return nil }
-            return (source: Pile.foundation(f), count: 1)
+        case .waste, .foundation:
+            return placement.card == board.topCard(of: placement.pile) ? (source: placement.pile, count: 1) : nil
         case .tableau(let t):
-            if !placement.faceUp { return nil }
-            return (source: Pile.tableau(t), count: game.tableau[t].count - placement.index)
+            return placement.faceUp ? (source: placement.pile, count: board.tableau[t].count - placement.index) : nil
         }
     }
 
@@ -194,19 +189,16 @@ struct BoardView: View {
 
     private func accessibility(for placement: CardPlacement, highlighted: Bool) -> CardAccessibility {
         let game = session.game
-        var accessible = false
+        let lift = liftable(placement)
         var place = ""
         switch placement.pile {
         case .stock:
-            accessible = false
+            break
         case .waste:
-            accessible = placement.index == game.waste.count - 1
             place = "Waste"
-        case .foundation(let f):
-            accessible = placement.index == game.foundations[f].count - 1
+        case .foundation:
             place = "Foundation"
         case .tableau(let t):
-            accessible = placement.faceUp
             let hiddenBelow = game.tableau[t].hidden.count
             place = "Column \(t + 1)"
             if placement.index == hiddenBelow, hiddenBelow > 0 {
@@ -214,15 +206,23 @@ struct BoardView: View {
             }
         }
         var actions: [CardAccessibility.Action] = []
-        if accessible, let lift = liftable(placement) {
-            if let f = (0..<4).first(where: { game.isLegal(.transfer(from: lift.source, to: .foundation($0), count: lift.count)) }) {
-                actions.append(.init(name: "Move to foundation") {
-                    _ = session.drop(from: lift.source, count: lift.count, onto: .foundation(f))
-                })
-            }
-            for t in 0..<BoardLayout.columns where game.isLegal(.transfer(from: lift.source, to: .tableau(t), count: lift.count)) {
-                actions.append(.init(name: "Move to column \(t + 1)") {
-                    _ = session.drop(from: lift.source, count: lift.count, onto: .tableau(t))
+        if let lift {
+            var offersFoundation = false
+            for pile in game.destinations(from: lift.source, count: lift.count) {
+                let name: String
+                switch pile {
+                case .foundation:
+                    // One foundation is as good as another.
+                    if offersFoundation { continue }
+                    offersFoundation = true
+                    name = "Move to foundation"
+                case .tableau(let t):
+                    name = "Move to column \(t + 1)"
+                case .stock, .waste:
+                    continue
+                }
+                actions.append(.init(name: name) {
+                    _ = session.drop(from: lift.source, count: lift.count, onto: pile)
                 })
             }
         }
@@ -231,7 +231,7 @@ struct BoardView: View {
         return CardAccessibility(
             label: placement.faceUp ? card.name : "Face-down card",
             value: place,
-            isAccessible: accessible,
+            isAccessible: lift != nil,
             identifier: "card-\(card.code)",
             actions: actions,
             activate: { session.tap(card) }

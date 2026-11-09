@@ -22,7 +22,7 @@ final class BubblesUITests: UITestCase {
         XCTAssertTrue(waitFor("bubblesResult").exists)
         XCTAssertTrue(labelled("Level 1 cleared!").exists)
         XCTAssertEqual(element("resultStars").label, "3 of 3 stars")
-        element("bubblesNext").tap()
+        element("resultNext").tap()
         XCTAssertEqual(waitFor("bubbleLevel").value as? String, "2 of 2,000")
         element("levels").tap()
         XCTAssertEqual(waitFor("level-1").value as? String, "3 of 3 stars")
@@ -41,7 +41,7 @@ final class BubblesUITests: UITestCase {
         shoot(dx: 0.5, dy: 0.15)
         XCTAssertTrue(waitFor("bubblesResult").exists)
         XCTAssertTrue(labelled("Out of shots").exists)
-        element("bubblesRetry").tap()
+        element("resultRetry").tap()
         XCTAssertFalse(element("bubblesResult").exists)
         XCTAssertEqual(waitFor("shotsLeft").value as? String, "9", "a fresh attempt at the real level 1")
     }

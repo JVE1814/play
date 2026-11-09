@@ -6,11 +6,11 @@ final class PlayKitTests: XCTestCase {
     func testWinsLossesStreaksAndBestTime() {
         var stats = GameStats()
         XCTAssertEqual(stats.winRate, 0)
-        stats.recordWin(time: 300, moves: 120)
-        stats.recordWin(time: 240, moves: 140)
+        stats.recordWin(time: 300)
+        stats.recordWin(time: 240)
         XCTAssertEqual(stats.currentStreak, 2)
         stats.recordLoss()
-        stats.recordWin(time: 500, moves: 90)
+        stats.recordWin(time: 500)
         XCTAssertEqual(stats.played, 4)
         XCTAssertEqual(stats.won, 3)
         XCTAssertEqual(stats.lost, 1)
@@ -18,12 +18,11 @@ final class PlayKitTests: XCTestCase {
         XCTAssertEqual(stats.currentStreak, 1)
         XCTAssertEqual(stats.bestStreak, 2)
         XCTAssertEqual(stats.bestTime, 240)
-        XCTAssertEqual(stats.fewestMoves, 90)
     }
 
     func testStatsAreKeptPerGameAndPersisted() {
         let env = TestEnvironment()
-        env.stats.recordWin(gameID: "a", time: 100, moves: 50)
+        env.stats.recordWin(gameID: "a", time: 100)
         env.stats.recordLoss(gameID: "b")
         let reloaded = StatsStore(storage: env.storage)
         XCTAssertEqual(reloaded.stats(for: "a").won, 1)
@@ -96,7 +95,7 @@ final class PlayKitTests: XCTestCase {
         let options = TestEnvironment.options(["-resetState", "-seed", "42", "-scenario", "nearWin",
                                                "-forceAppearance", "dark", "-includeTestGames"])
         XCTAssertTrue(options.resetState)
-        XCTAssertEqual(options.seed, 42)
+        XCTAssertEqual(options.value(after: "-seed"), "42")
         XCTAssertEqual(options.scenario, "nearWin")
         XCTAssertEqual(options.forcedAppearance, .dark)
         XCTAssertTrue(options.includeTestGames)

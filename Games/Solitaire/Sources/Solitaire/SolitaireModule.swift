@@ -20,13 +20,12 @@ public struct SolitaireModule: GameModule {
     }
 
     @MainActor public func makeSettingsSection(context: GameContext) -> AnyView? {
-        AnyView(SolitaireSettingsRows(preferences: SolitairePreferences.shared(in: context)))
+        AnyView(SolitaireSettingsRows(preferences: context.preferences(SolitairePreferences.self)))
     }
 
     @MainActor public func statusLine(context: GameContext) -> String? {
-        if let save = context.saveSlot.load(SolitaireSave.self), save.game.moveCount > 0, !save.game.isWon {
-            let moves = save.game.moveCount == 1 ? "1 move" : "\(save.game.moveCount) moves"
-            return "Resume · \(moves) · \(Format.clock(save.elapsed))"
+        if let save = SolitaireSave.load(from: context), save.isInProgress {
+            return "Resume · \(Format.count(save.game.moveCount, "move")) · \(Format.clock(save.elapsed))"
         }
         let stats = context.gameStats
         if stats.played > 0 {
@@ -38,7 +37,7 @@ public struct SolitaireModule: GameModule {
 
 /// Solitaire's own preferences, shared by the game screen and its settings rows.
 @MainActor
-public final class SolitairePreferences: ObservableObject {
+public final class SolitairePreferences: ObservableObject, GamePreferenceSet {
     private let store: GamePreferences
 
     /// Draw 1 by default. Takes effect from the next deal.
@@ -56,15 +55,10 @@ public final class SolitairePreferences: ObservableObject {
         drawMode = DrawMode(rawValue: preferences.int("drawMode", default: DrawMode.one.rawValue)) ?? .one
         leftHanded = preferences.bool("leftHanded", default: false)
     }
-
-    public static func shared(in context: GameContext) -> SolitairePreferences {
-        context.shared(SolitairePreferences.self) { SolitairePreferences(preferences: context.preferences) }
-    }
 }
 
 /// What is written to disk after every move.
 public struct SolitaireSave: Codable, Equatable {
-    public var version = 1
     public var game: KlondikeGame
     /// Seconds of play so far.
     public var elapsed: TimeInterval
@@ -73,10 +67,13 @@ public struct SolitaireSave: Codable, Equatable {
     /// How many deals this install has started (used to vary seeded test deals).
     public var dealsStarted: Int
 
-    public init(game: KlondikeGame, elapsed: TimeInterval, resultRecorded: Bool, dealsStarted: Int) {
-        self.game = game
-        self.elapsed = elapsed
-        self.resultRecorded = resultRecorded
-        self.dealsStarted = dealsStarted
+    /// A started game whose result is not yet in the statistics.
+    public var isInProgress: Bool { game.moveCount > 0 && !resultRecorded }
+
+    /// The saved game, unless there is none or it fails the integrity check (52 unique cards,
+    /// legal runs), in which case a fresh deal replaces it.
+    @MainActor
+    static func load(from context: GameContext) -> SolitaireSave? {
+        context.saveSlot.load(SolitaireSave.self).flatMap { $0.game.integrityProblems.isEmpty ? $0 : nil }
     }
 }

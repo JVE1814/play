@@ -4,23 +4,19 @@ import Foundation
 public struct KlondikeGame: Hashable, Codable, Sendable {
     public private(set) var board: Board
     public let drawMode: DrawMode
-    /// The seed the game was dealt from, or nil for hand-built positions.
-    public let seed: UInt64?
     public private(set) var history: [MoveRecord]
 
     /// Deal a new game from `seed`. The same seed always gives the same deal.
     public init(seed: UInt64, drawMode: DrawMode = .one) {
         self.board = Board(seed: seed)
         self.drawMode = drawMode
-        self.seed = seed
         self.history = []
     }
 
     /// Start from an arbitrary position (used for fixtures and tests).
-    public init(board: Board, drawMode: DrawMode = .one, seed: UInt64? = nil) {
+    public init(board: Board, drawMode: DrawMode = .one) {
         self.board = board
         self.drawMode = drawMode
-        self.seed = seed
         self.history = []
     }
 
@@ -77,16 +73,24 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
             sources.append((.foundation(f), 1))
         }
         for (from, count) in sources {
-            for f in Board.foundationIndices {
-                let move = Move.transfer(from: from, to: .foundation(f), count: count)
-                if isLegal(move) { moves.append(move) }
-            }
-            for t in Board.columnIndices {
-                let move = Move.transfer(from: from, to: .tableau(t), count: count)
-                if isLegal(move) { moves.append(move) }
-            }
+            moves += destinations(from: from, count: count).map { .transfer(from: from, to: $0, count: count) }
         }
         return moves
+    }
+
+    /// The piles that `count` cards lifted from `source` may go to: foundations first, then columns.
+    public func destinations(from source: Pile, count: Int) -> [Pile] {
+        let piles = Board.foundationIndices.map { Pile.foundation($0) } + Board.columnIndices.map { Pile.tableau($0) }
+        return piles.filter { isLegal(.transfer(from: source, to: $0, count: count)) }
+    }
+
+    /// The cards `move` would move, bottom first (empty if it cannot be made).
+    public func cards(movedBy move: Move) -> [Card] {
+        switch move {
+        case .draw: return Array(board.stock.suffix(drawMode.rawValue))
+        case .recycle: return board.waste
+        case let .transfer(from, _, count): return board.movableCards(from: from, count: count) ?? []
+        }
     }
 
     /// Make a move. Returns false (and changes nothing) if the move is illegal.
@@ -95,7 +99,7 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
         guard isLegal(move) else { return false }
         switch move {
         case .draw:
-            let n = min(drawMode.rawValue, board.stock.count)
+            let n = cards(movedBy: move).count
             for _ in 0..<n { board.waste.append(board.stock.removeLast()) }
             history.append(MoveRecord(move: move, revealedCard: false, cardCount: n))
         case .recycle:

@@ -9,8 +9,6 @@ public struct GameStats: Codable, Equatable, Sendable {
     public var bestStreak = 0
     /// Fastest win, in seconds.
     public var bestTime: TimeInterval?
-    /// Fewest moves in a win.
-    public var fewestMoves: Int?
 
     public init() {}
 
@@ -19,13 +17,12 @@ public struct GameStats: Codable, Equatable, Sendable {
     /// 0...1, or 0 before any game is finished.
     public var winRate: Double { played == 0 ? 0 : Double(won) / Double(played) }
 
-    public mutating func recordWin(time: TimeInterval, moves: Int) {
+    public mutating func recordWin(time: TimeInterval) {
         played += 1
         won += 1
         currentStreak += 1
         bestStreak = max(bestStreak, currentStreak)
         bestTime = min(bestTime ?? time, time)
-        fewestMoves = min(fewestMoves ?? moves, moves)
     }
 
     public mutating func recordLoss() {
@@ -50,8 +47,8 @@ public final class StatsStore: ObservableObject {
         all[gameID] ?? GameStats()
     }
 
-    public func recordWin(gameID: String, time: TimeInterval, moves: Int) {
-        update(gameID) { $0.recordWin(time: time, moves: moves) }
+    public func recordWin(gameID: String, time: TimeInterval) {
+        update(gameID) { $0.recordWin(time: time) }
     }
 
     public func recordLoss(gameID: String) {

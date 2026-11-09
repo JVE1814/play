@@ -42,7 +42,7 @@ public struct FieldLayout {
 
     /// Top edge of the death row: a bubble left below this line loses the level.
     public var deathLineY: CGFloat {
-        point(Point(0, 0.5 + Double(BubbleGrid.deathRow) * BubbleGrid.rowHeight - 0.5)).y
+        point(Point(0, BubbleGrid.y(ofRow: BubbleGrid.deathRow) - 0.5)).y
     }
 
     /// The aim for a touch at `location`. Above (or beside) the launcher you point where to shoot;

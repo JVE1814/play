@@ -16,8 +16,6 @@ public struct Vec2: Hashable, Codable, Sendable, CustomStringConvertible {
     public static func + (a: Vec2, b: Vec2) -> Vec2 { Vec2(a.x + b.x, a.y + b.y) }
     public static func - (a: Vec2, b: Vec2) -> Vec2 { Vec2(a.x - b.x, a.y - b.y) }
     public static func * (a: Vec2, k: Double) -> Vec2 { Vec2(a.x * k, a.y * k) }
-    public static prefix func - (a: Vec2) -> Vec2 { Vec2(-a.x, -a.y) }
-    public static func += (a: inout Vec2, b: Vec2) { a = a + b }
 
     public var length: Double { (x * x + y * y).squareRoot() }
     public func distance(to other: Vec2) -> Double { (self - other).length }

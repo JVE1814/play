@@ -4,7 +4,6 @@ import Foundation
 /// tuned: the expert sets what three stars take, the novice what passing takes. Both aim on a
 /// phone-sized view, misjudge the wind at first and learn from where their arrows land.
 public struct ArcherSkill: Sendable {
-    public let name: String
     /// Random aiming error on screen (one standard deviation), in points.
     public let aimError: Double
     /// Share of the expected wind drift allowed for on the first arrow (1 = all of it).
@@ -24,10 +23,9 @@ public struct ArcherSkill: Sendable {
     /// Seconds spent between arrows (watching the flag, nocking the next arrow).
     public let pace: ClosedRange<Double>
 
-    public init(name: String, aimError: Double, windAllowance: Double, windLearning: Double, windError: Double,
+    public init(aimError: Double, windAllowance: Double, windLearning: Double, windError: Double,
                 leading: Double, leadError: Double, swayControl: Double, patient: Bool,
                 pace: ClosedRange<Double>) {
-        self.name = name
         self.aimError = aimError
         self.windAllowance = windAllowance
         self.windLearning = windLearning
@@ -40,11 +38,11 @@ public struct ArcherSkill: Sendable {
     }
 
     /// A practised player: reads the flag, leads moving targets and waits for a calm sight.
-    public static let expert = ArcherSkill(name: "expert", aimError: 1.8, windAllowance: 0.85, windLearning: 0.7,
+    public static let expert = ArcherSkill(aimError: 1.8, windAllowance: 0.85, windLearning: 0.7,
                                            windError: 0.15, leading: 0.85, leadError: 0.15, swayControl: 0.35,
                                            patient: true, pace: 1.0...2.5)
     /// A newcomer: allows for little wind at first, barely leads and lets go whenever.
-    public static let novice = ArcherSkill(name: "novice", aimError: 4.0, windAllowance: 0.25, windLearning: 0.5,
+    public static let novice = ArcherSkill(aimError: 4.0, windAllowance: 0.25, windLearning: 0.5,
                                            windError: 0.35, leading: 0.35, leadError: 0.35, swayControl: 0.1,
                                            patient: false, pace: 1.5...4.0)
 }

@@ -80,7 +80,6 @@ final class AppModel: ObservableObject {
             accent: game.module.accent,
             storage: storage,
             stats: stats,
-            settings: settings,
             defaults: defaults,
             feedback: feedback,
             options: options,

@@ -122,7 +122,7 @@ final class LevelTests: XCTestCase {
     }
 
     func testABotThatIgnoresTheWindStrugglesLater() {
-        let stubborn = ArcherSkill(name: "stubborn", aimError: 2, windAllowance: 0, windLearning: 0, windError: 0,
+        let stubborn = ArcherSkill(aimError: 2, windAllowance: 0, windLearning: 0, windError: 0,
                                    leading: 0, leadError: 0, swayControl: 0.3, patient: true, pace: 1...2)
         let early = results(LevelCatalog.level(3), stubborn, attempts: 60)
         let late = results(LevelCatalog.level(27), stubborn, attempts: 60)

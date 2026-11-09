@@ -74,10 +74,13 @@ public struct ArcheryRound: Hashable, Codable, Sendable {
     }
 
     /// Seconds left on a timed level (the full limit until the first draw).
-    public var timeLeft: Double? {
+    public var timeLeft: Double? { timeLeft(at: clock) }
+
+    /// Seconds left when the level clock reads `time`.
+    public func timeLeft(at time: Double) -> Double? {
         guard let limit = level.timeLimit else { return nil }
         guard let start = timerStart else { return limit }
-        return max(0, limit - (clock - start))
+        return max(0, limit - (time - start))
     }
 
     // MARK: Playing

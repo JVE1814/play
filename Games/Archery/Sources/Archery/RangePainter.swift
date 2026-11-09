@@ -93,7 +93,7 @@ struct RangePainter {
                 context.fill(Path(ellipseIn: rect), with: .color(.white.opacity(0.35 + 0.5 * twinkle * stars.nextUnit())))
             }
         }
-        guard let sun = venue.sun else { return }
+        let sun = venue.sun
         let center = CGPoint(x: w * sun.x, y: horizon - horizon * sun.y)
         let r = sun.radius
         context.fill(Path(ellipseIn: CGRect(x: center.x - r * 5, y: center.y - r * 5, width: r * 10, height: r * 10)),
@@ -566,9 +566,8 @@ struct RangePainter {
 
     private func flightArrow(_ context: inout GraphicsContext) {
         guard let flight = f.flight else { return }
-        // Flight fraction: 1 at the target. A miss flies on to 1.25 (see the session).
-        let arrival = flight.shot.hit.inBoss ? flight.duration : flight.duration / 1.25
-        let s = f.now.timeIntervalSince(flight.start) / arrival
+        // Flight fraction: 1 at the target. A miss flies on past it.
+        let s = f.now.timeIntervalSince(flight.start) / flight.arrival
         guard s >= 0 else { return }
         let path = flight.path
         func position(_ s: Double) -> Vec3 {

@@ -75,7 +75,7 @@ final class GameTests: XCTestCase {
         var queues = Set<String>()
         for attempt in 0..<8 {
             var g = BubbleGame(level: level, attempt: attempt)
-            XCTAssertEqual(g.grid, level.grid)
+            XCTAssertEqual(g.grid, level.layout.grid)
             var queue = ""
             for _ in 0..<6 {
                 queue.append(Bubble.color(g.current).code)

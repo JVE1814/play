@@ -91,14 +91,15 @@ struct RangeView: View {
         let camera = RangeCamera(size: size, distance: round.level.distance, zoom: reduceMotion ? 1 : 1 + 0.045 * eased)
         let time = session.clock(at: date)
         let landed = Array(session.landedShots)
-        return RangeFrame(camera: camera, venue: Venue.of(round.level.chapter), level: round.level, time: time,
+        let venue = Venue.of(round.level.chapter)
+        return RangeFrame(camera: camera, venue: venue, level: round.level, time: time,
                           now: date, wind: round.wind, targetOffset: round.targetOffset(at: time), landed: landed,
                           flight: session.flight, landing: session.landing, drawProgress: progress,
                           held: session.held(at: date), sight: session.sight(at: date),
                           showsRestingSight: session.canDraw && !session.showingTip,
                           previousAim: session.isDrawing ? landed.last?.aim : nil,
                           leftHanded: preferences.leftHanded, reduceMotion: reduceMotion,
-                          dimmed: colorScheme == .dark && round.level.chapter != .floodlights)
+                          dimmed: colorScheme == .dark && !venue.isNight)
     }
 
     private func aimGesture(camera: RangeCamera) -> some Gesture {
@@ -108,7 +109,7 @@ struct RangeView: View {
                 if !session.isDrawing {
                     if session.canDraw { session.beginDraw() }
                 } else if let last = lastTouch {
-                    let gain = preferences.aimGain / Double(camera.pointsPerMetre)
+                    let gain = preferences.aimSpeed.gain / Double(camera.pointsPerMetre)
                     let delta = Vec2(Double(value.location.x - last.x) * gain, -Double(value.location.y - last.y) * gain)
                     session.moveAim(by: delta, limit: camera.aimLimit)
                 }
@@ -208,7 +209,7 @@ struct WindGauge: View {
         .padding(.horizontal, Theme.Space.m)
         .padding(.vertical, Theme.Space.s)
         .fixedSize(horizontal: true, vertical: false)
-        .background(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous).fill(Color.black.opacity(0.42)))
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous).fill(ArcheryStyle.hudFill))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Wind")
         .accessibilityValue(ArcherySession.spokenWind(speed))
@@ -231,7 +232,7 @@ struct HUDChip: View {
         .foregroundStyle(tint)
         .padding(.horizontal, Theme.Space.m)
         .padding(.vertical, Theme.Space.s)
-        .background(Capsule().fill(Color.black.opacity(0.42)))
+        .background(Capsule().fill(ArcheryStyle.hudFill))
     }
 }
 
@@ -279,7 +280,7 @@ struct ScoreCard: View {
         }
         .padding(.horizontal, Theme.Space.m)
         .padding(.vertical, Theme.Space.s)
-        .background(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous).fill(Color.black.opacity(0.42)))
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous).fill(ArcheryStyle.hudFill))
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Score card")
@@ -291,7 +292,7 @@ struct ScoreCard: View {
         let left = session.displayedArrowsLeft
         var parts: [String] = []
         if !shots.isEmpty { parts.append(shots.map(\.hit.spokenLabel).joined(separator: ", ")) }
-        parts.append("\(left) \(left == 1 ? "arrow" : "arrows") left")
+        parts.append("\(Format.count(left, "arrow")) left")
         parts.append("total \(session.displayedScore) of \(session.level.maxScore)")
         return parts.joined(separator: ". ")
     }

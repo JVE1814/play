@@ -6,9 +6,8 @@ import XCTest
 @MainActor
 final class SolitaireTests: XCTestCase {
     private func session(_ env: TestEnvironment, _ arguments: [String] = ["-seed", "42"]) -> SolitaireSession {
-        let session = SolitaireSession(context: env.context(options: TestEnvironment.options(arguments)))
-        session.animationsEnabled = false
-        session.setOnScreen(true)
+        let session = SolitaireSession(context: env.context(for: SolitaireModule(), arguments: arguments))
+        session.setInView(true)
         return session
     }
 
@@ -93,7 +92,7 @@ final class SolitaireTests: XCTestCase {
             if case let .transfer(from, to, count) = move { s.drop(from: from, count: count, onto: to) } else { s.tapPile(.stock) }
         }
         XCTAssertTrue(s.game.isWon)
-        XCTAssertTrue(s.showsWin)
+        XCTAssertTrue(s.showsResult)
         XCTAssertFalse(s.canUndo, "a won game is final")
         var stats = env.stats.stats(for: "klondike")
         XCTAssertEqual(stats.won, 1)
@@ -102,7 +101,7 @@ final class SolitaireTests: XCTestCase {
         s.startNewGame()
         stats = env.stats.stats(for: "klondike")
         XCTAssertEqual(stats.played, 1, "starting a new deal after a win is not a loss")
-        XCTAssertFalse(s.showsWin)
+        XCTAssertFalse(s.showsResult)
     }
 
     func testDrawThreeAppliesFromTheNextDeal() {
@@ -136,15 +135,15 @@ final class SolitaireTests: XCTestCase {
         let env = TestEnvironment()
         let s = session(env)
         s.tapPile(.stock)
-        s.setOnScreen(false)
+        s.setInView(false)
         let paused = s.elapsed()
         XCTAssertEqual(s.elapsed(at: Date().addingTimeInterval(600)), paused, accuracy: 0.001)
     }
 
     func testStatusLineShowsGameInProgress() {
         let env = TestEnvironment()
-        let context = env.context(options: TestEnvironment.options(["-seed", "42"]))
         let module = SolitaireModule()
+        let context = env.context(for: module, arguments: ["-seed", "42"])
         XCTAssertNil(module.statusLine(context: context))
         let s = SolitaireSession(context: context)
         s.tapPile(.stock)

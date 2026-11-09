@@ -1,17 +1,22 @@
 import Foundation
 import KlondikeEngine
 import PlayKit
-import UIKit
 
 /// The game in progress: wraps the rules engine with the timer, statistics, saving,
 /// hints, auto-finish and feedback. The view layer only calls these methods.
 @MainActor
-public final class SolitaireSession: ObservableObject {
-    @Published public private(set) var game: KlondikeGame
-    /// The move currently suggested by Hint, if any.
+public final class SolitaireSession: ObservableObject, GameSession {
+    @Published public private(set) var game: KlondikeGame {
+        didSet {
+            hint = nil
+            recentlyMoved = []
+        }
+    }
+    /// The move currently suggested by Hint, if any. It stays until the next move, so a glance
+    /// away doesn't lose it.
     @Published public private(set) var hint: Move? = nil
     @Published public private(set) var toast: String? = nil
-    @Published public private(set) var showsWin: Bool
+    @Published public private(set) var showsResult: Bool
     @Published public private(set) var isAutoFinishing = false
     /// Cards moved by the latest move (drawn above the others while they travel).
     @Published public private(set) var recentlyMoved: Set<Card> = []
@@ -21,66 +26,40 @@ public final class SolitaireSession: ObservableObject {
 
     public let context: GameContext
     public let preferences: SolitairePreferences
-    /// Set by the view: false when Reduce Motion is on or tests disable animation.
-    public var animationsEnabled = true
 
     private var resultRecorded: Bool
-    private var elapsedBeforeRun: TimeInterval
-    private var runStartedAt: Date?
-    private var isOnScreen = false
+    private var clock: PlayClock
+    private var inView = false
     private var dealsStarted: Int
-    private var toastTask: Task<Void, Never>?
+    private let toastTimer = Pending()
+    private let resultReveal = Pending()
     private var autoFinishTask: Task<Void, Never>?
-    private var winTask: Task<Void, Never>?
 
     public init(context: GameContext) {
         self.context = context
-        let preferences = SolitairePreferences.shared(in: context)
+        let preferences = context.preferences(SolitairePreferences.self)
         self.preferences = preferences
-        let saved = context.saveSlot.load(SolitaireSave.self).flatMap { $0.game.integrityProblems.isEmpty ? $0 : nil }
-        let initial = saved?.game
-            ?? SolitaireSession.makeGame(options: context.options, drawMode: preferences.drawMode, dealNumber: 0)
+        let saved = SolitaireSave.load(from: context)
+        let initial = saved?.game ?? Deals.game(number: 0, options: context.options, drawMode: preferences.drawMode)
         game = initial
-        elapsedBeforeRun = saved?.elapsed ?? 0
+        clock = PlayClock(elapsed: saved?.elapsed ?? 0)
         resultRecorded = saved?.resultRecorded ?? false
         dealsStarted = saved?.dealsStarted ?? 1
-        showsWin = initial.isWon
-        save()
-    }
-
-    /// The first deal can be a prepared scenario (for UI tests and screenshots); later deals are
-    /// random, or follow from `-seed` when one is given.
-    static func makeGame(options: LaunchOptions, drawMode: DrawMode, dealNumber: Int) -> KlondikeGame {
-        if dealNumber == 0, let scenario = options.scenario {
-            let seed = options.seed ?? 1
-            switch scenario {
-            case "nearWin":
-                return KlondikeFixtures.nearlyWon(seed: seed, drawMode: drawMode)
-            case "midGame":
-                var game = KlondikeGame(seed: seed, drawMode: drawMode)
-                for _ in 0..<12 {
-                    guard let move = game.hint() else { break }
-                    game.perform(move)
-                }
-                return game
-            default:
-                break
-            }
-        }
-        let seed = options.seed.map { $0 &+ UInt64(dealNumber) } ?? UInt64.random(in: 1...UInt64.max)
-        return KlondikeGame(seed: seed, drawMode: drawMode)
+        showsResult = initial.isWon
+        commit()
     }
 
     // MARK: State for the view
 
-    public var canUndo: Bool { game.canUndo && !game.isWon && !isAutoFinishing }
+    /// The player may move cards: the game is neither won nor finishing itself.
+    public var canPlay: Bool { !isAutoFinishing && !game.isWon }
+    public var canUndo: Bool { game.canUndo && canPlay }
     public var canAutoFinish: Bool { !isAutoFinishing && game.canAutoFinish }
-    public var canHint: Bool { !game.isWon && !isAutoFinishing }
     /// A started game whose result is not yet in the statistics.
-    public var isInProgress: Bool { game.moveCount > 0 && !resultRecorded }
+    public var isInProgress: Bool { save.isInProgress }
 
     public func elapsed(at date: Date = Date()) -> TimeInterval {
-        elapsedBeforeRun + (runStartedAt.map { max(0, date.timeIntervalSince($0)) } ?? 0)
+        clock.elapsed(at: date)
     }
 
     /// Board description for UI tests, including the move count.
@@ -90,31 +69,29 @@ public final class SolitaireSession: ObservableObject {
     public var hintedCards: Set<Card> {
         guard case let .transfer(from, to, count)? = hint else { return [] }
         var cards = Set(game.board.movableCards(from: from, count: count) ?? [])
-        if let target = topCard(of: to) { cards.insert(target) }
+        if let target = game.board.topCard(of: to) { cards.insert(target) }
         return cards
     }
 
     public var hintedPile: Pile? {
         switch hint {
         case .draw?, .recycle?: return .stock
-        case let .transfer(_, to, _)?: return topCard(of: to) == nil ? to : nil
+        case let .transfer(_, to, _)?: return game.board.topCard(of: to) == nil ? to : nil
         case nil: return nil
         }
     }
 
     // MARK: Lifecycle
 
-    /// Called when the screen appears/disappears or the app moves between foreground and background.
-    public func setOnScreen(_ visible: Bool) {
-        isOnScreen = visible
-        updateClock()
-        save()
+    public func setInView(_ inView: Bool) {
+        self.inView = inView
+        commit()
     }
 
     // MARK: Player actions
 
     public func tap(_ card: Card) {
-        guard !isAutoFinishing, !game.isWon else { return }
+        guard canPlay else { return }
         if let move = game.bestMove(tapping: card) {
             apply(move)
         } else {
@@ -123,10 +100,10 @@ public final class SolitaireSession: ObservableObject {
     }
 
     public func tapPile(_ pile: Pile) {
-        guard !isAutoFinishing, !game.isWon else { return }
+        guard canPlay else { return }
         if let move = game.bestMove(tappingPile: pile) {
             apply(move)
-        } else if let top = topCard(of: pile) {
+        } else if let top = game.board.topCard(of: pile) {
             reject(top)
         } else {
             context.feedback.play(.invalid)
@@ -136,7 +113,7 @@ public final class SolitaireSession: ObservableObject {
     /// A drag ended over `pile`. Returns false if the drop is not legal.
     @discardableResult
     public func drop(from source: Pile, count: Int, onto pile: Pile) -> Bool {
-        guard !isAutoFinishing, !game.isWon else { return false }
+        guard canPlay else { return false }
         let move = Move.transfer(from: source, to: pile, count: count)
         guard game.isLegal(move) else {
             context.feedback.play(.invalid)
@@ -149,12 +126,9 @@ public final class SolitaireSession: ObservableObject {
     public func undo() {
         guard canUndo else { return }
         game.undo()
-        hint = nil
-        recentlyMoved = []
         context.feedback.play(.tap)
-        updateClock()
-        save()
-        announce("Undone")
+        commit()
+        context.announce("Undone")
     }
 
     /// Ask for a new deal; confirms first if the current game would count as a loss.
@@ -168,39 +142,34 @@ public final class SolitaireSession: ObservableObject {
 
     public func startNewGame() {
         autoFinishTask?.cancel()
-        winTask?.cancel()
+        resultReveal.cancel()
         isAutoFinishing = false
         if isInProgress {
-            context.stats.recordLoss(gameID: context.gameID)
+            context.recordLoss()
         }
-        game = SolitaireSession.makeGame(options: context.options, drawMode: preferences.drawMode, dealNumber: dealsStarted)
+        game = Deals.game(number: dealsStarted, options: context.options, drawMode: preferences.drawMode)
         dealsStarted += 1
-        elapsedBeforeRun = 0
-        runStartedAt = nil
+        clock = PlayClock()
         resultRecorded = false
-        showsWin = false
-        hint = nil
-        recentlyMoved = []
+        showsResult = false
         confirmingNewGame = false
-        updateClock()
-        save()
+        commit()
         context.feedback.play(.draw)
-        announce("New deal")
+        context.announce("New deal")
     }
 
     public func showHint() {
-        guard canHint else { return }
+        guard canPlay else { return }
         context.feedback.play(.tap)
         guard let move = game.hint() else {
             hint = nil
             showToast("No helpful moves left. Try Undo or a new deal.")
             return
         }
-        // The highlight stays until the next move, so a glance away doesn't lose it.
         hint = move
         let text = describe(move)
         showToast(text)
-        announce(text)
+        context.announce(text)
     }
 
     /// Play the remaining moves to the foundations one by one.
@@ -208,7 +177,7 @@ public final class SolitaireSession: ObservableObject {
         guard !isAutoFinishing, let moves = game.autoFinishMoves() else { return }
         isAutoFinishing = true
         hint = nil
-        let delay: UInt64 = animationsEnabled ? 110_000_000 : 15_000_000
+        let delay: UInt64 = context.animationsEnabled ? 110_000_000 : 15_000_000
         autoFinishTask = Task { [weak self] in
             for move in moves {
                 guard !Task.isCancelled, let self else { return }
@@ -219,43 +188,27 @@ public final class SolitaireSession: ObservableObject {
         }
     }
 
-    /// Leaving for the home screen.
-    public func leave() {
-        setOnScreen(false)
-        context.exit()
-    }
-
     // MARK: Internals
 
     private func apply(_ move: Move, quiet: Bool = false) {
-        let moving = cards(movedBy: move)
+        let moving = game.cards(movedBy: move)
         guard game.perform(move) else { return }
         recentlyMoved = Set(moving)
-        hint = nil
-        updateClock()
         if game.isWon && !resultRecorded {
             resultRecorded = true
-            context.stats.recordWin(gameID: context.gameID, time: elapsedBeforeRun, moves: game.moveCount)
+            let time = clock.elapsed()
+            context.recordWin(time: time)
             context.feedback.play(.win)
-            presentWin()
+            context.announce("You won! Time \(Format.spokenDuration(time)), \(Format.count(game.moveCount, "move")).")
+            // The last card lands before the panel covers it.
+            resultReveal.schedule(after: context.animationsEnabled ? 0.45 : 0) { [weak self] in
+                self?.showsResult = true
+            }
         } else if !quiet {
             context.feedback.play(move == .draw || move == .recycle ? .draw : .place)
         }
-        save()
+        commit()
         if !quiet { announceMove(move, cards: moving) }
-    }
-
-    private func presentWin() {
-        announce("You won! Time \(Format.spokenDuration(elapsedBeforeRun)), \(game.moveCount) moves.")
-        guard animationsEnabled else {
-            showsWin = true
-            return
-        }
-        winTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 450_000_000)
-            guard !Task.isCancelled, let self, self.game.isWon else { return }
-            self.showsWin = true
-        }
     }
 
     private func reject(_ card: Card) {
@@ -263,47 +216,20 @@ public final class SolitaireSession: ObservableObject {
         context.feedback.play(.invalid)
     }
 
-    private func updateClock(now: Date = Date()) {
-        let started = game.moveCount > 0 || elapsedBeforeRun > 0
-        let shouldRun = isOnScreen && started && !game.isWon
-        if shouldRun, runStartedAt == nil {
-            runStartedAt = now
-        } else if !shouldRun, let start = runStartedAt {
-            elapsedBeforeRun += max(0, now.timeIntervalSince(start))
-            runStartedAt = nil
-        }
+    private var save: SolitaireSave {
+        SolitaireSave(game: game, elapsed: clock.elapsed(), resultRecorded: resultRecorded, dealsStarted: dealsStarted)
     }
 
-    private func save() {
-        context.saveSlot.save(SolitaireSave(game: game, elapsed: elapsed(), resultRecorded: resultRecorded,
-                                            dealsStarted: dealsStarted))
-    }
-
-    private func topCard(of pile: Pile) -> Card? {
-        switch pile {
-        case .stock: return game.stock.last
-        case .waste: return game.waste.last
-        case .foundation(let f): return game.foundations[f].last
-        case .tableau(let t): return game.tableau[t].top
-        }
-    }
-
-    private func cards(movedBy move: Move) -> [Card] {
-        switch move {
-        case .draw: return Array(game.stock.suffix(game.drawMode.rawValue))
-        case .recycle: return game.waste
-        case let .transfer(from, _, count): return game.board.movableCards(from: from, count: count) ?? []
-        }
+    /// After every change: the timer runs from the first move while the game is in view, and
+    /// the game is saved.
+    private func commit() {
+        clock.setRunning(inView && (game.moveCount > 0 || clock.hasStarted) && !game.isWon)
+        context.saveSlot.save(save)
     }
 
     private func showToast(_ text: String) {
-        toastTask?.cancel()
         toast = text
-        toastTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 4_500_000_000)
-            guard !Task.isCancelled, let self, self.toast == text else { return }
-            self.toast = nil
-        }
+        toastTimer.schedule(after: 4.5) { [weak self] in self?.toast = nil }
     }
 
     /// Plain-language description of a move, for hints and VoiceOver.
@@ -329,24 +255,18 @@ public final class SolitaireSession: ObservableObject {
     }
 
     private func announceMove(_ move: Move, cards: [Card]) {
-        guard UIAccessibility.isVoiceOverRunning else { return }
         switch move {
         case .draw:
-            announce(game.waste.last.map { "Drew the \($0.name)" } ?? "Drew")
+            context.announce(game.waste.last.map { "Drew the \($0.name)" } ?? "Drew")
         case .recycle:
-            announce("Redealt the waste")
+            context.announce("Redealt the waste")
         case let .transfer(_, to, _):
             guard let base = cards.first else { return }
             switch to {
-            case .foundation: announce("\(base.name) to foundation")
-            case .tableau(let t): announce("\(base.name) to column \(t + 1)")
+            case .foundation: context.announce("\(base.name) to foundation")
+            case .tableau(let t): context.announce("\(base.name) to column \(t + 1)")
             case .stock, .waste: break
             }
         }
-    }
-
-    private func announce(_ text: String) {
-        guard UIAccessibility.isVoiceOverRunning else { return }
-        UIAccessibility.post(notification: .announcement, argument: text)
     }
 }

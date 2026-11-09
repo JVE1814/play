@@ -18,8 +18,7 @@ let package = Package(
             dependencies: [
                 .product(name: "PlayKit", package: "PlayKit"),
                 .product(name: "ArcheryEngine", package: "ArcheryEngine"),
-            ],
-            swiftSettings: [.define("DEBUG", .when(configuration: .debug))]
+            ]
         ),
     ]
 )

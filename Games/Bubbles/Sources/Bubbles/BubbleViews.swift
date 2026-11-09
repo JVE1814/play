@@ -50,9 +50,24 @@ enum BubbleStyle {
     static let line = Color(light: 0xC81E3A, lightOpacity: 0.35, dark: 0xFF6B72, darkOpacity: 0.45)
 }
 
-/// Original flat symbols drawn inside bubbles.
+extension Bubble {
+    /// What VoiceOver calls it: the colour and the symbol drawn on it, such as "Red triangle".
+    var spokenName: String {
+        switch self {
+        case .color(let color): return "\(color.name) \(BubbleStyle.symbol(self).rawValue)"
+        case .stone: return "Stone"
+        case .bomb: return "Bomb"
+        }
+    }
+}
+
+extension BubbleColor {
+    var spokenName: String { Bubble.color(self).spokenName }
+}
+
+/// Original flat symbols drawn inside bubbles. The raw value is the symbol's spoken name.
 struct BubbleSymbol: Shape {
-    enum Kind { case triangle, dot, square, diamond, plus, star, burst, bar }
+    enum Kind: String { case triangle, dot = "circle", square, diamond, plus, star, burst, bar }
     let kind: Kind
 
     func path(in rect: CGRect) -> Path {

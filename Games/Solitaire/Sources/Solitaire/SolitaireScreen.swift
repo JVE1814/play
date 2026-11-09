@@ -2,82 +2,43 @@ import KlondikeEngine
 import PlayKit
 import SwiftUI
 
-/// The Solitaire screen: top bar (moves and time), the table, and a thumb-height toolbar.
+/// The Solitaire screen: moves and time in the top bar, the table, and New, Hint or Finish, and
+/// Undo in the toolbar.
 struct SolitaireScreen: View {
-    let context: GameContext
     @StateObject private var session: SolitaireSession
     @ObservedObject private var preferences: SolitairePreferences
-    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(context: GameContext) {
-        self.context = context
         _session = StateObject(wrappedValue: SolitaireSession(context: context))
-        _preferences = ObservedObject(wrappedValue: SolitairePreferences.shared(in: context))
+        _preferences = ObservedObject(wrappedValue: context.preferences(SolitairePreferences.self))
     }
 
-    private var animate: Bool { !reduceMotion && !context.options.disableAnimations }
-
     var body: some View {
-        VStack(spacing: 0) {
-            GameTopBar(onBack: { session.leave() }, onSettings: { context.openSettings() }) {
-                StatusReadout(session: session)
+        let animate = !reduceMotion && !session.context.options.disableAnimations
+        GameScreen(session: session) {
+            Readout("Moves", value: "\(session.game.moveCount)", identifier: "moves")
+            TimelineView(.periodic(from: Date(), by: 1)) { timeline in
+                let seconds = session.elapsed(at: timeline.date)
+                Readout("Time", value: Format.clock(seconds), spokenValue: Format.spokenDuration(seconds),
+                        identifier: "timer")
             }
-            if context.options.showBoardSignature {
-                Text(session.signature)
-                    .font(.system(size: 6))
-                    .lineLimit(1)
-                    .foregroundStyle(context.accent.onTable)
-                    .accessibilityIdentifier("boardSignature")
-            }
+        } table: {
             GeometryReader { proxy in
                 let layout = BoardLayout(size: proxy.size, leftHanded: preferences.leftHanded)
                 ZStack(alignment: .bottom) {
                     BoardView(session: session, layout: layout, animate: animate)
                     if let toast = session.toast {
-                        // Just above the bottom row, so it never hides a card you need.
                         Toast(toast)
                             .padding(.horizontal, Theme.Space.l)
-                            .padding(.bottom, layout.card.height + layout.margin + Theme.Space.m)
+                            .padding(.bottom, layout.bottomRowHeight + Theme.Space.m)
                             .transition(.opacity)
                             .allowsHitTesting(false)
                     }
                 }
             }
-            toolbar
-        }
-        .background(context.accent.table.ignoresSafeArea())
-        .overlay {
-            if session.showsWin {
-                WinOverlay(time: session.elapsed(), moves: session.game.moveCount,
-                           stats: context.gameStats,
-                           onNewGame: { session.startNewGame() },
-                           onHome: { session.leave() })
-                    .transition(animate ? .opacity.combined(with: .scale(scale: 0.96)) : .opacity)
-            }
-        }
-        .animation(animate ? .easeOut(duration: 0.25) : nil, value: session.showsWin)
-        .animation(animate ? .easeOut(duration: 0.2) : nil, value: session.toast)
-        .environment(\.accent, context.accent)
-        .confirmationDialog("Start a new deal?", isPresented: $session.confirmingNewGame, titleVisibility: .visible) {
-            Button("New Deal", role: .destructive) { session.startNewGame() }
-            // Not a cancel-role button: iOS 26 hides those in dialogs, and an explicit way out is
-            // easier on a moving train than tapping outside.
-            Button("Keep Playing") {}
-        } message: {
-            Text("The current game will count as a loss.")
-        }
-        .onAppear {
-            session.animationsEnabled = animate
-            session.setOnScreen(scenePhase == .active)
-        }
-        .onDisappear { session.setOnScreen(false) }
-        .onChange(of: scenePhase) { _, phase in session.setOnScreen(phase == .active) }
-        .onChange(of: reduceMotion) { _, _ in session.animationsEnabled = animate }
-    }
-
-    private var toolbar: some View {
-        HStack(spacing: Theme.Space.s) {
+            .animation(animate ? .easeOut(duration: 0.2) : nil, value: session.toast)
+        } tools: {
             if preferences.leftHanded {
                 undoButton
                 middleButton
@@ -87,11 +48,16 @@ struct SolitaireScreen: View {
                 middleButton
                 undoButton
             }
+        } result: {
+            WinOverlay(time: session.elapsed(), moves: session.game.moveCount,
+                       stats: session.context.gameStats,
+                       onNewGame: { session.startNewGame() },
+                       onHome: { session.leave() })
         }
-        .padding(.horizontal, Theme.Space.m)
-        .padding(.top, Theme.Space.xs)
-        .padding(.bottom, Theme.Space.s)
-        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+        .confirmation("Start a new deal?", isPresented: $session.confirmingNewGame,
+                      message: "The current game will count as a loss.", confirm: "New Deal") {
+            session.startNewGame()
+        }
     }
 
     private var newButton: some View {
@@ -106,51 +72,13 @@ struct SolitaireScreen: View {
             }
         } else {
             ToolbarButton("Hint", systemImage: "lightbulb.fill", identifier: "hint") { session.showHint() }
-                .disabled(!session.canHint)
+                .disabled(!session.canPlay)
         }
     }
 
     private var undoButton: some View {
         ToolbarButton("Undo", systemImage: "arrow.uturn.backward", identifier: "undo") { session.undo() }
             .disabled(!session.canUndo)
-    }
-}
-
-/// Moves and elapsed time, centred in the top bar.
-struct StatusReadout: View {
-    @ObservedObject var session: SolitaireSession
-    @Environment(\.accent) private var accent
-
-    var body: some View {
-        HStack(spacing: Theme.Space.xl) {
-            readout(value: "\(session.game.moveCount)", title: "Moves")
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Moves")
-                .accessibilityValue("\(session.game.moveCount)")
-                .accessibilityIdentifier("moves")
-            TimelineView(.periodic(from: Date(), by: 1)) { timeline in
-                let seconds = session.elapsed(at: timeline.date)
-                readout(value: Format.clock(seconds), title: "Time")
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Time")
-                    .accessibilityValue(Format.spokenDuration(seconds))
-                    .accessibilityIdentifier("timer")
-            }
-        }
-        .foregroundStyle(accent.onTable)
-        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-    }
-
-    private func readout(value: String, title: String) -> some View {
-        VStack(spacing: 0) {
-            Text(value)
-                .font(Typography.numeric)
-                .lineLimit(1)
-            Text(title)
-                .font(Typography.caption)
-                .opacity(0.8)
-        }
-        .frame(minWidth: 56)
     }
 }
 
@@ -163,20 +91,7 @@ struct WinOverlay: View {
     let onHome: () -> Void
 
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-                .accessibilityHidden(true)
-            ViewThatFits(in: .vertical) {
-                panel
-                ScrollView { panel }
-            }
-            .padding(Theme.Space.l)
-        }
-    }
-
-    private var panel: some View {
-        VStack(spacing: Theme.Space.l) {
+        ResultPanel(identifier: "winScreen") {
             HStack(spacing: Theme.Space.s) {
                 ForEach([Suit.spades, .hearts, .clubs, .diamonds], id: \.self) { suit in
                     SuitShape(suit: suit)
@@ -185,10 +100,7 @@ struct WinOverlay: View {
                 }
             }
             .accessibilityHidden(true)
-            Text("You won!")
-                .font(Typography.display)
-                .foregroundStyle(Theme.ink)
-                .accessibilityAddTraits(.isHeader)
+            ResultHeadline("You won!")
             HStack(spacing: Theme.Space.s) {
                 StatValue("Time", value: Format.clock(time))
                 StatValue("Moves", value: "\(moves)")
@@ -208,11 +120,6 @@ struct WinOverlay: View {
                     .accessibilityIdentifier("winHome")
             }
         }
-        .padding(Theme.Space.xl)
-        .frame(maxWidth: 420)
-        .background(RoundedRectangle(cornerRadius: Theme.Radius.xl, style: .continuous).fill(Theme.surface))
-        .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("winScreen")
     }
 }
 

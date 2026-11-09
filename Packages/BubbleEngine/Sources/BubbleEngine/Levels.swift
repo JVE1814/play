@@ -1,35 +1,29 @@
 import Foundation
 
-/// A playable level: its starting grid, colours and shot limit.
+/// A playable level: the layout that passed calibration, and its shot limit.
 public struct Level: Hashable, Sendable {
-    public let number: Int
-    public let grid: BubbleGrid
-    public let palette: [BubbleColor]
-    public let seed: UInt64
+    public let layout: LevelLayout
     /// Shots the bot needed to clear it.
     public let par: Int
     public let shotLimit: Int
-    /// Names of the shape and colouring used (for variety checks and debugging).
-    public let pattern: String
-    public let coloring: String
-    /// Which generated variant passed calibration (0 unless the first one was not clearable).
-    public let variant: Int
 }
 
-/// The generated layout of a level, before calibration.
+/// The generated layout of a level: its starting grid and colours.
 public struct LevelLayout: Hashable, Sendable {
     public let number: Int
+    /// Which generated variant this is (0 unless the first one failed calibration).
     public let variant: Int
     public let grid: BubbleGrid
     public let palette: [BubbleColor]
     public let seed: UInt64
+    /// Names of the shape and colouring used (for variety checks and debugging).
     public let pattern: String
     public let coloring: String
 
     /// A game on this layout with an unlimited supply of shots (used to calibrate par).
     public var calibrationGame: BubbleGame {
         BubbleGame(grid: grid, palette: palette, shotLimit: 10_000, par: 0,
-                   seed: seed ^ 0x5851_F42D_4C95_7F2D, levelNumber: number)
+                   seed: BubbleGame.queueSeed(for: self), levelNumber: number)
     }
 }
 
@@ -45,10 +39,8 @@ public enum LevelCatalog {
     public static func level(_ number: Int) -> Level {
         precondition((1...count).contains(number), "no such level")
         let calibration = tabledPar(for: number) ?? calibrate(number)
-        let layout = layout(number, variant: calibration.variant)
-        return Level(number: number, grid: layout.grid, palette: layout.palette, seed: layout.seed,
-                     par: calibration.par, shotLimit: shotLimit(par: calibration.par),
-                     pattern: layout.pattern, coloring: layout.coloring, variant: calibration.variant)
+        return Level(layout: layout(number, variant: calibration.variant),
+                     par: calibration.par, shotLimit: shotLimit(par: calibration.par))
     }
 
     /// Par plus about 30% (at least three) spare shots.

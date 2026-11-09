@@ -14,10 +14,20 @@ public enum Format {
         let total = max(0, Int(seconds))
         let h = total / 3600, m = (total % 3600) / 60, s = total % 60
         var parts: [String] = []
-        if h > 0 { parts.append("\(h) hour\(h == 1 ? "" : "s")") }
-        if m > 0 { parts.append("\(m) minute\(m == 1 ? "" : "s")") }
-        if s > 0 || parts.isEmpty { parts.append("\(s) second\(s == 1 ? "" : "s")") }
+        if h > 0 { parts.append(count(h, "hour")) }
+        if m > 0 { parts.append(count(m, "minute")) }
+        if s > 0 || parts.isEmpty { parts.append(count(s, "second")) }
         return parts.joined(separator: " ")
+    }
+
+    /// "1 shot", "3 shots".
+    public static func count(_ number: Int, _ noun: String) -> String {
+        "\(number) \(plural(number, noun))"
+    }
+
+    /// "shot" for one, "shots" otherwise.
+    public static func plural(_ number: Int, _ noun: String) -> String {
+        number == 1 ? noun : noun + "s"
     }
 
     /// "43%".

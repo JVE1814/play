@@ -16,7 +16,6 @@ public struct Face: Hashable, Codable, Sendable {
 
     public static let full122 = Face(size: 1.22)
     public static let full80 = Face(size: 0.80)
-    public static let full60 = Face(size: 0.60)
     public static func spot(_ size: Double) -> Face { Face(size: size, lowestRing: 6) }
 
     /// Width of one ring.

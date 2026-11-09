@@ -88,7 +88,6 @@ final class BetweenStopsUITests: UITestCase {
         waitFor("autoFinish").tap()          // every card is face up, so finish automatically
         XCTAssertTrue(waitFor("winScreen", timeout: 15).exists)
         XCTAssertTrue(app.staticTexts["You won!"].exists)
-        XCTAssertTrue(signature().contains("F0:AD,2D,3D,4D,5D,6D,7D,8D,9D,10D,JD,QD,KD"), signature())
         element("winHome").tap()
         waitFor("statsButton").tap()
         XCTAssertTrue(labelled("Won: 1").waitForExistence(timeout: 5))

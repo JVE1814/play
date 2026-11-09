@@ -13,6 +13,26 @@ enum CardPalette {
     static func ink(for card: Card) -> Color { card.isRed ? red : black }
 }
 
+/// The outline every card and empty slot shares.
+enum CardShape {
+    static func outline(width: CGFloat) -> RoundedRectangle {
+        RoundedRectangle(cornerRadius: width * 0.12, style: .continuous)
+    }
+}
+
+extension View {
+    /// The ring around a card or slot that a hint points at.
+    func hintRing(_ shown: Bool, cardWidth: CGFloat) -> some View {
+        overlay {
+            if shown {
+                RoundedRectangle(cornerRadius: cardWidth * 0.14, style: .continuous)
+                    .strokeBorder(Theme.highlight, lineWidth: 3.5)
+                    .padding(-2)
+            }
+        }
+    }
+}
+
 /// One playing card, face up or face down.
 struct CardView: View {
     let card: Card
@@ -29,13 +49,7 @@ struct CardView: View {
             }
         }
         .frame(width: size.width, height: size.height)
-        .overlay {
-            if highlighted {
-                RoundedRectangle(cornerRadius: size.width * 0.14, style: .continuous)
-                    .strokeBorder(Theme.highlight, lineWidth: 3.5)
-                    .padding(-2)
-            }
-        }
+        .hintRing(highlighted, cardWidth: size.width)
     }
 }
 
@@ -46,7 +60,7 @@ struct CardFace: View {
     var body: some View {
         let w = size.width
         let ink = CardPalette.ink(for: card)
-        let shape = RoundedRectangle(cornerRadius: w * 0.12, style: .continuous)
+        let shape = CardShape.outline(width: w)
         ZStack(alignment: .topLeading) {
             shape.fill(CardPalette.face)
             shape.strokeBorder(CardPalette.edge, lineWidth: 1)
@@ -78,10 +92,10 @@ struct CardBack: View {
     var body: some View {
         let w = size.width
         ZStack {
-            RoundedRectangle(cornerRadius: w * 0.12, style: .continuous)
+            CardShape.outline(width: w)
                 .fill(accent.deep)
             // A thin edge in the table colour separates stacked face-down cards cleanly.
-            RoundedRectangle(cornerRadius: w * 0.12, style: .continuous)
+            CardShape.outline(width: w)
                 .strokeBorder(accent.table, lineWidth: 1.5)
             SuitShape(suit: .diamonds)
                 .fill(CardPalette.backMark)
@@ -101,7 +115,7 @@ struct SlotView: View {
 
     var body: some View {
         let w = size.width
-        RoundedRectangle(cornerRadius: w * 0.12, style: .continuous)
+        CardShape.outline(width: w)
             .fill(accent.tableControl)
             .overlay {
                 if let label {
@@ -114,13 +128,7 @@ struct SlotView: View {
                         .foregroundStyle(accent.onTable.opacity(0.6))
                 }
             }
-            .overlay {
-                if highlighted {
-                    RoundedRectangle(cornerRadius: w * 0.14, style: .continuous)
-                        .strokeBorder(Theme.highlight, lineWidth: 3.5)
-                        .padding(-2)
-                }
-            }
+            .hintRing(highlighted, cardWidth: w)
             .frame(width: size.width, height: size.height)
     }
 }
@@ -139,7 +147,7 @@ struct SolitaireIcon: View {
     var body: some View {
         GeometryReader { proxy in
             let w = proxy.size.width * 0.56
-            let size = CGSize(width: w, height: w * 1.4)
+            let size = CGSize(width: w, height: w * BoardLayout.cardAspect)
             ZStack {
                 CardFace(card: Card(1, .hearts), size: size)
                     .rotationEffect(.degrees(-12))
