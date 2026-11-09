@@ -23,7 +23,7 @@ final class InvariantTests: XCTestCase {
                     XCTFail("seed \(seed): invalid run \(column.visible)")
                 }
             }
-            XCTAssertEqual(game.board.integrityProblems, [], "seed \(seed)")
+            XCTAssertEqual(game.integrityProblems, [], "seed \(seed)")
             game.undoAll()
             XCTAssertEqual(game, deal, "seed \(seed): undo all should restore the deal")
         }
@@ -61,6 +61,9 @@ final class InvariantTests: XCTestCase {
             MoveRecord(move: .transfer(from: .tableau(1), to: .tableau(1), count: 1), revealedCard: true, cardCount: 1),
             MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 0), revealedCard: false, cardCount: 0),
             MoveRecord(move: .recycle, revealedCard: false, cardCount: 5),
+            MoveRecord(move: .transfer(from: .stock, to: .tableau(1), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .draw, revealedCard: false, cardCount: 0),
             MoveRecord(move: .draw, revealedCard: false, cardCount: 3),
             MoveRecord(move: .draw, revealedCard: false, cardCount: -1),
         ]
