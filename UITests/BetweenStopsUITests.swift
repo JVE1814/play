@@ -129,18 +129,6 @@ final class BetweenStopsUITests: UITestCase {
         waitFor("game-testgame")
     }
 
-    func testKeepPlayingDismissesTheNewDealQuestionAndKeepsTheGame() {
-        launch(["-seed", "42"])
-        openSolitaire()
-        tapCenter(element("stock"))
-        element("newGame").tap()
-        let newDeal = app.buttons["New Deal"]
-        XCTAssertTrue(newDeal.waitForExistence(timeout: 5))
-        app.buttons["Keep Playing"].tap()
-        XCTAssertTrue(newDeal.waitForNonExistence(timeout: 5))
-        XCTAssertEqual(moves(), "1", "dismissing keeps the current game")
-    }
-
     func testDrawThreeSettingAppliesToTheNextDeal() {
         launch(["-seed", "42", "-showBoardSignature"])
         waitFor("settingsButton").tap()
@@ -243,6 +231,7 @@ final class BetweenStopsUITests: UITestCase {
         snap("08-confirm-new-deal-\(appearance)")
         app.buttons["Keep Playing"].tap()
         XCTAssertTrue(newDeal.waitForNonExistence(timeout: 5))
+        XCTAssertEqual(moves(), "1", "Keep Playing keeps the current game")
         element("back").tap()
         waitFor("statsButton").tap()
         waitFor("done")

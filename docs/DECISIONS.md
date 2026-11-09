@@ -259,3 +259,8 @@ worth a look before you submit are marked **review**.
     first in the row, and the par table was regenerated: 16 levels changed, the rest are
     identical. This amends decision 38's "every level is known to be winnable", which was not
     true of those 28.
+73. **The UI tests get what is left of the job's 30 minutes**, less two and a half minutes to
+    collect and upload results, instead of a fixed 20. The suite on `main` finished 29 seconds
+    inside the fixed limit; the first run of this refactor passed every test it reached but
+    was stopped with four UI tests to go, on a runner whose app launches were a fifth slower.
+    `ci/run.sh` reads the job's limit from the workflow, so the two cannot drift apart.

@@ -22,6 +22,12 @@ START=$(date +%s)
 PROJECT=BetweenStops.xcodeproj
 SCHEME=BetweenStops
 
+# The workflow stops the job after this long, results published or not. The tests get what is
+# left of it when they start, less the time it takes to collect and upload the results.
+JOB_MINUTES=$(sed -nE 's/^ +timeout-minutes: *([0-9]+).*/\1/p' .github/workflows/ci.yml | head -1)
+JOB_LIMIT=$(( ${JOB_MINUTES:-30} * 60 ))
+RESERVE=150
+
 step() { echo; echo "=== [$(( $(date +%s) - START ))s] $*"; }
 fail() { echo "FAIL: $*" | tee -a "$OUT/failures.txt"; STATUS=1; }
 
@@ -108,9 +114,11 @@ if [ "$BUILD_RC" -eq 0 ]; then
   nice -n 15 bash ci/engine_tests.sh "$OUT" 1 > "$OUT/engine-tests.log" 2>&1 &
   ENGINE_PID=$!
 
-  step "Unit and UI tests"
+  TEST_LIMIT=$(( JOB_LIMIT - ($(date +%s) - START) - RESERVE ))
+  if [ "$TEST_LIMIT" -lt 60 ]; then TEST_LIMIT=60; fi
+  step "Unit and UI tests (up to ${TEST_LIMIT}s)"
   rm -rf "$BUILD/Tests.xcresult"
-  TEST_RUNNER_SCREENSHOT_DIR="$OUT/screenshots" with_timeout 1200 xcodebuild test-without-building \
+  TEST_RUNNER_SCREENSHOT_DIR="$OUT/screenshots" with_timeout "$TEST_LIMIT" xcodebuild test-without-building \
     -project "$PROJECT" -scheme "$SCHEME" -destination "$DESTINATION" \
     -derivedDataPath "$BUILD/DerivedData" \
     -resultBundlePath "$BUILD/Tests.xcresult" \
