@@ -49,11 +49,10 @@ public struct Wind: Hashable, Codable, Sendable {
         Wind(base: base, gust: gust, period: period, phase: phase + extra)
     }
 
-    /// "2.4 m/s from the left", "Calm".
-    public static func describe(_ speed: Double) -> String {
-        let rounded = (abs(speed) * 10).rounded() / 10
-        guard rounded >= 0.1 else { return "Calm" }
-        return String(format: "%.1f m/s from the %@", rounded, speed > 0 ? "left" : "right")
+    /// A speed as a gauge reads it: to a tenth of a metre per second, and exactly zero when
+    /// that is calm.
+    public static func reading(_ speed: Double) -> Double {
+        (speed * 10).rounded() / 10
     }
 }
 

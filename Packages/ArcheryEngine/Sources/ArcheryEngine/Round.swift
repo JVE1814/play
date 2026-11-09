@@ -57,7 +57,6 @@ public struct ArcheryRound: Hashable, Codable, Sendable {
 
     // MARK: Progress
 
-    public var arrowsShot: Int { shots.count }
     public var arrowsLeft: Int { status == .playing ? level.arrows - shots.count : 0 }
     public var score: Int { shots.reduce(0) { $0 + $1.score } }
     public var xCount: Int { shots.filter(\.hit.isX).count }

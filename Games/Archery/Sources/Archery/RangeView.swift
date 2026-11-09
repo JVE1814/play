@@ -76,7 +76,7 @@ struct RangeView: View {
         .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.l, style: .continuous))
     }
 
-    private var paused: Bool { session.showingLevels || !live }
+    private var paused: Bool { !session.inView || !live }
 
     /// Full frame rate while the bow is drawn or an arrow flies; half otherwise (the flag and
     /// drifting seeds don't need more), which saves battery on a long ride.
@@ -185,13 +185,14 @@ struct WindGauge: View {
 
     var body: some View {
         let strength = min(1, abs(speed) / 5)
-        let calm = abs(speed) < 0.05
+        let reading = Wind.reading(speed)
+        let calm = reading == 0
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
                 Image(systemName: "wind")
                 Image(systemName: speed >= 0 ? "arrow.right" : "arrow.left")
                     .opacity(calm ? 0 : 1)
-                Text(calm ? "Calm" : String(format: "%.1f m/s", abs(speed)))
+                Text(calm ? "Calm" : String(format: "%.1f m/s", abs(reading)))
                     .monospacedDigit()
             }
             .font(Typography.label)
@@ -244,7 +245,7 @@ struct TimerChip: View {
     var body: some View {
         let whole = Int(seconds.rounded(.up))
         let urgent = running && seconds <= 5
-        HUDChip(systemImage: running ? "stopwatch.fill" : "stopwatch", text: String(format: "%d:%02d", whole / 60, whole % 60),
+        HUDChip(systemImage: running ? "stopwatch.fill" : "stopwatch", text: Format.clock(TimeInterval(whole)),
                 tint: urgent ? Color(hex: 0xFF8A7A) : .white)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Time left")

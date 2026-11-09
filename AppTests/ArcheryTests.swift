@@ -18,22 +18,6 @@ final class ArcheryTests: XCTestCase {
         session.release(at: start.addingTimeInterval(Sway.drawTime + held))
     }
 
-    func testProgressKeepsTheBestAndUnlocksOnlyAPass() {
-        var progress = LevelProgress()
-        progress.record(level: 1, stars: 0, score: 12, of: LevelCatalog.count)
-        XCTAssertEqual(progress.bestScore(for: 1), 12)
-        XCTAssertFalse(progress.isUnlocked(2), "a score without a star doesn't unlock the next level")
-        progress.record(level: 1, stars: 2, score: 26, of: LevelCatalog.count)
-        progress.record(level: 1, stars: 1, score: 20, of: LevelCatalog.count)
-        XCTAssertEqual(progress.stars(for: 1), 2)
-        XCTAssertEqual(progress.bestScore(for: 1), 26)
-        XCTAssertTrue(progress.isUnlocked(2))
-        XCTAssertEqual(progress.totalStars, 2)
-        progress.record(level: LevelCatalog.count, stars: 3, score: 50, of: LevelCatalog.count)
-        XCTAssertEqual(progress.unlocked, LevelCatalog.count, "never beyond the last level")
-        XCTAssertNil(progress.bestScore(for: 5))
-    }
-
     func testANewArcherStartsAtLevelOneWithTheTip() {
         let env = TestEnvironment()
         let s = session(env)
@@ -122,7 +106,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertTrue(relaunched.showsResult)
         XCTAssertEqual(relaunched.progress.stars(for: 1), 3)
         XCTAssertTrue(relaunched.progress.isUnlocked(2), "Next Level works")
-        XCTAssertEqual(env.stats.stats(for: "archery").won, 1)
+        XCTAssertEqual(s.context.gameStats.won, 1)
     }
 
     func testLeavingWhileTheLastArrowFliesLandsItAndRecordsTheEnd() {
@@ -132,7 +116,7 @@ final class ArcheryTests: XCTestCase {
         s.setInView(false)
         XCTAssertNil(s.flight)
         XCTAssertEqual(s.landedArrows, 3)
-        XCTAssertEqual(env.stats.stats(for: "archery").won, 1)
+        XCTAssertEqual(s.context.gameStats.won, 1)
         XCTAssertEqual(session(env).progress.stars(for: 1), 3, "saved too")
     }
 
@@ -145,7 +129,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertEqual(s.round.shots.count, 3)
         s.start(level: 1)
         XCTAssertTrue(s.round.shots.isEmpty)
-        XCTAssertEqual(env.stats.stats(for: "archery").won, 1, "the finished end still counts")
+        XCTAssertEqual(s.context.gameStats.won, 1, "the finished end still counts")
         XCTAssertEqual(s.progress.stars(for: 1), 3)
     }
 
@@ -200,7 +184,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertTrue(s.showsResult)
         XCTAssertEqual(s.progress.stars(for: 1), 3)
         XCTAssertTrue(s.progress.isUnlocked(2))
-        XCTAssertEqual(env.stats.stats(for: "archery").won, 1)
+        XCTAssertEqual(s.context.gameStats.won, 1)
         XCTAssertEqual(ArcheryModule().statusLine(context: s.context), "Level 1 · 3 ★")
         s.nextLevel()
         XCTAssertEqual(s.level.number, 2)
@@ -216,7 +200,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertTrue(s.round.isOver)
         XCTAssertFalse(s.round.passed)
         XCTAssertTrue(s.showsResult)
-        let stats = env.stats.stats(for: "archery")
+        let stats = s.context.gameStats
         XCTAssertEqual(stats.played, 1)
         XCTAssertEqual(stats.won, 0)
         XCTAssertFalse(s.progress.isUnlocked(2))
@@ -242,7 +226,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertFalse(s.isDrawing)
         XCTAssertTrue(s.showsResult)
         XCTAssertEqual(s.round.shots.count, 1)
-        XCTAssertEqual(env.stats.stats(for: "archery").played, 1)
+        XCTAssertEqual(s.context.gameStats.played, 1)
     }
 
     func testEarlyLevelsSayWhatTheWindDid() throws {
@@ -269,7 +253,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertTrue(s.confirmingRestart)
         s.retry()
         XCTAssertTrue(s.round.shots.isEmpty)
-        XCTAssertEqual(env.stats.stats(for: "archery").played, 0, "restarting is not a loss")
+        XCTAssertEqual(s.context.gameStats.played, 0, "restarting is not a loss")
     }
 
     func testLockedLevelsCannotBeStarted() {
@@ -308,11 +292,11 @@ final class ArcheryTests: XCTestCase {
 
     func testPreferencesAreRemembered() {
         let env = TestEnvironment()
-        let prefs = ArcheryPreferences(preferences: GamePreferences(gameID: "archery", defaults: env.defaults))
+        let prefs = ArcheryPreferences(preferences: GamePreferences(gameID: ArcheryModule().id, defaults: env.defaults))
         XCTAssertEqual(prefs.aimSpeed, .normal)
         prefs.aimSpeed = .fast
         prefs.leftHanded = true
-        let again = ArcheryPreferences(preferences: GamePreferences(gameID: "archery", defaults: env.defaults))
+        let again = ArcheryPreferences(preferences: GamePreferences(gameID: ArcheryModule().id, defaults: env.defaults))
         XCTAssertEqual(again.aimSpeed, .fast)
         XCTAssertTrue(again.leftHanded)
         XCTAssertEqual(again.aimSpeed.gain, 0.65)

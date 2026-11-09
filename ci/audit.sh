@@ -4,8 +4,12 @@
 cd "$(dirname "$0")/.."
 source ci/lib.sh
 status=0
-# Every Swift file in the repository, wherever it lives.
+# Every Swift file in the repository, wherever it lives. Git lists them, so this needs a checkout.
 swift_files() { git ls-files -z -- "$@"; }
+if [ -z "$(git ls-files -- '*.swift')" ]; then
+  echo "audit: git lists no Swift files here, so there is nothing to check"
+  exit 1
+fi
 
 echo "Networking APIs in Swift sources:"
 PATTERN='URLSession|URLRequest|NSURLConnection|URLSessionWebSocket|import Network\b|NWConnection|NWListener|NWPathMonitor|CFNetwork|CFSocket|CFStream|NSStream|InputStream\(url|OutputStream\(url|import WebKit|WKWebView|SFSafariViewController|import SafariServices|import MultipeerConnectivity|import CloudKit|import GameKit|import StoreKit|import AdSupport|import AppTrackingTransparency|ASIdentifierManager|https?://|socket\(|getaddrinfo|Data\(contentsOf: *URL\(string'

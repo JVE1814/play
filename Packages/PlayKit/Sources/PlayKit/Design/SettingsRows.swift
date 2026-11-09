@@ -2,12 +2,10 @@ import SwiftUI
 
 public struct SettingsPanel<Content: View>: View {
     let title: String
-    let footer: String?
     let content: Content
 
-    public init(_ title: String, footer: String? = nil, @ViewBuilder content: () -> Content) {
+    public init(_ title: String, @ViewBuilder content: () -> Content) {
         self.title = title
-        self.footer = footer
         self.content = content()
     }
 
@@ -24,12 +22,6 @@ public struct SettingsPanel<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, Theme.Space.xs)
             .background(RoundedRectangle(cornerRadius: Theme.Radius.l, style: .continuous).fill(Theme.surface))
-            if let footer {
-                Text(footer)
-                    .font(Typography.caption)
-                    .foregroundStyle(Theme.inkSecondary)
-                    .padding(.horizontal, Theme.Space.l)
-            }
         }
     }
 }

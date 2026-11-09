@@ -4,6 +4,7 @@ import SwiftUI
 /// Lists every registered game. It knows nothing about any particular game.
 struct HomeView: View {
     @EnvironmentObject private var model: AppModel
+    /// Not read here: observing it redraws the tiles' status lines when statistics change.
     @EnvironmentObject private var stats: StatsStore
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 

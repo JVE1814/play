@@ -33,16 +33,42 @@ final class PlayKitTests: XCTestCase {
         XCTAssertEqual(StatsStore(storage: env.storage).stats(for: "a"), GameStats())
     }
 
-    func testSaveSlotRoundTripAndClear() {
+    func testEachGameHasItsOwnSaveSlot() {
         struct Sample: Codable, Equatable { var value: Int }
         let env = TestEnvironment()
         let slot = SaveSlot(storage: env.storage, gameID: "sample")
-        XCTAssertFalse(slot.exists)
+        XCTAssertNil(slot.load(Sample.self))
         slot.save(Sample(value: 7))
         XCTAssertEqual(SaveSlot(storage: env.storage, gameID: "sample").load(Sample.self), Sample(value: 7))
         XCTAssertNil(SaveSlot(storage: env.storage, gameID: "other").load(Sample.self))
-        slot.clear()
-        XCTAssertFalse(slot.exists)
+    }
+
+    func testLevelProgressKeepsTheBestAndUnlocksTheNextLevelOnAStar() {
+        var progress = LevelProgress()
+        XCTAssertTrue(progress.isUnlocked(1))
+        XCTAssertFalse(progress.isUnlocked(2))
+        progress.record(level: 1, stars: 0, score: 12, of: 30)
+        XCTAssertEqual(progress.bestScore(for: 1), 12)
+        XCTAssertFalse(progress.isUnlocked(2), "a score without a star doesn't unlock the next level")
+        progress.record(level: 1, stars: 2, score: 26, of: 30)
+        progress.record(level: 1, stars: 1, score: 20, of: 30)
+        XCTAssertEqual(progress.stars(for: 1), 2, "the best result is kept")
+        XCTAssertEqual(progress.bestScore(for: 1), 26)
+        XCTAssertEqual(progress.unlocked, 2)
+        progress.record(level: 2, stars: 3, of: 30)
+        XCTAssertEqual(progress.totalStars, 5)
+        XCTAssertNil(progress.bestScore(for: 2), "a game that keeps no scores has none")
+        progress.record(level: 30, stars: 3, of: 30)
+        XCTAssertEqual(progress.unlocked, 30, "never beyond the last level")
+    }
+
+    /// Saves written before level progress was shared have no best scores.
+    func testLevelProgressReadsASaveWithoutBestScores() throws {
+        let old = Data(#"{"unlocked":3,"stars":[3,1]}"#.utf8)
+        let progress = try JSONDecoder().decode(LevelProgress.self, from: old)
+        XCTAssertEqual(progress.unlocked, 3)
+        XCTAssertEqual(progress.stars(for: 2), 1)
+        XCTAssertNil(progress.bestScore(for: 1))
     }
 
     func testOpenGameIsRemembered() {
@@ -57,7 +83,7 @@ final class PlayKitTests: XCTestCase {
         env.stats.recordLoss(gameID: "a")
         SaveSlot(storage: env.storage, gameID: "a").save(1)
         env.storage.wipe()
-        XCTAssertFalse(SaveSlot(storage: env.storage, gameID: "a").exists)
+        XCTAssertNil(SaveSlot(storage: env.storage, gameID: "a").load(Int.self))
         XCTAssertEqual(StatsStore(storage: env.storage).stats(for: "a"), GameStats())
     }
 

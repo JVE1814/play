@@ -107,7 +107,6 @@ public struct TargetLayout: Hashable, Codable, Sendable {
         let half = bossSize / 2
         let inBoss = abs(point.x) <= half && abs(point.y) <= half
         guard inBoss else { return Hit(point: point, ring: 0, isX: false, spot: nil, inBoss: false, repeatSpot: false) }
-        // The best-scoring spot the arrow touches.
         var best: (index: Int, ring: Int, isX: Bool)?
         for (index, spot) in spots.enumerated() {
             let result = spot.face.score(distance: point.distance(to: spot.center))

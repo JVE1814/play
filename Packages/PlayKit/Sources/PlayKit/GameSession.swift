@@ -8,12 +8,16 @@ public protocol GameSession: ObservableObject {
     var signature: String { get }
     /// The result panel is up.
     var showsResult: Bool { get }
+    /// The session is showing something of its own over the table, which counts as out of view.
+    var coversTable: Bool { get }
     /// The game came into view, or left it: the home screen, the background, or something
     /// covering it. Clocks run only while in view. May be called again with the same value.
     func setInView(_ inView: Bool)
 }
 
 extension GameSession {
+    public var coversTable: Bool { false }
+
     /// Back to the home screen. The session hears it has left view first, so what it saves is
     /// there for the home screen's tile.
     public func leave() {

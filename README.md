@@ -26,7 +26,7 @@ a train. It has three games: **Solitaire** (Klondike), **Bubbles**, a bubble sho
 | `Games/Archery/` | The Archery game module (SwiftUI): the range drawn in a Canvas, drawing and aiming, the target camera, levels by venue. |
 | `Games/TestGame/` | A tiny debug-only game: the smallest example of one, and proof that adding a game needs no home screen changes. |
 | `AppTests/`, `UITests/` | Unit tests and UI tests (including screenshot capture). |
-| `ci/` | `run.sh` (the CI pipeline), `engine_tests.sh` (the rules engines' tests), `audit.sh` (no networking or third-party code), `release.sh` (archive and upload). |
+| `ci/` | `run.sh` (the CI pipeline), `engine_tests.sh` (the rules engines' tests), `audit.sh` (no networking or third-party code), `lib.sh` (what those share, including how the engines are found), `release.sh` (archive and upload). |
 | `docs/` | Decisions, release steps, App Store listing, privacy policy and screenshots. |
 | `tools/` | Scripts that draw the icon, synthesize the sounds and fetch the App Store screenshots from CI. |
 

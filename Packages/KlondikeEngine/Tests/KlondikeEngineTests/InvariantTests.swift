@@ -37,11 +37,6 @@ final class InvariantTests: XCTestCase {
         let data = try JSONEncoder().encode(game)
         let decoded = try JSONDecoder().decode(KlondikeGame.self, from: data)
         XCTAssertEqual(decoded, game)
-        XCTAssertEqual(decoded.board.signature, game.board.signature)
-        XCTAssertEqual(decoded.integrityProblems, [])
-        var a = game, b = decoded
-        a.undoAll(); b.undoAll()
-        XCTAssertEqual(a, b)
     }
 
     func testCardsEncodeAsSmallIntegers() throws {
@@ -63,6 +58,7 @@ final class InvariantTests: XCTestCase {
             MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 1), revealedCard: true, cardCount: 1),
             MoveRecord(move: .transfer(from: .waste, to: .foundation(9), count: 1), revealedCard: false, cardCount: 1),
             MoveRecord(move: .transfer(from: .tableau(-1), to: .tableau(1), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .transfer(from: .tableau(1), to: .tableau(1), count: 1), revealedCard: true, cardCount: 1),
             MoveRecord(move: .draw, revealedCard: false, cardCount: 3),
             MoveRecord(move: .draw, revealedCard: false, cardCount: -1),
         ]

@@ -25,8 +25,6 @@ public final class ArcherySession: ObservableObject, LevelSession {
         public let start: Date
         /// Seconds until the arrow reaches the target.
         public let arrival: TimeInterval
-        /// Seconds it stays in the air: an arrow that misses the boss carries on past it.
-        public let duration: TimeInterval
     }
 
     /// The arrow that landed last, for the score that pops up beside it.
@@ -58,7 +56,8 @@ public final class ArcherySession: ObservableObject, LevelSession {
     private var resultRecorded: Bool
     /// Time spent on this attempt, for statistics: from the first draw to the end.
     private var playClock: PlayClock
-    private var inView = false
+    /// The range is on screen with nothing over it: the clocks run and the range is redrawn.
+    @Published public private(set) var inView = false
     /// The display clock when it was paused after the last arrow, so a moving target carries
     /// on from where it was rather than jumping back to the moment the end finished.
     private var heldClock: Double?
@@ -181,7 +180,7 @@ public final class ArcherySession: ObservableObject, LevelSession {
     /// Out of view (the home screen, the background, Settings or the level list over the game),
     /// the bow comes down, an arrow in the air lands at once and the clocks stop.
     public func setInView(_ inView: Bool) {
-        self.inView = inView
+        if self.inView != inView { self.inView = inView }
         if !inView {
             cancelDraw()
             settleFlight(at: Date())
@@ -267,9 +266,9 @@ public final class ArcherySession: ObservableObject, LevelSession {
         }
         // A moving target is shown exactly where the engine says it is when the arrow arrives.
         let arrival = round.level.motion.isMoving ? path.duration : max(0.24, path.duration)
-        let duration = shot.hit.inBoss ? arrival : arrival * 1.25
-        flight = Flight(shot: shot, arrow: index, path: path, start: now, arrival: arrival, duration: duration)
-        flightEnd.schedule(after: duration) { [weak self] in self?.land(shot, arrow: index, at: Date()) }
+        flight = Flight(shot: shot, arrow: index, path: path, start: now, arrival: arrival)
+        // An arrow that misses the boss carries on past it for a moment.
+        flightEnd.schedule(after: shot.hit.inBoss ? arrival : arrival * 1.25) { [weak self] in self?.land(shot, arrow: index, at: Date()) }
     }
 
     private func land(_ shot: Shot, arrow: Int, at now: Date, quietly: Bool = false) {
@@ -378,16 +377,17 @@ public final class ArcherySession: ObservableObject, LevelSession {
         return pieces.isEmpty ? "Sight on the centre." : "Sight " + pieces.joined(separator: " and ") + "."
     }
 
+    /// The wind as VoiceOver says it: "2.4 metres per second from the left", or "calm".
     static func spokenWind(_ speed: Double) -> String {
-        let text = Wind.describe(speed)
-        return text == "Calm" ? "calm" : text.replacingOccurrences(of: "m/s", with: "metres per second")
+        let reading = Wind.reading(speed)
+        guard reading != 0 else { return "calm" }
+        return String(format: "%.1f metres per second from the %@", abs(reading), reading > 0 ? "left" : "right")
     }
 
     // MARK: Levels
 
     /// Leaving a level unfinished is not a loss.
-    public func start(level number: Int) {
-        guard progress.isUnlocked(number) else { return }
+    public func beginAttempt(at number: Int) {
         // An end that is already decided (its last arrow still in the air) is recorded first.
         settleFlight(at: Date())
         resultReveal.cancel()
@@ -403,8 +403,6 @@ public final class ArcherySession: ObservableObject, LevelSession {
         playClock = PlayClock()
         resultRecorded = false
         showsResult = false
-        confirmingRestart = false
-        showingLevels = false
         showingTip = true
         notice = nil
         heldClock = nil

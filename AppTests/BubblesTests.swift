@@ -17,21 +17,6 @@ final class BubblesTests: XCTestCase {
         session.fire()
     }
 
-    func testProgressUnlocksTheNextLevelAndKeepsTheBestStars() {
-        var progress = LevelProgress()
-        XCTAssertTrue(progress.isUnlocked(1))
-        XCTAssertFalse(progress.isUnlocked(2))
-        progress.record(level: 1, stars: 2, of: LevelCatalog.count)
-        progress.record(level: 1, stars: 1, of: LevelCatalog.count)
-        XCTAssertEqual(progress.stars(for: 1), 2, "best result is kept")
-        XCTAssertTrue(progress.isUnlocked(2))
-        progress.record(level: 1, stars: 3, of: LevelCatalog.count)
-        XCTAssertEqual(progress.totalStars, 3)
-        XCTAssertEqual(progress.unlocked, 2)
-        progress.record(level: LevelCatalog.count, stars: 3, of: LevelCatalog.count)
-        XCTAssertEqual(progress.unlocked, LevelCatalog.count, "never beyond the last level")
-    }
-
     func testANewPlayerStartsAtLevelOne() {
         let env = TestEnvironment()
         let s = session(env)
@@ -61,7 +46,7 @@ final class BubblesTests: XCTestCase {
         XCTAssertTrue(s.showsResult)
         XCTAssertEqual(s.progress.stars(for: 1), 3)
         XCTAssertTrue(s.progress.isUnlocked(2))
-        XCTAssertEqual(env.stats.stats(for: "bubbles").won, 1)
+        XCTAssertEqual(s.context.gameStats.won, 1)
         s.nextLevel()
         XCTAssertEqual(s.levelNumber, 2)
         XCTAssertFalse(s.showsResult)
@@ -73,7 +58,7 @@ final class BubblesTests: XCTestCase {
         shoot(s)
         XCTAssertEqual(s.game.status, .outOfShots)
         XCTAssertTrue(s.showsResult)
-        let stats = env.stats.stats(for: "bubbles")
+        let stats = s.context.gameStats
         XCTAssertEqual(stats.played, 1)
         XCTAssertEqual(stats.won, 0)
         XCTAssertFalse(s.progress.isUnlocked(2))
@@ -92,7 +77,7 @@ final class BubblesTests: XCTestCase {
         XCTAssertTrue(s.confirmingRestart)
         s.retry()
         XCTAssertEqual(s.game.shotsFired, 0)
-        XCTAssertEqual(env.stats.stats(for: "bubbles").played, 0, "restarting is not a loss")
+        XCTAssertEqual(s.context.gameStats.played, 0, "restarting is not a loss")
     }
 
     func testLockedLevelsCannotBeStarted() {

@@ -13,9 +13,8 @@ struct ArcheryScreen: View {
     }
 
     var body: some View {
-        GameScreen(session: session, obscured: session.showingLevels) {
-            Readout("Level", value: "\(session.levelNumber)",
-                    spokenValue: "\(session.levelNumber) of \(LevelCatalog.count)", identifier: "archeryLevel")
+        GameScreen(session: session) {
+            LevelReadout(session, identifier: "archeryLevel")
             Readout("Score", value: "\(session.displayedScore)", identifier: "archeryScore")
             Readout(Format.plural(session.displayedArrowsLeft, "Arrow"), value: "\(session.displayedArrowsLeft)",
                     label: "Arrows left", identifier: "arrowsLeft")
@@ -34,7 +33,7 @@ struct ArcheryScreen: View {
             ArcheryResult(session: session)
         }
         .levelChrome(session, restartMessage: "Your arrows so far won't count.") {
-            ArcheryLevelList(session: session)
+            ArcheryLevels(session: session)
         }
     }
 }
@@ -92,12 +91,7 @@ struct ArcheryResult: View {
                 StatValue("X count", value: "\(round.xCount)")
                 StatValue("Best", value: "\(session.progress.bestScore(for: round.level.number) ?? round.score)")
             }
-            if let message {
-                Text(message)
-                    .font(Typography.body)
-                    .foregroundStyle(Theme.inkSecondary)
-                    .multilineTextAlignment(.center)
-            }
+            if let message { ResultMessage(message) }
             LevelResultButtons(session, passed: round.passed, replayTitle: "Shoot Again")
         }
     }
@@ -105,24 +99,21 @@ struct ArcheryResult: View {
 
 /// Every level by venue, with stars and best scores. Passed and current levels can be shot;
 /// the rest unlock one by one.
-struct ArcheryLevelList: View {
+struct ArcheryLevels: View {
     @ObservedObject var session: ArcherySession
 
     var body: some View {
         let progress = session.progress
-        LevelsSheet(session) {
-            ForEach(Chapter.allCases) { chapter in
-                VStack(alignment: .leading, spacing: Theme.Space.s) {
-                    ChapterHeader(chapter: chapter)
-                    ForEach(LevelCatalog.all.filter { $0.chapter == chapter }) { level in
-                        let current = level.number == session.levelNumber
-                        LevelRow(level: level, unlocked: progress.isUnlocked(level.number),
-                                 stars: progress.stars(for: level.number),
-                                 best: progress.bestScore(for: level.number), current: current,
-                                 spokenState: progress.spokenState(of: level.number, isCurrent: current)) {
-                            session.start(level: level.number)
-                        }
-                        .id(level.number)
+        ForEach(Chapter.allCases) { chapter in
+            VStack(alignment: .leading, spacing: Theme.Space.s) {
+                ChapterHeader(chapter: chapter)
+                ForEach(LevelCatalog.all.filter { $0.chapter == chapter }) { level in
+                    let unlocked = progress.isUnlocked(level.number)
+                    LevelButton(session, level: level.number, name: "Level \(level.number), \(level.name)",
+                                hint: unlocked ? level.summary : "Pass the level before it to unlock.") {
+                        LevelRow(level: level, unlocked: unlocked, stars: progress.stars(for: level.number),
+                                 best: progress.bestScore(for: level.number),
+                                 current: level.number == session.levelNumber)
                     }
                 }
             }
@@ -163,62 +154,50 @@ struct LevelRow: View {
     let stars: Int
     let best: Int?
     let current: Bool
-    let spokenState: String
-    let action: () -> Void
     @Environment(\.accent) private var accent
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: Theme.Space.m) {
-                ZStack {
-                    Circle().fill(current ? accent.fill : (unlocked ? Theme.hairline : Theme.hairline.opacity(0.5)))
-                    if unlocked {
-                        Text("\(level.number)")
-                            .font(Typography.headline)
+        HStack(spacing: Theme.Space.m) {
+            ZStack {
+                Circle().fill(current ? accent.fill : (unlocked ? Theme.hairline : Theme.hairline.opacity(0.5)))
+                if unlocked {
+                    Text("\(level.number)")
+                        .font(Typography.headline)
+                        .monospacedDigit()
+                        .foregroundStyle(current ? accent.onFill : Theme.ink)
+                } else {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Theme.inkSecondary)
+                }
+            }
+            .frame(width: 40, height: 40)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(level.name)
+                    .font(Typography.headline)
+                    .foregroundStyle(unlocked ? Theme.ink : Theme.inkSecondary)
+                Text(level.summary)
+                    .font(Typography.caption)
+                    .foregroundStyle(Theme.inkSecondary)
+            }
+            Spacer(minLength: Theme.Space.s)
+            if unlocked {
+                VStack(alignment: .trailing, spacing: 3) {
+                    StarRow(stars: stars, size: 14)
+                    if let best {
+                        Text("Best \(best)")
+                            .font(Typography.caption)
                             .monospacedDigit()
-                            .foregroundStyle(current ? accent.onFill : Theme.ink)
-                    } else {
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(Theme.inkSecondary)
                     }
                 }
-                .frame(width: 40, height: 40)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(level.name)
-                        .font(Typography.headline)
-                        .foregroundStyle(unlocked ? Theme.ink : Theme.inkSecondary)
-                    Text(level.summary)
-                        .font(Typography.caption)
-                        .foregroundStyle(Theme.inkSecondary)
-                }
-                Spacer(minLength: Theme.Space.s)
-                if unlocked {
-                    VStack(alignment: .trailing, spacing: 3) {
-                        StarRow(stars: stars, size: 14)
-                        if let best {
-                            Text("Best \(best)")
-                                .font(Typography.caption)
-                                .monospacedDigit()
-                                .foregroundStyle(Theme.inkSecondary)
-                        }
-                    }
-                }
             }
-            .padding(Theme.Space.m)
-            .frame(minHeight: Theme.minTouchTarget + 12)
-            .background(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous).fill(Theme.surface))
-            .overlay(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous)
-                .strokeBorder(current ? accent.fill : Color.clear, lineWidth: 2))
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .disabled(!unlocked)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Level \(level.number), \(level.name)")
-        .accessibilityValue(spokenState)
-        .accessibilityHint(unlocked ? level.summary : "Pass the level before it to unlock.")
-        .accessibilityAddTraits(.isButton)
-        .accessibilityIdentifier("level-\(level.number)")
+        .padding(Theme.Space.m)
+        .frame(minHeight: Theme.minTouchTarget + 12)
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous).fill(Theme.surface))
+        .overlay(RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous)
+            .strokeBorder(current ? accent.fill : Color.clear, lineWidth: 2))
+        .contentShape(Rectangle())
     }
 }

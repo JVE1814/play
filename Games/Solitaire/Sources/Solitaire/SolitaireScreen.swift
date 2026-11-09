@@ -15,7 +15,7 @@ struct SolitaireScreen: View {
     }
 
     var body: some View {
-        let animate = !reduceMotion && !session.context.options.disableAnimations
+        let animate = session.context.animates(reduceMotion: reduceMotion)
         GameScreen(session: session) {
             Readout("Moves", value: "\(session.game.moveCount)", identifier: "moves")
             TimelineView(.periodic(from: Date(), by: 1)) { timeline in

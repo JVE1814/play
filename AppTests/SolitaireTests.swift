@@ -26,7 +26,6 @@ final class SolitaireTests: XCTestCase {
         // A brand-new session on the same storage is what the app sees after a force quit.
         let relaunched = session(env, [])
         XCTAssertEqual(relaunched.game, first.game)
-        XCTAssertEqual(relaunched.signature, first.signature)
     }
 
     func testTapPlaysTheBestMove() {
@@ -71,12 +70,12 @@ final class SolitaireTests: XCTestCase {
         let s = session(env)
         s.requestNewGame()
         XCTAssertFalse(s.confirmingNewGame, "nothing played yet, no confirmation needed")
-        XCTAssertEqual(env.stats.stats(for: "klondike").played, 0)
+        XCTAssertEqual(s.context.gameStats.played, 0)
         s.tapPile(.stock)
         s.requestNewGame()
         XCTAssertTrue(s.confirmingNewGame)
         s.startNewGame()
-        let stats = env.stats.stats(for: "klondike")
+        let stats = s.context.gameStats
         XCTAssertEqual(stats.played, 1)
         XCTAssertEqual(stats.won, 0)
         XCTAssertEqual(s.game.moveCount, 0)
@@ -94,12 +93,12 @@ final class SolitaireTests: XCTestCase {
         XCTAssertTrue(s.game.isWon)
         XCTAssertTrue(s.showsResult)
         XCTAssertFalse(s.canUndo, "a won game is final")
-        var stats = env.stats.stats(for: "klondike")
+        var stats = s.context.gameStats
         XCTAssertEqual(stats.won, 1)
         XCTAssertEqual(stats.currentStreak, 1)
         XCTAssertNotNil(stats.bestTime)
         s.startNewGame()
-        stats = env.stats.stats(for: "klondike")
+        stats = s.context.gameStats
         XCTAssertEqual(stats.played, 1, "starting a new deal after a win is not a loss")
         XCTAssertFalse(s.showsResult)
     }
@@ -170,8 +169,7 @@ final class SolitaireTests: XCTestCase {
         let offsets = layout.offsets(hidden: 6, visible: 13)
         let bottom = layout.tableauTop + layout.card.height + 6 * offsets.down + 12 * offsets.up
         XCTAssertLessThanOrEqual(bottom, layout.tableauBottom + 0.5)
-        let typical = layout.offsets(hidden: 3, visible: 5)
-        XCTAssertGreaterThanOrEqual(typical.up, layout.card.height * 0.3, "rank and suit always visible")
+        XCTAssertGreaterThanOrEqual(offsets.up, layout.card.height * 0.31, "rank and suit stay visible in the longest column")
         let game = KlondikeGame(seed: 1)
         for placement in layout.placements(for: game) {
             XCTAssertTrue(CGRect(origin: .zero, size: layout.size).insetBy(dx: -1, dy: -1)

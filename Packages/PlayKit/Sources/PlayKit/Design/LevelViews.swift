@@ -1,10 +1,8 @@
 import SwiftUI
 
 /// A five-pointed star.
-public struct StarShape: Shape {
-    public init() {}
-
-    public func path(in rect: CGRect) -> Path {
+struct StarShape: Shape {
+    func path(in rect: CGRect) -> Path {
         var path = Path()
         let c = CGPoint(x: rect.midX, y: rect.midY + rect.height * 0.04)
         let outer = min(rect.width, rect.height) / 2
@@ -52,6 +50,22 @@ public struct ResultStars: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("\(stars) of \(LevelProgress.maxStars) stars")
             .accessibilityIdentifier("resultStars")
+    }
+}
+
+/// The level number in the top bar.
+public struct LevelReadout<Session: LevelSession>: View {
+    @ObservedObject var session: Session
+    let identifier: String
+
+    public init(_ session: Session, identifier: String) {
+        self.session = session
+        self.identifier = identifier
+    }
+
+    public var body: some View {
+        Readout("Level", value: "\(session.levelNumber)",
+                spokenValue: "\(session.levelNumber) of \(session.levelCount.formatted())", identifier: identifier)
     }
 }
 
@@ -120,18 +134,53 @@ public struct LevelResultButtons<Session: LevelSession>: View {
     }
 }
 
-/// The level list's sheet: a summary of the stars, then the game's own rows. It opens scrolled
-/// to the current level, so each row must carry its level number as its `id`.
-public struct LevelsSheet<Session: LevelSession, Rows: View>: View {
+/// One level in the list, which starts that level when it is unlocked. The game supplies its
+/// looks.
+public struct LevelButton<Session: LevelSession, Label: View>: View {
     @ObservedObject var session: Session
-    let rows: Rows
+    let level: Int
+    let name: String
+    let hint: String
+    let label: Label
 
-    public init(_ session: Session, @ViewBuilder rows: () -> Rows) {
+    /// - Parameters:
+    ///   - name: what VoiceOver calls the level, such as "Level 4, Crosswind".
+    ///   - hint: anything VoiceOver should add about it.
+    public init(_ session: Session, level: Int, name: String, hint: String = "", @ViewBuilder label: () -> Label) {
         self.session = session
-        self.rows = rows()
+        self.level = level
+        self.name = name
+        self.hint = hint
+        self.label = label()
     }
 
     public var body: some View {
+        let progress = session.progress
+        Button {
+            session.start(level: level)
+        } label: {
+            label
+        }
+        .buttonStyle(.plain)
+        .disabled(!progress.isUnlocked(level))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(name)
+        .accessibilityValue(progress.spokenState(of: level, isCurrent: level == session.levelNumber))
+        .accessibilityHint(hint)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier("level-\(level)")
+        // The list scrolls to the current level by this.
+        .id(level)
+    }
+}
+
+/// The level list's sheet: a summary of the stars, then the game's `LevelButton`s. It opens
+/// scrolled to the current level.
+private struct LevelsSheet<Session: LevelSession, Rows: View>: View {
+    @ObservedObject var session: Session
+    let rows: Rows
+
+    var body: some View {
         SheetPage("Levels") {
             ScrollViewReader { proxy in
                 ScrollView {
@@ -151,15 +200,15 @@ public struct LevelsSheet<Session: LevelSession, Rows: View>: View {
     }
 }
 
-private struct LevelChrome<Session: LevelSession, Levels: View>: ViewModifier {
+private struct LevelChrome<Session: LevelSession, Rows: View>: ViewModifier {
     @ObservedObject var session: Session
     let restartMessage: String
-    let levels: () -> Levels
+    let rows: () -> Rows
 
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: Binding(get: { session.showingLevels }, set: { session.showingLevels = $0 })) {
-                levels()
+                LevelsSheet(session: session, rows: rows())
             }
             .confirmation("Restart this level?",
                           isPresented: Binding(get: { session.confirmingRestart }, set: { session.confirmingRestart = $0 }),
@@ -170,11 +219,11 @@ private struct LevelChrome<Session: LevelSession, Levels: View>: ViewModifier {
 }
 
 extension View {
-    /// Attaches what a levelled game shows over its screen: the level list and the question
-    /// asked before a restart throws shots away.
-    public func levelChrome<Session: LevelSession, Levels: View>(
-        _ session: Session, restartMessage: String, @ViewBuilder levels: @escaping () -> Levels
+    /// Attaches what a levelled game shows over its screen: the level list, made of the
+    /// game's `LevelButton`s, and the question asked before a restart throws shots away.
+    public func levelChrome<Session: LevelSession, Rows: View>(
+        _ session: Session, restartMessage: String, @ViewBuilder levels: @escaping () -> Rows
     ) -> some View {
-        modifier(LevelChrome(session: session, restartMessage: restartMessage, levels: levels))
+        modifier(LevelChrome(session: session, restartMessage: restartMessage, rows: levels))
     }
 }

@@ -25,9 +25,10 @@ public enum Appearance: String, CaseIterable, Codable, Sendable, Identifiable {
 /// Sound is off and light haptics are on by default.
 @MainActor
 public final class AppSettings: ObservableObject {
-    public static let soundKey = "settings.sound"
-    public static let hapticsKey = "settings.haptics"
-    public static let appearanceKey = "settings.appearance"
+    private static let prefix = "settings."
+    private static let soundKey = prefix + "sound"
+    private static let hapticsKey = prefix + "haptics"
+    private static let appearanceKey = prefix + "appearance"
 
     private let defaults: UserDefaults
 
@@ -49,11 +50,20 @@ public final class AppSettings: ObservableObject {
         hapticsEnabled = defaults.object(forKey: Self.hapticsKey) as? Bool ?? true
         appearance = defaults.string(forKey: Self.appearanceKey).flatMap(Appearance.init(rawValue:)) ?? .system
     }
+
+    /// Forgets every setting and every game's preferences (for `-resetState`).
+    public static func eraseAll(in defaults: UserDefaults) {
+        for key in defaults.dictionaryRepresentation().keys
+        where key.hasPrefix(prefix) || key.hasPrefix(GamePreferences.prefix) {
+            defaults.removeObject(forKey: key)
+        }
+    }
 }
 
 /// Key–value preferences namespaced to one game (stored in UserDefaults).
 public struct GamePreferences {
-    public let gameID: String
+    static let prefix = "game."
+    private let gameID: String
     private let defaults: UserDefaults
 
     public init(gameID: String, defaults: UserDefaults) {
@@ -61,7 +71,7 @@ public struct GamePreferences {
         self.defaults = defaults
     }
 
-    private func key(_ name: String) -> String { "game.\(gameID).\(name)" }
+    private func key(_ name: String) -> String { "\(Self.prefix)\(gameID).\(name)" }
 
     public func bool(_ name: String, default fallback: Bool) -> Bool {
         defaults.object(forKey: key(name)) as? Bool ?? fallback

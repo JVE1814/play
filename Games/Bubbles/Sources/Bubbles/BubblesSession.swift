@@ -178,8 +178,7 @@ public final class BubblesSession: ObservableObject, LevelSession {
     // MARK: Levels
 
     /// Leaving a level unfinished is not a loss.
-    public func start(level: Int) {
-        guard progress.isUnlocked(level) else { return }
+    public func beginAttempt(at level: Int) {
         landing.cancel()
         effectsEnd.cancel()
         resultReveal.cancel()
@@ -192,8 +191,6 @@ public final class BubblesSession: ObservableObject, LevelSession {
         clock = PlayClock()
         resultRecorded = false
         showsResult = false
-        confirmingRestart = false
-        showingLevels = false
         commit()
         context.feedback.play(.draw)
         context.announce("Level \(level). \(Format.count(game.shotsLeft, "shot")).")

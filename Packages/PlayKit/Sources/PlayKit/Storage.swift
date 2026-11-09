@@ -3,7 +3,7 @@ import Foundation
 /// Small JSON files in Application Support. Every write is atomic, so a force quit can never
 /// leave a half-written save behind.
 public final class Storage {
-    public let root: URL
+    private let root: URL
 
     public init(root: URL) {
         self.root = root
@@ -16,12 +16,8 @@ public final class Storage {
         return base.appendingPathComponent("BetweenStops", isDirectory: true)
     }
 
-    public func url(for name: String) -> URL {
+    private func url(for name: String) -> URL {
         root.appendingPathComponent(name)
-    }
-
-    public func read(_ name: String) -> Data? {
-        try? Data(contentsOf: url(for: name))
     }
 
     private func write(_ data: Data, to name: String) {
@@ -30,12 +26,8 @@ public final class Storage {
         try? data.write(to: target, options: .atomic)
     }
 
-    public func remove(_ name: String) {
-        try? FileManager.default.removeItem(at: url(for: name))
-    }
-
     public func load<T: Decodable>(_ type: T.Type, from name: String) -> T? {
-        guard let data = read(name) else { return nil }
+        guard let data = try? Data(contentsOf: url(for: name)) else { return nil }
         return try? JSONDecoder().decode(type, from: data)
     }
 
@@ -61,18 +53,12 @@ public struct SaveSlot {
         self.name = "saves/\(gameID).json"
     }
 
-    public var exists: Bool { storage.read(name) != nil }
-
     public func load<T: Decodable>(_ type: T.Type) -> T? {
         storage.load(type, from: name)
     }
 
     public func save<T: Encodable>(_ value: T) {
         storage.store(value, to: name)
-    }
-
-    public func clear() {
-        storage.remove(name)
     }
 }
 

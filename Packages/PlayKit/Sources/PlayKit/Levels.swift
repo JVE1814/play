@@ -76,13 +76,23 @@ public protocol LevelSession: GameSession {
     var canRestart: Bool { get }
     var showingLevels: Bool { get set }
     var confirmingRestart: Bool { get set }
-    /// Starts a fresh attempt at `level`, if it is unlocked.
-    func start(level: Int)
+    /// Sets the game up for a fresh attempt at `level`, which is unlocked. Called by `start(level:)`.
+    func beginAttempt(at level: Int)
 }
 
 extension LevelSession {
     public var canRestart: Bool { true }
     public var hasNextLevel: Bool { levelNumber < levelCount }
+    public var coversTable: Bool { showingLevels }
+
+    /// Starts a fresh attempt at `level`, if it is unlocked, and puts away the level list and
+    /// the restart question.
+    public func start(level: Int) {
+        guard progress.isUnlocked(level) else { return }
+        beginAttempt(at: level)
+        showingLevels = false
+        confirmingRestart = false
+    }
 
     public func retry() { start(level: levelNumber) }
     public func nextLevel() { start(level: levelNumber + 1) }

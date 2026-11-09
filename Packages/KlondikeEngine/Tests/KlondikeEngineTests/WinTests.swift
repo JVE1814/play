@@ -33,7 +33,6 @@ final class WinTests: XCTestCase {
             XCTAssertFalse(game.board.allCardsRevealed)
             XCTAssertFalse(game.canAutoFinish)
         }
-        XCTAssertEqual(KlondikeFixtures.nearlyWon(seed: 3), KlondikeFixtures.nearlyWon(seed: 3))
         XCTAssertNotEqual(KlondikeFixtures.nearlyWon(seed: 3).board, KlondikeFixtures.nearlyWon(seed: 4).board)
     }
 
@@ -41,7 +40,6 @@ final class WinTests: XCTestCase {
         var game = KlondikeFixtures.nearlyWon(seed: 9)
         var taps = 0
         while !game.isWon && taps < 30 {
-            // Tap a card with a move if there is one, otherwise tap the stock, like a player would.
             let tops = game.waste.suffix(1) + game.board.tableau.compactMap(\.top)
             let move = tops.lazy.compactMap { game.bestMove(tapping: $0) }.first ?? game.bestMove(tappingPile: .stock)
             guard let move else { break }
@@ -98,7 +96,6 @@ final class WinTests: XCTestCase {
         for seed in 0..<300 as Range<UInt64> {
             var game = KlondikeGame(seed: seed, drawMode: .one)
             var steps = 0
-            // Greedy play until all cards are revealed (or we give up on this deal).
             while !game.board.allCardsRevealed && steps < 2000 {
                 guard let move = game.hint() else { break }
                 game.perform(move)

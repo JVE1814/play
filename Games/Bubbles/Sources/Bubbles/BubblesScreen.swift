@@ -14,9 +14,8 @@ struct BubblesScreen: View {
     var body: some View {
         let game = session.game
         let lowOnShots = game.shotsLeft <= 3 && game.status == .playing
-        GameScreen(session: session, obscured: session.showingLevels) {
-            Readout("Level", value: "\(game.levelNumber)",
-                    spokenValue: "\(game.levelNumber) of \(LevelCatalog.count.formatted())", identifier: "bubbleLevel")
+        GameScreen(session: session) {
+            LevelReadout(session, identifier: "bubbleLevel")
             Readout(Format.plural(game.shotsLeft, "Shot"), value: "\(game.shotsLeft)", label: "Shots left",
                     identifier: "shotsLeft")
                 .foregroundStyle(lowOnShots ? Theme.onHighlight : session.context.accent.onTable)
@@ -35,7 +34,7 @@ struct BubblesScreen: View {
             BubblesResult(session: session)
         }
         .levelChrome(session, restartMessage: "You'll start again with a fresh set of bubbles.") {
-            BubblesLevelList(session: session)
+            BubblesLevels(session: session)
         }
     }
 }
@@ -52,10 +51,7 @@ struct BubblesResult: View {
             if won { ResultStars(game.stars) }
             ResultHeadline(ending.title)
             if let message = ending.message {
-                Text(message)
-                    .font(Typography.body)
-                    .foregroundStyle(Theme.inkSecondary)
-                    .multilineTextAlignment(.center)
+                ResultMessage(message)
             } else {
                 HStack(spacing: Theme.Space.s) {
                     StatValue("Shots used", value: "\(game.shotsFired)")
@@ -70,7 +66,7 @@ struct BubblesResult: View {
 
 /// Every level with its stars. Cleared and current levels can be played; the rest unlock one
 /// by one.
-struct BubblesLevelList: View {
+struct BubblesLevels: View {
     @ObservedObject var session: BubblesSession
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -78,15 +74,11 @@ struct BubblesLevelList: View {
         let progress = session.progress
         let columns = Array(repeating: GridItem(.flexible(), spacing: Theme.Space.s),
                             count: dynamicTypeSize.isAccessibilitySize ? 3 : 5)
-        LevelsSheet(session) {
-            LazyVGrid(columns: columns, spacing: Theme.Space.s) {
-                ForEach(1...LevelCatalog.count, id: \.self) { level in
+        LazyVGrid(columns: columns, spacing: Theme.Space.s) {
+            ForEach(1...LevelCatalog.count, id: \.self) { level in
+                LevelButton(session, level: level, name: "Level \(level.formatted())") {
                     LevelCell(level: level, unlocked: progress.isUnlocked(level), stars: progress.stars(for: level),
-                              current: level == session.levelNumber,
-                              spokenState: progress.spokenState(of: level, isCurrent: level == session.levelNumber)) {
-                        session.start(level: level)
-                    }
-                    .id(level)
+                              current: level == session.levelNumber)
                 }
             }
         }
@@ -98,40 +90,31 @@ struct LevelCell: View {
     let unlocked: Bool
     let stars: Int
     let current: Bool
-    let spokenState: String
-    let action: () -> Void
     @Environment(\.accent) private var accent
 
     var body: some View {
-        Button(action: action) {
-            VStack(spacing: 4) {
-                if unlocked {
-                    Text("\(level)")
-                        .font(Typography.headline)
-                        .monospacedDigit()
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                    StarRow(stars: stars, size: 10)
-                } else {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 14, weight: .bold))
-                    Text("\(level)")
-                        .font(Typography.caption)
-                        .monospacedDigit()
-                }
+        VStack(spacing: 4) {
+            if unlocked {
+                Text("\(level)")
+                    .font(Typography.headline)
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                StarRow(stars: stars, size: 10)
+            } else {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 14, weight: .bold))
+                Text("\(level)")
+                    .font(Typography.caption)
+                    .monospacedDigit()
             }
-            .foregroundStyle(unlocked ? (current ? accent.onFill : Theme.ink) : Theme.inkSecondary)
-            .frame(maxWidth: .infinity, minHeight: Theme.minTouchTarget + 6)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous)
-                    .fill(current ? accent.fill : (unlocked ? Theme.surface : Theme.hairline))
-            )
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .disabled(!unlocked)
-        .accessibilityLabel("Level \(level)")
-        .accessibilityValue(spokenState)
-        .accessibilityIdentifier("level-\(level)")
+        .foregroundStyle(unlocked ? (current ? accent.onFill : Theme.ink) : Theme.inkSecondary)
+        .frame(maxWidth: .infinity, minHeight: Theme.minTouchTarget + 6)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous)
+                .fill(current ? accent.fill : (unlocked ? Theme.surface : Theme.hairline))
+        )
+        .contentShape(Rectangle())
     }
 }

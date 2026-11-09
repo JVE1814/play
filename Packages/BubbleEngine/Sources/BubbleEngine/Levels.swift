@@ -38,20 +38,14 @@ public enum LevelCatalog {
 
     public static func level(_ number: Int) -> Level {
         precondition((1...count).contains(number), "no such level")
-        let calibration = tabledPar(for: number) ?? calibrate(number)
-        return Level(layout: layout(number, variant: calibration.variant),
-                     par: calibration.par, shotLimit: shotLimit(par: calibration.par))
+        let par = Int(LevelPar.par[number - 1])
+        return Level(layout: layout(number, variant: Int(LevelPar.variant[number - 1])),
+                     par: par, shotLimit: shotLimit(par: par))
     }
 
     /// Par plus about 30% (at least three) spare shots.
     public static func shotLimit(par: Int) -> Int {
         par + max(3, Int((Double(par) * 0.3).rounded(.up)))
-    }
-
-    static func tabledPar(for number: Int) -> (par: Int, variant: Int)? {
-        let index = number - 1
-        guard index < LevelPar.par.count, index < LevelPar.variant.count, LevelPar.par[index] > 0 else { return nil }
-        return (Int(LevelPar.par[index]), Int(LevelPar.variant[index]))
     }
 
     /// The fewest shots a level may need: no one-shot giveaways, and later levels take longer.

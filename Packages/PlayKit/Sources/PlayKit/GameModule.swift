@@ -17,7 +17,7 @@ public protocol GameModule {
 
     /// A flat illustration for the home screen tile.
     @MainActor func makeIcon() -> AnyView
-    /// The full-screen game. Call `context.exit()` to return home.
+    /// The full-screen game, built on `GameScreen`.
     @MainActor func makeGameView(context: GameContext) -> AnyView
     /// Optional rows for the shared Settings screen.
     @MainActor func makeSettingsSection(context: GameContext) -> AnyView?
@@ -34,7 +34,7 @@ extension GameModule {
 /// launch options and navigation. One context exists per game per launch.
 @MainActor
 public final class GameContext: ObservableObject {
-    public let gameID: String
+    private let gameID: String
     public let accent: Accent
     public let saveSlot: SaveSlot
     public let feedback: Feedback
@@ -71,7 +71,8 @@ public final class GameContext: ObservableObject {
         self.settingsAction = openSettings
     }
 
-    public func exit() { exitAction() }
+    /// Games leave through `GameSession.leave()`, which lets the session save first.
+    func exit() { exitAction() }
 
     public func openSettings() { settingsAction() }
 
@@ -83,7 +84,12 @@ public final class GameContext: ObservableObject {
     /// False when Reduce Motion is on or tests disable animation: sessions then skip the
     /// pauses they leave for animations.
     public var animationsEnabled: Bool {
-        !options.disableAnimations && !UIAccessibility.isReduceMotionEnabled
+        animates(reduceMotion: UIAccessibility.isReduceMotionEnabled)
+    }
+
+    /// The same rule for views, which read Reduce Motion from their environment.
+    public func animates(reduceMotion: Bool) -> Bool {
+        !reduceMotion && !options.disableAnimations
     }
 
     public func announce(_ text: String) {

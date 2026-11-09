@@ -16,8 +16,7 @@ final class DealTests: XCTestCase {
         XCTAssertFalse(game.isWon)
     }
 
-    func testSameSeedGivesSameDeal() {
-        XCTAssertEqual(KlondikeGame(seed: 7).board, KlondikeGame(seed: 7).board)
+    func testTheDrawModeDoesNotChangeTheDeal() {
         XCTAssertEqual(KlondikeGame(seed: 7, drawMode: .three).board, KlondikeGame(seed: 7, drawMode: .one).board)
     }
 

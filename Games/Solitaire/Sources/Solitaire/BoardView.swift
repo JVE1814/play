@@ -3,8 +3,6 @@ import PlayKit
 import SwiftUI
 
 struct DragState: Equatable {
-    var source: Pile
-    var count: Int
     var cards: [Card]
     var translation: CGSize
 }
@@ -71,7 +69,7 @@ struct BoardView: View {
         if game.stock.isEmpty {
             value = canRedeal ? "Empty, redeal available" : "Empty"
         } else {
-            value = game.stock.count == 1 ? "1 card" : "\(game.stock.count) cards"
+            value = Format.count(game.stock.count, "card")
         }
         return SlotView(size: layout.card, systemImage: canRedeal ? "arrow.counterclockwise" : nil,
                         highlighted: session.hintedPile == .stock && game.stock.isEmpty)
@@ -135,7 +133,7 @@ struct BoardView: View {
                     guard distance(value.translation) > Self.tapSlop, session.canPlay,
                           let lift = liftable(placement),
                           let cards = session.game.board.movableCards(from: lift.source, count: lift.count) else { return }
-                    drag = DragState(source: lift.source, count: lift.count, cards: cards, translation: value.translation)
+                    drag = DragState(cards: cards, translation: value.translation)
                 } else {
                     drag?.translation = value.translation
                 }

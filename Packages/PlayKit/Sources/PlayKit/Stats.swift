@@ -1,7 +1,7 @@
 import Foundation
 
-/// Statistics kept for every game. A game counts as played once it is won or abandoned
-/// (a new deal started after at least one move), so the win rate is always wins ÷ finished games.
+/// Statistics kept for every game. A game counts as played once it is won or lost (each game
+/// decides what a loss is), so the win rate is always wins ÷ finished games.
 public struct GameStats: Codable, Equatable, Sendable {
     public var played = 0
     public var won = 0

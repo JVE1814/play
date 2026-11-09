@@ -2,6 +2,10 @@
 
 # Each game's rules engine is a Foundation-only package in Packages/ whose name ends in "Engine".
 ENGINES=$(cd Packages && ls -d *Engine)
+if [ -z "$ENGINES" ]; then
+  echo "ci/lib.sh: no rules engines found under Packages/" >&2
+  exit 1
+fi
 
 # Runs a command with a time limit (macOS has no `timeout`), so a hang fails one step instead
 # of the whole job hitting the workflow timeout before results are published.

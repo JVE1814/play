@@ -87,7 +87,6 @@ final class UndoTests: XCTestCase {
                 boards.append(game.board)
             }
             XCTAssertGreaterThan(game.moveCount, 300)
-            // Step back one move at a time, checking every intermediate position.
             while game.canUndo {
                 boards.removeLast()
                 game.undo()

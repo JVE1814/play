@@ -4,11 +4,10 @@ import SwiftUI
 /// Settings), the table, a thumb-height toolbar, and the result panel over it all.
 ///
 /// It also tells the session when the game is in view: on screen, in the foreground, and not
-/// covered by Settings or by anything the game says obscures it.
+/// covered by Settings or by something of the session's own (`coversTable`).
 public struct GameScreen<Session: GameSession, Readouts: View, Table: View, Tools: View, Result: View>: View {
     @ObservedObject private var session: Session
     @ObservedObject private var context: GameContext
-    private let obscured: Bool
     private let readouts: Readouts
     private let table: Table
     private let tools: Tools
@@ -17,15 +16,13 @@ public struct GameScreen<Session: GameSession, Readouts: View, Table: View, Tool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var appeared = false
 
-    /// - Parameter obscured: true while the game itself covers the table, for example with a sheet.
-    public init(session: Session, obscured: Bool = false,
+    public init(session: Session,
                 @ViewBuilder readouts: () -> Readouts,
                 @ViewBuilder table: () -> Table,
                 @ViewBuilder tools: () -> Tools,
                 @ViewBuilder result: () -> Result) {
         self.session = session
         self.context = session.context
-        self.obscured = obscured
         self.readouts = readouts()
         self.table = table()
         self.tools = tools()
@@ -33,8 +30,8 @@ public struct GameScreen<Session: GameSession, Readouts: View, Table: View, Tool
     }
 
     public var body: some View {
-        let animate = !reduceMotion && !context.options.disableAnimations
-        let inView = appeared && scenePhase == .active && !context.isCovered && !obscured
+        let animate = context.animates(reduceMotion: reduceMotion)
+        let inView = appeared && scenePhase == .active && !context.isCovered && !session.coversTable
         VStack(spacing: 0) {
             HStack(spacing: Theme.Space.m) {
                 IconButton(systemImage: "chevron.left", label: "Games", identifier: "back") { session.leave() }
@@ -80,6 +77,22 @@ public struct GameScreen<Session: GameSession, Readouts: View, Table: View, Tool
         .onChange(of: inView, initial: true) { _, inView in session.setInView(inView) }
         // A view on its way out may never see another change, so say so directly.
         .onDisappear { session.setInView(false) }
+    }
+}
+
+/// The explanation under a result panel's headline.
+public struct ResultMessage: View {
+    let text: String
+
+    public init(_ text: String) {
+        self.text = text
+    }
+
+    public var body: some View {
+        Text(text)
+            .font(Typography.body)
+            .foregroundStyle(Theme.inkSecondary)
+            .multilineTextAlignment(.center)
     }
 }
 

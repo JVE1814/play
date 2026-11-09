@@ -352,9 +352,7 @@ struct RangePainter {
         }
 
         // The boss: a square of straw, bound with darker bands.
-        let topLeft = onBoss(Vec2(-half, half), shake: jolt)
-        let bottomRight = onBoss(Vec2(half, -half), shake: jolt)
-        let bossRect = CGRect(x: topLeft.x, y: topLeft.y, width: bottomRight.x - topLeft.x, height: bottomRight.y - topLeft.y)
+        let bossRect = self.bossRect(shake: jolt)
         let bossPath = Path(roundedRect: bossRect, cornerRadius: ppm * 0.07)
         context.fill(bossPath, with: .color(venue.boss))
         context.fill(bossPath, with: .linearGradient(Gradient(colors: [.white.opacity(0.18), .black.opacity(0.1)]),
@@ -683,6 +681,13 @@ struct RangePainter {
     // MARK: Bow and sight
 
     private var sightPoint: CGPoint { cam.onTarget(f.sight) }
+
+    /// Where the sight is drawn: it rises into place as the bow is drawn.
+    private var raisedSight: CGPoint {
+        let eased = 1 - pow(1 - f.drawProgress, 3)
+        let raise = f.reduceMotion ? 0 : (1 - eased) * h * 0.6
+        return CGPoint(x: sightPoint.x, y: sightPoint.y + raise)
+    }
     private var side: CGFloat { f.leftHanded ? -1 : 1 }
 
     /// The view darkens at the edges while you concentrate at full draw.
@@ -714,9 +719,7 @@ struct RangePainter {
     /// you draw.
     private func bow(_ context: inout GraphicsContext) {
         let progress = f.drawProgress
-        let eased = 1 - pow(1 - progress, 3)
-        let raise = f.reduceMotion ? 0 : (1 - eased) * h * 0.6
-        let s = CGPoint(x: sightPoint.x, y: sightPoint.y + raise)
+        let s = raisedSight
         // Far enough out that the riser never hides the wind flag on a near target.
         let riserX = s.x + side * w * 0.4
         let riserWidth = w * 0.1
@@ -761,9 +764,7 @@ struct RangePainter {
 
     private func reticle(_ context: inout GraphicsContext) {
         let progress = f.drawProgress
-        let eased = 1 - pow(1 - progress, 3)
-        let raise = f.reduceMotion ? 0 : (1 - eased) * h * 0.6
-        let s = CGPoint(x: sightPoint.x, y: sightPoint.y + raise)
+        let s = raisedSight
         let held = f.held ?? -1
         let tiring = held > Sway.steadyTime
         let ring: CGFloat = 15

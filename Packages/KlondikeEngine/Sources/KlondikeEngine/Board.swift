@@ -84,7 +84,6 @@ public struct Board: Hashable, Codable, Sendable {
                 next += 1
             }
         }
-        // The rest of the deck is the stock; deck order is preserved (last = top).
         self.init(stock: Array(deck[next...]), waste: [], foundations: Array(repeating: [], count: Board.foundationCount), tableau: columns)
     }
 

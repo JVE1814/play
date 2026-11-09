@@ -218,7 +218,6 @@ extension BubbleGrid {
     public mutating func resolve(placing bubble: Bubble, at cell: Cell) -> ShotResult {
         var removed: [Cell: Bubble] = [:]
         self[cell] = bubble
-        // Bombs next to the landing cell go off, setting off any bombs caught in their blast.
         var exploded: [Cell] = []
         var blasted = Set<Cell>()
         var detonated = Set<Cell>()
@@ -236,7 +235,6 @@ extension BubbleGrid {
             self[target] = nil
             exploded.append(target)
         }
-        // Three or more of a colour pop.
         var popped: [Cell] = []
         if self[cell] != nil {
             let group = self.group(at: cell)
@@ -248,7 +246,6 @@ extension BubbleGrid {
                 popped = group
             }
         }
-        // Anything no longer connected to the ceiling falls.
         var dropped: [Cell] = []
         if !popped.isEmpty || !exploded.isEmpty {
             let anchored = self.anchored()
