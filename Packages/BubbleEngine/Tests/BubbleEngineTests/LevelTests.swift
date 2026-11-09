@@ -46,7 +46,7 @@ final class LevelTests: XCTestCase {
             XCTAssertFalse(grid.occupied.contains { grid[$0] == .stone }, "no stones before level 30 (level \(n))")
         }
         let patterns = Set((1...200).map { LevelCatalog.level($0).layout.pattern })
-        XCTAssertEqual(patterns.count, 14, "every shape appears early on")
+        XCTAssertEqual(patterns.count, LevelCatalog.Pattern.allCases.count, "every shape appears early on")
     }
 
     /// The par table was produced on one machine; check that the bot still clears a spread of

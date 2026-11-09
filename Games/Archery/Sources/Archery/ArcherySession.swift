@@ -25,6 +25,10 @@ public final class ArcherySession: ObservableObject, LevelSession {
         public let start: Date
         /// Seconds until the arrow reaches the target.
         public let arrival: TimeInterval
+
+        /// An arrow that misses the boss carries on past it for this share of its flight,
+        /// fading as it goes.
+        static let missOvershoot = 0.25
     }
 
     /// The arrow that landed last, for the score that pops up beside it.
@@ -267,8 +271,7 @@ public final class ArcherySession: ObservableObject, LevelSession {
         // A moving target is shown exactly where the engine says it is when the arrow arrives.
         let arrival = round.level.motion.isMoving ? path.duration : max(0.24, path.duration)
         flight = Flight(shot: shot, arrow: index, path: path, start: now, arrival: arrival)
-        // An arrow that misses the boss carries on past it for a moment.
-        flightEnd.schedule(after: shot.hit.inBoss ? arrival : arrival * 1.25) { [weak self] in self?.land(shot, arrow: index, at: Date()) }
+        flightEnd.schedule(after: shot.hit.inBoss ? arrival : arrival * (1 + Flight.missOvershoot)) { [weak self] in self?.land(shot, arrow: index, at: Date()) }
     }
 
     private func land(_ shot: Shot, arrow: Int, at now: Date, quietly: Bool = false) {

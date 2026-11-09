@@ -135,7 +135,8 @@ public struct LevelResultButtons<Session: LevelSession>: View {
 }
 
 /// One level in the list, which starts that level when it is unlocked. The game supplies its
-/// looks.
+/// looks. In a lazy container, the enclosing `ForEach` must identify its rows by level number
+/// too, or the list cannot scroll to a level it has not built yet.
 public struct LevelButton<Session: LevelSession, Label: View>: View {
     @ObservedObject var session: Session
     let level: Int

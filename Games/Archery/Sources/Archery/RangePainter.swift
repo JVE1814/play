@@ -576,7 +576,7 @@ struct RangePainter {
         let length = (heading.x * heading.x + heading.y * heading.y + heading.z * heading.z).squareRoot()
         let tailWorld = tip - heading * (Arrow.length / max(length, 1e-9))
         guard tailWorld.z > 0.9 else { return }
-        let fade = s > 1 ? max(0, 1 - (s - 1) * 4) : 1
+        let fade = s > 1 ? max(0, 1 - (s - 1) / ArcherySession.Flight.missOvershoot) : 1
         let tipPoint = cam.project(tip)
         let tailPoint = cam.project(tailWorld)
         let trailStart = cam.project(position(max(0, s - 0.07)))
