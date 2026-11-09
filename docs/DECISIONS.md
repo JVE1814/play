@@ -214,3 +214,7 @@ worth a look before you submit are marked **review**.
 62. **The first three venues coach you.** After each arrow in levels 1 to 18, a short note says
     how far the wind carried it, or how far a moving target travelled while it flew, and which
     way to adjust if the arrow landed off centre. Later venues trust you to read it yourself.
+63. **In UI tests the range is drawn once per change, not every frame.** A view that never stops
+    animating keeps XCUITest waiting for the app to go idle before every step. With
+    `-disableAnimations` (tests only) the range's timeline is paused and the wind readout is
+    static, which keeps the CI job well inside its time limit with three games.

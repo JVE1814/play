@@ -11,6 +11,9 @@ struct RangeView: View {
     @ObservedObject var session: ArcherySession
     @ObservedObject var preferences: ArcheryPreferences
     let reduceMotion: Bool
+    /// False in UI tests (`-disableAnimations`): the range is drawn once per change instead of
+    /// every frame, so the app goes idle between steps.
+    let live: Bool
     @Environment(\.colorScheme) private var colorScheme
     @State private var lastTouch: CGPoint?
 
@@ -47,8 +50,14 @@ struct RangeView: View {
                 .accessibilityIdentifier("range")
 
                 // The wind reading updates four times a second; it needs no more.
-                TimelineView(.periodic(from: .now, by: 0.25)) { timeline in
-                    topDisplay(date: timeline.date)
+                Group {
+                    if live {
+                        TimelineView(.periodic(from: .now, by: 0.25)) { timeline in
+                            topDisplay(date: timeline.date)
+                        }
+                    } else {
+                        topDisplay(date: Date())
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 bottomDisplay(size: size)
@@ -57,7 +66,7 @@ struct RangeView: View {
         .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.l, style: .continuous))
     }
 
-    private var paused: Bool { session.showingLevels }
+    private var paused: Bool { session.showingLevels || !live }
 
     /// Full frame rate while the bow is drawn or an arrow flies; half otherwise (the flag and
     /// drifting seeds don't need more), which saves battery on a long ride.

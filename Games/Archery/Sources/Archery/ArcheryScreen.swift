@@ -30,7 +30,8 @@ struct ArcheryScreen: View {
                     .foregroundStyle(context.accent.onTable)
                     .accessibilityIdentifier("boardSignature")
             }
-            RangeView(session: session, preferences: preferences, reduceMotion: reduceMotion)
+            RangeView(session: session, preferences: preferences, reduceMotion: reduceMotion,
+                      live: !context.options.disableAnimations)
                 .padding(.horizontal, Theme.Space.s)
             toolbar
         }
