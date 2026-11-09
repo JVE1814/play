@@ -115,7 +115,8 @@ if [ "$BUILD_RC" -eq 0 ]; then
   ENGINE_PID=$!
 
   TEST_LIMIT=$(( JOB_LIMIT - ($(date +%s) - START) - RESERVE ))
-  if [ "$TEST_LIMIT" -lt 60 ]; then TEST_LIMIT=60; fi
+  # No time left: the tests are stopped as they start, and the step fails.
+  if [ "$TEST_LIMIT" -lt 0 ]; then TEST_LIMIT=0; fi
   step "Unit and UI tests (up to ${TEST_LIMIT}s)"
   rm -rf "$BUILD/Tests.xcresult"
   TEST_RUNNER_SCREENSHOT_DIR="$OUT/screenshots" with_timeout "$TEST_LIMIT" xcodebuild test-without-building \
