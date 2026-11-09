@@ -1,3 +1,4 @@
+import Archery
 import Bubbles
 import PlayKit
 import Solitaire
@@ -14,6 +15,7 @@ enum GameRegistry {
         var games: [any GameModule] = [
             SolitaireModule(),
             BubblesModule(),
+            ArcheryModule(),
         ]
         #if DEBUG
         // Test-only placeholder, never compiled into release builds.

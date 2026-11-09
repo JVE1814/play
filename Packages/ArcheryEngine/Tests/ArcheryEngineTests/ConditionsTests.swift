@@ -24,6 +24,15 @@ final class ConditionsTests: XCTestCase {
         XCTAssertEqual(wind.strongest, 3.5)
     }
 
+    func testTravelIsTheWindAddedUpOverTime() {
+        let wind = Wind(base: 1.2, gust: 1.8, period: 6, phase: 0.7)
+        var numeric = 0.0
+        let dt = 0.001
+        for i in 0..<10_000 { numeric += wind.speed(at: (Double(i) + 0.5) * dt) * dt }
+        XCTAssertEqual(wind.travel(at: 10) - wind.travel(at: 0), numeric, accuracy: 1e-6)
+        XCTAssertEqual(Wind(base: -2).travel(at: 3), -6)
+    }
+
     func testWindIsDescribedByWhereItComesFrom() {
         XCTAssertEqual(Wind.describe(2.44), "2.4 m/s from the left")
         XCTAssertEqual(Wind.describe(-0.96), "1.0 m/s from the right")

@@ -98,12 +98,12 @@ public struct FlightPath: Hashable, Sendable {
 }
 
 /// How big the target looks. The view is magnified like a sight's scope, so that a 122 cm face
-/// fills about half the width of the screen at 18 m and a quarter of it at 90 m: far targets look
-/// smaller, but never too small to aim at.
+/// fills half the width of the screen up to about 20 m and a quarter of it at 90 m: far targets
+/// look smaller, but never too small to aim at, and near ones leave room for the wind flag.
 public enum Optics {
     /// Apparent width of a 122 cm face, as a share of the view's width.
     public static func faceShare(distance: Double) -> Double {
-        min(0.6, max(0.2, 0.56 * (18 / distance).squareRoot()))
+        min(0.5, max(0.2, 0.56 * (18 / distance).squareRoot()))
     }
 
     /// Screen points per metre at the target, for a view `viewWidth` points wide.

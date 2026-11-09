@@ -29,6 +29,17 @@ public struct Wind: Hashable, Codable, Sendable {
         return base + gust * (0.72 * slow + 0.28 * ripple)
     }
 
+    /// How far the air has moved by `time`: the integral of the speed, in metres. Used to drift
+    /// seeds and leaves across the view at exactly the speed of the wind.
+    public func travel(at time: Double) -> Double {
+        guard gust != 0 else { return base * time }
+        let slow = period / (2 * .pi)
+        let fast = period * 0.37 / (2 * .pi)
+        return base * time
+            - gust * 0.72 * slow * cos(2 * .pi * time / period + phase)
+            - gust * 0.28 * fast * cos(2 * .pi * time / (period * 0.37) + 2.3 * phase + 0.8)
+    }
+
     /// The fastest the wind ever blows, either way.
     public var strongest: Double { abs(base) + abs(gust) }
 

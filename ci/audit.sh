@@ -30,7 +30,7 @@ else
   echo "  none found (no CocoaPods, Carthage or resolved remote packages)"
 fi
 
-for engine in KlondikeEngine BubbleEngine; do
+for engine in KlondikeEngine BubbleEngine ArcheryEngine; do
   echo "Imports used by $engine (must be Foundation only, plus the engine itself in its tool):"
   grep -rhoE '^import [A-Za-z]+' "Packages/$engine/Sources" | sort | uniq -c
   if grep -rhE '^import ' "Packages/$engine/Sources" | grep -vqE "^import (Foundation|$engine)\$"; then

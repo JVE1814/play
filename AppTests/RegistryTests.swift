@@ -13,7 +13,7 @@ final class RegistryTests: XCTestCase {
 
     func testTestGameIsAddedOnlyWhenRequested() {
         let games = GameRegistry.games(options: TestEnvironment.options(["-includeTestGames"]))
-        XCTAssertEqual(games.map { $0.id }, ["klondike", "bubbles", "testgame"])
+        XCTAssertEqual(games.map { $0.id }, ["klondike", "bubbles", "archery", "testgame"])
     }
 
     func testAppModelReopensTheLastGame() {

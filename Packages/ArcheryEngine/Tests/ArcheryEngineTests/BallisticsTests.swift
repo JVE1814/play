@@ -59,10 +59,11 @@ final class BallisticsTests: XCTestCase {
     }
 
     func testFarTargetsLookSmallerButNotTiny() {
-        XCTAssertEqual(Optics.faceShare(distance: 10), 0.6)
-        XCTAssertEqual(Optics.faceShare(distance: 18), 0.56, accuracy: 1e-9)
+        XCTAssertEqual(Optics.faceShare(distance: 10), 0.5)
+        XCTAssertEqual(Optics.faceShare(distance: 18), 0.5)
+        XCTAssertEqual(Optics.faceShare(distance: 30), 0.56 * (0.6).squareRoot(), accuracy: 1e-9)
         XCTAssertEqual(Optics.faceShare(distance: 90), 0.56 * (0.2).squareRoot(), accuracy: 1e-9)
         XCTAssertGreaterThan(Optics.faceShare(distance: 90), 0.2)
-        XCTAssertEqual(Optics.pointsPerMetre(distance: 18, viewWidth: 1.22), 0.56, accuracy: 1e-9)
+        XCTAssertEqual(Optics.pointsPerMetre(distance: 50, viewWidth: 1.22), Optics.faceShare(distance: 50), accuracy: 1e-9)
     }
 }

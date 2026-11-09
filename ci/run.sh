@@ -142,7 +142,7 @@ fi
 ENGINE_TOTAL=0
 ENGINE_FAILED=0
 ENGINE_SUMMARY=""
-for engine in KlondikeEngine BubbleEngine; do
+for engine in KlondikeEngine BubbleEngine ArcheryEngine; do
   step "Engine tests: swift test in Packages/$engine"
   log="$OUT/engine-tests-$engine.log"
   (cd "Packages/$engine" && with_timeout 900 swift test -c release -Xswiftc -enable-testing) > "$log" 2>&1
