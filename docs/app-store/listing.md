@@ -8,15 +8,15 @@ Between Stops: Commute Games  [28]
 
 ## Subtitle (30)
 
-Solitaire made for one thumb  [28]
+Three games for one thumb  [25]
 
 ## Promotional text (170)
 
-Classic Klondike built for the commute: tap a card and it goes where it should. Undo anything, and pick up exactly where you left off, even offline.  [148]
+Solitaire, a bubble shooter with 2,000 levels, and target archery from 10 to 90 metres, all made for one thumb. Pick up exactly where you left off, even offline.  [161]
 
 ## Description (4000)
 
-Between Stops is a small collection of calm, colorful games for the moments between here and there. It has two games, both built for one-handed play on a moving train: Solitaire (classic Klondike) and Bubbles, a bubble shooter with 2,000 levels.
+Between Stops is a small collection of calm, colorful games for the moments between here and there. It has three games, all built for one-handed play on a moving train: Solitaire (classic Klondike), Bubbles, a bubble shooter with 2,000 levels, and Archery, with 30 levels of target archery.
 
 MADE FOR ONE THUMB
 • Tap any card and it makes its best move. No precise dragging needed (but you can drag too).
@@ -32,6 +32,13 @@ BUBBLES: 2,000 LEVELS
 • Match three to pop them, and cut bubbles loose to drop whole clusters.
 • Stones, bombs and new shapes keep arriving as you go, with a gentler level every so often.
 • Every level has been cleared by our own test player, so a solution always exists. Earn up to three stars on each.
+
+ARCHERY: 30 LEVELS, 10 TO 90 METRES
+• Touch and hold to draw the bow, slide your thumb to move the sight, and let go to shoot.
+• Read the wind from the flag on the target and allow for it. Gusts come and go, and on some days the wind swings from side to side.
+• Hold steady: the sight settles after you draw, then wanders as your arms tire.
+• Five venues from a calm morning practice field to a windy championship under floodlights, with moving and swinging targets, small three-spot faces and races against the clock.
+• A target camera shows your group, and every arrow scores just like real archery, X ring included.
 
 CLASSIC KLONDIKE
 • Draw 1 or Draw 3, with unlimited redeals.
@@ -51,7 +58,7 @@ PRIVATE BY DESIGN
 
 ## Keywords (100)
 
-solitaire,klondike,patience,card game,bubble shooter,bubbles,offline,one hand,commute,train,relax  [97]
+solitaire,klondike,card game,bubble shooter,archery,bow,arrow,target,offline,one hand,commute,train  [99]
 
 ## Support URL
 
@@ -67,17 +74,19 @@ Leave blank.
 
 ## Categories
 
-Primary: Games. Subcategories: Card, Puzzle.
+Primary: Games. Subcategories: Card, Puzzle (Apple allows two; Sports would also fit Archery).
 
 ## Age rating
 
-Answer None or No to every question. Expected result: 4+.
+Answer None or No to every question. Expected result: 4+. (Archery is target shooting at paper
+faces only: there are no people or animals, so "Cartoon or Fantasy Violence" is None.)
 
 ## App Review notes
 
 Between Stops is fully offline and has no accounts, sign-in, purchases or network access. To
 try it: open Solitaire from the home screen, then tap any face-up card to move it, or tap the
-stock (bottom right) to draw. Settings (gear icon) switches between Draw 1 and Draw 3.
+stock (bottom right) to draw. Settings (gear icon) switches between Draw 1 and Draw 3. In
+Archery, touch and hold anywhere on the range to draw the bow, slide to aim, and let go to shoot.
 
 ## Screenshots
 
@@ -85,8 +94,10 @@ Use the 1320 × 2868 PNGs in `docs/app-store/screenshots/` (6.9" display), in th
 
 1. `1-solitaire.png`: a Solitaire game in progress
 2. `2-bubbles.png`: Bubbles, aiming with the guide (level 210, with stones and bombs)
-3. `3-hint.png`: a Solitaire hint highlighting the next move
-4. `4-bubbles-cleared.png`: a Bubbles level cleared with three stars
-5. `5-win.png`: the Solitaire win screen with statistics
-6. `6-home.png`: the game collection
-7. `7-dark.png`: dark mode
+3. `3-archery.png`: Archery at sunset, drawn and aiming at 70 metres
+4. `4-hint.png`: a Solitaire hint highlighting the next move
+5. `5-bubbles-cleared.png`: a Bubbles level cleared with three stars
+6. `6-archery-night.png`: Archery under floodlights, with a swinging target
+7. `7-win.png`: the Solitaire win screen with statistics
+8. `8-home.png`: the game collection
+9. `9-dark.png`: dark mode

@@ -145,3 +145,65 @@ worth a look before you submit are marked **review**.
 45. **CI runs the engine tests in release mode with testability**
     (`swift test -c release -Xswiftc -enable-testing`). The tests are the same and run about
     three times faster, which keeps the whole CI job well inside its 30-minute limit with two games.
+
+## Archery
+
+46. **Original target archery, named plainly "Archery".** Its art, levels and details are its
+    own and not modelled on any particular game. It follows real target archery where that
+    helps: a ten-ring face in the usual colours with an X ring, arrows touching a line score
+    the higher ring, and on three-spot faces a second arrow in the same spot scores nothing.
+47. **30 hand-made levels in five venues of six**, each with its own light: Practice Field
+    (morning), Meadow (midday), Lakeside (afternoon), Hilltop (sunset) and Floodlights (night).
+    Each venue brings something new: wind, a smaller face and three spots; then gusts, a time
+    limit and a moving target; a swinging target and wind that changes sides; longer
+    distances and small spots; and finally 90 m at night. Distances run from 10 to 90 m, and
+    each new idea arrives on its own level, with a "NEW" badge on the level's tip card.
+48. **The sight is set for each distance**, as an archer sets sight marks, so in still air an
+    arrow lands where the sight points. Gravity only shapes the arc you watch. The challenge is
+    the wind, holding steady, smaller targets and moving ones, not guessing elevation.
+49. **Wind drift is scaled for play**: about 7 cm per m/s of crosswind at 18 m and 26 cm at
+    90 m. Real arrows drift less at short range, but then the wind would only matter late in
+    the game. As with a real arrow, wind early in the flight counts for more, and gusts during
+    the flight are followed, so on a gusty day the flag is only a guide. The wind shows three
+    ways: the flag on the target (limp, lifting or streaming, fluttering faster as it rises),
+    a gauge with speed and direction, and seeds, leaves or moths drifting at the wind's speed.
+50. **Controls for one thumb**: touch anywhere and hold to draw (0.45 s), slide to move the
+    sight, lift to shoot. The sight moves relative to the thumb at less than its speed (0.45×,
+    or 0.3× and 0.65× in Settings), so the thumb never has to cover the target and small
+    corrections are easy. Lifting before full draw lets the bow down without shooting.
+    Movement in the last 70 ms before lifting is ignored, because lifting a thumb nudges it.
+51. **The sight sways**, as an archer's does: it settles just after full draw, stays calm for
+    about three seconds, then wanders more and more as the arms tire. A ring around the sight
+    shows the draw, then the steady time running down. Sway grows with distance and a little
+    with each venue (nerves). "Steady aim" in Settings cuts it to 30%, for shaky hands or a
+    bumpy train.
+52. **The view is magnified like a scope.** A 122 cm face fills half the view's width up to
+    about 20 m and a quarter of it at 90 m, so far targets look smaller but are never too
+    small to aim at, and near ones leave room for the wind flag.
+53. **review: Star scores come from two bots.** An expert and a novice bot play every level
+    through the same API as the app. They aim with a few points of error on a phone-sized view,
+    misjudge the wind at first and learn from where each arrow lands. One star (a pass) is set
+    where the share of novices passing falls from 97% at the Practice Field to 60% at the
+    Floodlights. It is capped at 75% of the maximum score in the first two venues and 70% after,
+    because first-time players are clumsier than any bot. Three stars are set where the share of
+    experts reaching them falls from 90% to 50%, and never need every arrow in the ten. The
+    tests replay this and fail if a level becomes unwinnable or a venue gets easier than the
+    one before.
+54. **Timed levels start the clock at the first draw**, so reading the tip is never timed.
+    Arrows left in the quiver when time runs out score as misses.
+55. **Every attempt meets different conditions.** The gust cycle and a moving target's phase
+    shift by the golden angle on each attempt, so a level can't be beaten by memorising one gust.
+56. **Each arrow is saved the moment it is released**, before it lands, so a force quit
+    mid-flight loses nothing. The level clock (which drives the wind and moving targets) is
+    saved too, and only runs while the game is on screen.
+57. **One star passes a level and unlocks the next.** Finishing without a star counts as a loss
+    in Statistics. Restarting or leaving a level does not.
+58. **Battery:** the range redraws at 30 frames a second when idle and 60 while the bow is
+    drawn or an arrow is in flight. The wind and timer readouts update four times a second.
+59. **Accessibility:** VoiceOver aims one ring at a time (swipe up or down for left and right,
+    actions for up and down), describes the sight in centimetres from the centre with the wind
+    and arrows left, and shoots with a double-tap, held inside the steady window. Score chips
+    show the number as well as the ring's colour. Reduce Motion turns off the zoom, vignette,
+    flag flutter, drifting particles and the bow rising into view.
+60. **The venues keep their own light in dark mode**, because each is a time of day. They are
+    dimmed by 12% in dark mode, except the night venue, which is already dark.

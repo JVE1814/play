@@ -700,8 +700,9 @@ struct RangePainter {
         let eased = 1 - pow(1 - progress, 3)
         let raise = f.reduceMotion ? 0 : (1 - eased) * h * 0.6
         let s = CGPoint(x: sightPoint.x, y: sightPoint.y + raise)
-        let riserX = s.x + side * w * 0.31
-        let riserWidth = w * 0.12
+        // Far enough out that the riser never hides the wind flag on a near target.
+        let riserX = s.x + side * w * 0.4
+        let riserWidth = w * 0.1
 
         var layer = context
         layer.opacity = f.reduceMotion ? progress : 1

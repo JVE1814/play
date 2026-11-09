@@ -1,8 +1,8 @@
 # Between Stops
 
 An offline collection of quick games for iPhone, built for one-handed play in short sessions on
-a train. It has two games: **Solitaire** (Klondike) and **Bubbles**, a bubble shooter with
-2,000 levels.
+a train. It has three games: **Solitaire** (Klondike), **Bubbles**, a bubble shooter with
+2,000 levels, and **Archery**, 30 levels of target archery from 10 to 90 metres.
 
 - Native Swift and SwiftUI, iPhone, portrait, iOS 17+.
 - No network code, accounts, ads, analytics or tracking. No third-party runtime dependencies.
@@ -22,6 +22,8 @@ a train. It has two games: **Solitaire** (Klondike) and **Bubbles**, a bubble sh
 | `Games/Solitaire/` | The Solitaire game module (SwiftUI) built on the engine. |
 | `Packages/BubbleEngine/` | Bubble shooter rules engine. Imports only Foundation. Hex grid, shot tracing with wall bounces, matches, falling bubbles, stones, bombs, and 2,000 generated levels whose shot limits were set by a bot that cleared every one (`swift run -c release bubble-par` regenerates the table). |
 | `Games/Bubbles/` | The Bubbles game module (SwiftUI) built on that engine. |
+| `Packages/ArcheryEngine/` | Target archery engine. Imports only Foundation. Ten-ring faces with line-cutter scoring and three-spot targets, gusty crosswind followed through each flight, sight sway, sliding and swinging targets, timed ends, and the 30 levels, whose star scores come from expert and novice bots (`swift run -c release archery-calibrate` prints how they score). |
+| `Games/Archery/` | The Archery game module (SwiftUI): the range drawn in a Canvas, drawing and aiming, the target camera, levels by venue. |
 | `Games/TestGame/` | A tiny debug-only game that proves adding a game needs no home screen changes. |
 | `AppTests/`, `UITests/` | Unit tests and UI tests (including screenshot capture). |
 | `ci/` | `run.sh` (the CI pipeline), `audit.sh` (no networking or third-party code), `release.sh` (archive and upload). |
@@ -51,6 +53,7 @@ Run `xcodegen generate` again after adding or removing files or packages.
 ```sh
 cd Packages/KlondikeEngine && swift test
 cd Packages/BubbleEngine && swift test
+cd Packages/ArcheryEngine && swift test
 # or, on Linux or any machine with Docker:
 docker run --rm -v "$PWD/Packages/BubbleEngine":/pkg -w /pkg swift:6.3 swift test
 ```
@@ -61,6 +64,10 @@ The Bubbles tests (30) cover the geometry, shot paths and bounces, matching, fal
 stones, bombs, the bubble queue and saving. They also check that all 2,000 levels are
 well-formed, different and calibrated, and that the bot still clears a spread of levels within
 their shot limits.
+The Archery tests (40) cover ring scoring and line cutters, three-spot targets, wind and gusts,
+drift through the flight, sway, sliding and swinging targets, timed ends and saving. They also
+play every level with an expert and a novice bot: the expert must pass every level, newcomers
+must be able to pass each one with a few tries, and each venue must be harder than the last.
 
 **App unit and UI tests** (needs Xcode):
 
@@ -69,7 +76,8 @@ xcodebuild test -project BetweenStops.xcodeproj -scheme BetweenStops \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max'
 ```
 
-The UI tests cover tapping and dragging cards, undo, hints, Draw 3 and the left-handed layout.
+The UI tests cover tapping and dragging cards, undo, hints, Draw 3 and the left-handed layout,
+aiming and shooting in Bubbles, and drawing, shooting and finishing levels in Archery.
 They also play a near-finished game to the win screen, force-quit mid-game and check that the
 exact board and undo history come back, open the test-only game from the home screen, run an
 accessibility audit, and capture screenshots of every screen in light mode, dark mode and large text.
@@ -82,7 +90,7 @@ published to the `ci-results` branch (`totals.txt`, `failures.txt`, `test-result
 (6.9", 1320 × 2868) into `docs/app-store/screenshots/`.
 
 **Source audit:** `bash ci/audit.sh` fails if any networking API or third-party dependency
-appears, and checks that the engine imports only Foundation.
+appears, and checks that every engine imports only Foundation.
 
 ## Add a new game
 
@@ -126,6 +134,7 @@ appears, and checks that the engine imports only Foundation.
    var games: [any GameModule] = [
        SolitaireModule(),
        BubblesModule(),
+       ArcheryModule(),
        YourGameModule(),
    ]
    ```
@@ -145,4 +154,6 @@ Components there build on those tokens. Games should not hard-code colors or siz
 VoiceOver labels and actions on every card ("Queen of Hearts, Column 3": double-tap plays the
 best move, and swipe up or down to pick a destination). The suits have four distinct shapes, so
 color is never needed. Dynamic Type is supported, along with light and dark mode, Reduce Motion
-(no slides or shakes), and large touch targets.
+(no slides or shakes), and large touch targets. In Archery, VoiceOver aims the sight one ring at
+a time (swipe up or down, or the Aim actions), says where it points and what the wind is doing,
+and shoots with a double-tap. Score chips show the number as well as the ring's colour.
