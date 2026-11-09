@@ -100,13 +100,12 @@ public final class BubblesSession: ObservableObject, LevelSession {
 
     // MARK: Aiming and shooting
 
-    /// Updates the aim (nil cancels it).
+    /// Nil cancels the aim.
     public func setAim(_ direction: Point?) {
         guard isPlaying else { return }
         aim = direction
     }
 
-    /// Fires along the current aim, if any.
     public func fire() {
         guard isPlaying, let direction = aim else { return }
         aim = nil
@@ -128,8 +127,6 @@ public final class BubblesSession: ObservableObject, LevelSession {
         landing.schedule(after: duration) { [weak self] in self?.land() }
     }
 
-    /// Lands the shot in flight: updates the grid, starts the pop and fall effects, and ends the
-    /// attempt if it is won or lost.
     private func land() {
         guard let shot = pending else { return }
         pending = nil
@@ -180,7 +177,7 @@ public final class BubblesSession: ObservableObject, LevelSession {
 
     // MARK: Levels
 
-    /// Starts a fresh attempt at `level` (if unlocked). Leaving a level unfinished is not a loss.
+    /// Leaving a level unfinished is not a loss.
     public func start(level: Int) {
         guard progress.isUnlocked(level) else { return }
         landing.cancel()
@@ -204,7 +201,7 @@ public final class BubblesSession: ObservableObject, LevelSession {
 
     // MARK: VoiceOver aiming
 
-    /// Rotates the aim by `degrees` (positive = to the right).
+    /// Positive `degrees` turn the aim to the right.
     public func adjustSpokenAim(by degrees: Double) {
         guard isPlaying else { return }
         spokenAngle = min(170, max(10, spokenAngle - degrees))
@@ -243,7 +240,7 @@ public final class BubblesSession: ObservableObject, LevelSession {
         clock.setRunning(inView && started && !game.isOver)
     }
 
-    /// After every change: the clock is brought up to date and the game saved.
+    /// Called after every change.
     private func commit() {
         updateClock()
         context.saveSlot.save(BubblesSave(progress: progress, game: game, attempt: attempt, elapsed: clock.elapsed(),

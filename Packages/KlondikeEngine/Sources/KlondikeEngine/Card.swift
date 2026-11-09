@@ -27,7 +27,7 @@ public enum Suit: Int, CaseIterable, Codable, Sendable {
     }
 }
 
-/// A playing card. Identity only: whether it is face up is a property of the pile it lies in.
+/// Identity only: whether it is face up is a property of the pile it lies in.
 public struct Card: Hashable, Sendable, CustomStringConvertible {
     public let suit: Suit
     /// 1 (Ace) through 13 (King).

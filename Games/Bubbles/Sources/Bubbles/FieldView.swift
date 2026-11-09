@@ -2,8 +2,6 @@ import BubbleEngine
 import PlayKit
 import SwiftUI
 
-/// The playing field: bubbles, aim guide, launcher and shot in flight.
-///
 /// Aiming works with one thumb: touch above the launcher to point at a spot, or drag below it to
 /// pull back like a slingshot. Lift to shoot; slide back onto the launcher to cancel. The guide
 /// shows exactly where the bubble will settle.

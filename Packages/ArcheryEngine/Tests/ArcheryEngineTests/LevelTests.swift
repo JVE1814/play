@@ -73,19 +73,10 @@ final class LevelTests: XCTestCase {
     // MARK: Played by the bots
 
     private func results(_ level: Level, _ skill: ArcherSkill, attempts: Int) -> (scores: [Int], pass: Double, three: Double) {
-        var scores: [Int] = []
-        var passes = 0
-        var threes = 0
-        for attempt in 0..<attempts {
-            var round = ArcheryRound(level: level, attempt: attempt)
-            var archer = Archer(skill: skill, seed: UInt64(attempt * 104_729 + level.number))
-            archer.play(&round)
-            XCTAssertEqual(round.status, .finished)
-            scores.append(round.score)
-            if round.passed { passes += 1 }
-            if round.stars == 3 { threes += 1 }
-        }
-        return (scores, Double(passes) / Double(attempts), Double(threes) / Double(attempts))
+        let rounds = Archer.play(level, skill: skill, attempts: attempts)
+        XCTAssertTrue(rounds.allSatisfy { $0.status == .finished })
+        return (rounds.map(\.score), Double(rounds.filter(\.passed).count) / Double(attempts),
+                Double(rounds.filter { $0.stars == 3 }.count) / Double(attempts))
     }
 
     func testAnExpertPassesEveryLevel() {
@@ -113,8 +104,8 @@ final class LevelTests: XCTestCase {
                     XCTAssertLessThanOrEqual(novice.three, 0.4, "three stars mean something on level \(level.number)")
                 }
             }
-            passByChapter.append(novicePass / 6)
-            expertThreeByChapter.append(expertThree / 6)
+            passByChapter.append(novicePass / Double(LevelCatalog.levelsPerChapter))
+            expertThreeByChapter.append(expertThree / Double(LevelCatalog.levelsPerChapter))
         }
         XCTAssertGreaterThanOrEqual(passByChapter[0], 0.95, "the practice field is for everyone")
         XCTAssertEqual(passByChapter, passByChapter.sorted(by: >), "each venue is harder to pass than the last")

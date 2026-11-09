@@ -43,13 +43,11 @@ final class GameTests: XCTestCase {
     }
 
     func testTheQueueOnlyOffersColoursStillOnTheBoard() {
-        var g = game(["yyyyyyyy"], palette: [.red, .yellow, .blue], shots: 50)
-        for _ in 0..<20 {
-            XCTAssertEqual(g.current, .yellow)
-            XCTAssertEqual(g.next, .yellow)
-            g.shoot(direction: Point(0.3, -1))
-            if g.status != .playing { break }
-        }
+        var g = game(["...rr..y"], palette: [.red, .yellow, .blue], shots: 50, current: .red, next: .red)
+        g.shoot(direction: up)
+        XCTAssertEqual(g.status, .playing, "the reds pop and the yellow is left")
+        XCTAssertEqual(g.current, .yellow, "the red that was next is dealt again")
+        XCTAssertEqual(g.next, .yellow)
     }
 
     func testSwapExchangesTheTwoBubbles() {
@@ -79,7 +77,6 @@ final class GameTests: XCTestCase {
             var queue = ""
             for _ in 0..<6 {
                 queue.append(Bubble.color(g.current).code)
-                g.swap(); g.swap()
                 g.shoot(direction: Point(4, -1))
             }
             queues.insert(queue)

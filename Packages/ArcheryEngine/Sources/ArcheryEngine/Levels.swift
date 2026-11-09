@@ -33,7 +33,6 @@ public enum Chapter: Int, CaseIterable, Codable, Sendable, Identifiable {
     }
 }
 
-/// One level: a distance, a target, a number of arrows and the conditions to shoot them in.
 public struct Level: Hashable, Codable, Sendable, Identifiable {
     public let number: Int
     public let name: String

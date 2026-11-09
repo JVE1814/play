@@ -121,7 +121,6 @@ public struct BubbleGrid: Hashable, Codable, Sendable {
     }
 }
 
-/// The path a shot takes and where it settles.
 public struct ShotTrace: Hashable, Sendable {
     /// Start, every wall bounce, and the point where the bubble stops.
     public let path: [Point]
@@ -146,7 +145,6 @@ extension BubbleGrid {
         for _ in 0..<64 {
             var best = Double.infinity
             var hitBubble = false
-            // Bubbles.
             for cell in cells {
                 let f = position - Self.center(of: cell)
                 let b = f.dot(d)
@@ -159,13 +157,11 @@ extension BubbleGrid {
                     hitBubble = true
                 }
             }
-            // Ceiling.
             let tCeiling = (ceiling - position.y) / d.y
             if tCeiling < best {
                 best = tCeiling
                 hitBubble = false
             }
-            // Walls.
             var tWall = Double.infinity
             if d.x < 0 { tWall = (left - position.x) / d.x }
             if d.x > 0 { tWall = (right - position.x) / d.x }
@@ -204,7 +200,6 @@ extension BubbleGrid {
     }
 }
 
-/// What a shot did to the grid.
 public struct ShotResult: Hashable, Codable, Sendable {
     /// Same-colour group that popped (includes the shot bubble), with what was there.
     public let popped: [Cell]

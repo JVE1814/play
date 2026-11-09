@@ -247,7 +247,6 @@ struct RangePainter {
         context.fill(Path(ellipseIn: CGRect(x: spot.x - r, y: spot.y - r * 0.55, width: r * 2, height: r * 1.1)),
                      with: .radialGradient(Gradient(colors: [Color(hex: 0xFFF3D2, opacity: 0.32), Color(hex: 0xFFF3D2, opacity: 0)]),
                                            center: spot, startRadius: 0, endRadius: r))
-        // Light beams from the towers to the target.
         let target = cam.onTarget(.zero)
         for side in [-1.0, 1.0] {
             let lamp = CGPoint(x: w / 2 + CGFloat(side) * w * 0.46, y: h * 0.05)
@@ -310,7 +309,6 @@ struct RangePainter {
         let jolt = shake
         let woodWidth = max(1.2, ppm * 0.07)
 
-        // Shadow on the ground.
         let shadowCenter = cam.project(Vec3(offset.x + Double(venue.shadowLean) * 0.7, 0, distance))
         let shadowWidth = ppm * 1.7 * (1 + abs(venue.shadowLean) * 0.5)
         let shadowHeight = max(3, cam.groundY(atDepth: distance - 0.5) - cam.groundY(atDepth: distance + 0.5))
@@ -615,7 +613,6 @@ struct RangePainter {
                              with: .color(venue.bossEdge.opacity(1 - progress)))
             }
         }
-        // The score, rising from the arrow and fading.
         let chip = ArcheryStyle.chip(for: hit)
         let rise = f.reduceMotion ? 0 : CGFloat(min(1, age / 1.2)) * 14
         let opacity = age < 1.1 ? 1 : max(0, (1.6 - age) / 0.5)

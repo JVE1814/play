@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A titled, rounded group of settings rows.
 public struct SettingsPanel<Content: View>: View {
     let title: String
     let footer: String?
@@ -35,7 +34,6 @@ public struct SettingsPanel<Content: View>: View {
     }
 }
 
-/// A switch with a title and optional explanation.
 public struct SettingsToggleRow: View {
     let title: String
     let detail: String?
@@ -70,7 +68,6 @@ public struct SettingsToggleRow: View {
     }
 }
 
-/// A segmented choice with a title.
 public struct SettingsChoiceRow<Value: Hashable>: View {
     let title: String
     let detail: String?
@@ -111,7 +108,6 @@ public struct SettingsChoiceRow<Value: Hashable>: View {
     }
 }
 
-/// A hairline between settings rows.
 public struct SettingsDivider: View {
     public init() {}
 

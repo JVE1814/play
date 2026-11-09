@@ -18,7 +18,6 @@ public struct Face: Hashable, Codable, Sendable {
     public static let full80 = Face(size: 0.80)
     public static func spot(_ size: Double) -> Face { Face(size: size, lowestRing: 6) }
 
-    /// Width of one ring.
     public var ringWidth: Double { size / 20 }
     /// Outer radius of the printed face.
     public var radius: Double { outerRadius(ofRing: lowestRing) }

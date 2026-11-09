@@ -9,7 +9,6 @@ public enum FeedbackEvent: String, CaseIterable, Sendable {
     case draw
     /// The tap had no legal move.
     case invalid
-    /// The game was won.
     case win
     /// A button with no other feedback (hint, undo).
     case tap
@@ -53,7 +52,6 @@ public final class Feedback {
         }
     }
 
-    /// The bundled sound for `event`.
     public static func soundURL(for event: FeedbackEvent) -> URL? {
         Bundle.module.url(forResource: event.rawValue, withExtension: "wav")
             ?? Bundle.module.url(forResource: event.rawValue, withExtension: "wav", subdirectory: "Sounds")

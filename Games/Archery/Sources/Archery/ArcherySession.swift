@@ -132,7 +132,6 @@ public final class ArcherySession: ObservableObject, LevelSession {
     /// A restart waits for the arrow in the air to land.
     public var canRestart: Bool { flight == nil }
 
-    /// Arrows that have landed, and what they scored.
     public var landedShots: ArraySlice<Shot> { round.shots.prefix(landedArrows) }
     public var displayedScore: Int { landedShots.reduce(0) { $0 + $1.score } }
     public var displayedArrowsLeft: Int { round.level.arrows - landedArrows }
@@ -337,7 +336,6 @@ public final class ArcherySession: ObservableObject, LevelSession {
         count == 3 ? ["top", "middle", "bottom"][index] : "spot \(index + 1)"
     }
 
-    /// The face nearest the sight.
     private var nearestSpot: Int {
         let spots = round.level.layout.spots
         return spots.indices.min { spots[$0].center.distance(to: aim) < spots[$1].center.distance(to: aim) } ?? 0
@@ -387,7 +385,7 @@ public final class ArcherySession: ObservableObject, LevelSession {
 
     // MARK: Levels
 
-    /// Starts a fresh attempt at `level` (if unlocked). Leaving a level unfinished is not a loss.
+    /// Leaving a level unfinished is not a loss.
     public func start(level number: Int) {
         guard progress.isUnlocked(number) else { return }
         // An end that is already decided (its last arrow still in the air) is recorded first.
@@ -458,7 +456,7 @@ public final class ArcherySession: ObservableObject, LevelSession {
         updateRunClock(now)
     }
 
-    /// Brings the round's clock up to date. On a timed level this is where time runs out.
+    /// On a timed level this is where time runs out.
     private func syncClock(_ now: Date = Date()) {
         guard clockAnchor != nil else { return }
         let time = clock(at: now)

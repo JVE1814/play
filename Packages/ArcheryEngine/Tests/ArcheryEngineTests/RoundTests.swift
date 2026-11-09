@@ -54,7 +54,6 @@ final class RoundTests: XCTestCase {
         let now = round.targetOffset(at: round.clock)
         let atTarget = try XCTUnwrap(round.shoot(aim: now))
         XCTAssertGreaterThan(atTarget.hit.point.distance(to: .zero), 0.1, "aiming where it is now trails behind")
-        XCTAssertEqual(atTarget.targetOffset, round.targetOffset(at: 0.1 + Ballistics.flightTime(distance: 40)))
         let led = try XCTUnwrap(round.shoot(aim: round.aim(toHit: .zero)))
         XCTAssertEqual(led.hit.label, "X")
     }

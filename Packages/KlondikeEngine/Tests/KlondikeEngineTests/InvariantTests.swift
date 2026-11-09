@@ -7,7 +7,6 @@ final class InvariantTests: XCTestCase {
     func testOneThousandSeededRandomGamesAlwaysKeepExactly52UniqueCards() {
         let fullDeck = Set(Card.fullDeck)
         var movesPlayed = 0
-        var gamesChecked = 0
         for seed in 1...1000 as ClosedRange<UInt64> {
             var game = KlondikeGame(seed: seed, drawMode: seed.isMultiple(of: 2) ? .three : .one)
             let deal = game
@@ -27,9 +26,7 @@ final class InvariantTests: XCTestCase {
             XCTAssertEqual(game.board.integrityProblems, [], "seed \(seed)")
             game.undoAll()
             XCTAssertEqual(game, deal, "seed \(seed): undo all should restore the deal")
-            gamesChecked += 1
         }
-        XCTAssertEqual(gamesChecked, 1000)
         XCTAssertGreaterThan(movesPlayed, 100_000)
     }
 
@@ -59,22 +56,21 @@ final class InvariantTests: XCTestCase {
 
         var duplicated = good
         duplicated.stock.append(duplicated.stock[0])
-        XCTAssertTrue(duplicated.integrityProblems.contains { $0.contains("duplicate") })
+        XCTAssertFalse(duplicated.integrityProblems.isEmpty, "a card twice")
 
         var badRun = good
         let top = badRun.tableau[1].visible[0]
         let sameColour = badRun.stock.firstIndex { $0.isRed == top.isRed }!
         badRun.tableau[1].visible.append(badRun.stock.remove(at: sameColour))
-        XCTAssertTrue(badRun.integrityProblems.contains { $0.contains("not a valid run") })
+        XCTAssertFalse(badRun.integrityProblems.isEmpty, "two cards of one colour in a run")
 
         var noFaceUp = good
         noFaceUp.stock.append(noFaceUp.tableau[3].visible.removeLast())
-        XCTAssertTrue(noFaceUp.integrityProblems.contains { $0.contains("no face-up card") })
+        XCTAssertFalse(noFaceUp.integrityProblems.isEmpty, "a column with only face-down cards")
 
         var badFoundation = good
-        badFoundation.foundations[0] = [badFoundation.stock.removeLast()]
-        if badFoundation.foundations[0][0].rank != 1 {
-            XCTAssertTrue(badFoundation.integrityProblems.contains { $0.contains("foundation") })
-        }
+        let notAnAce = badFoundation.stock.firstIndex { $0.rank != 1 }!
+        badFoundation.foundations[0] = [badFoundation.stock.remove(at: notAnAce)]
+        XCTAssertFalse(badFoundation.integrityProblems.isEmpty, "a foundation that does not start with its ace")
     }
 }

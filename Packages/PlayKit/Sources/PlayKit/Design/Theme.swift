@@ -18,12 +18,10 @@ extension Color {
         self.init(uiColor: UIColor(hex: hex, alpha: CGFloat(opacity)))
     }
 
-    /// A colour that adapts to light and dark mode.
     public init(light: UInt32, dark: UInt32, opacity: Double = 1) {
         self.init(light: light, lightOpacity: opacity, dark: dark, darkOpacity: opacity)
     }
 
-    /// A colour that adapts to light and dark mode, with separate opacities.
     public init(light: UInt32, lightOpacity: Double, dark: UInt32, darkOpacity: Double) {
         self.init(uiColor: UIColor { traits in
             traits.userInterfaceStyle == .dark

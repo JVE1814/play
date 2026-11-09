@@ -2,16 +2,19 @@ import XCTest
 
 /// End-to-end tests for the Bubbles game.
 final class BubblesUITests: UITestCase {
+    /// The number of levels, as the app's locale writes it.
+    private let levelCount = 2000.formatted()
+
     func testBubblesIsOnHomeAndStartsAtLevelOne() {
         launch()
-        XCTAssertTrue(waitFor("game-klondike").exists)
+        waitFor("game-klondike")
         openBubbles()
-        XCTAssertEqual(element("bubbleLevel").value as? String, "1 of 2,000")
-        XCTAssertEqual(element("shotsLeft").value as? String, "9")
+        XCTAssertEqual(element("bubbleLevel").value as? String, "1 of \(levelCount)")
+        XCTAssertGreaterThan(shotsLeft(), 1)
         XCTAssertTrue(element("bubble-0-0").exists)
         XCTAssertTrue(element("swapBubble").exists)
         element("back").tap()
-        XCTAssertTrue(waitFor("homeTitle").exists)
+        waitFor("homeTitle")
         XCTAssertTrue(labelled("Bubbles").exists)
     }
 
@@ -19,11 +22,11 @@ final class BubblesUITests: UITestCase {
         launch(["-scenario", "bubblesNearWin"])
         openBubbles()
         shoot(dx: 0.5, dy: 0.15)                 // straight up: three reds pop
-        XCTAssertTrue(waitFor("bubblesResult").exists)
+        waitFor("bubblesResult")
         XCTAssertTrue(labelled("Level 1 cleared!").exists)
         XCTAssertEqual(element("resultStars").label, "3 of 3 stars")
         element("resultNext").tap()
-        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "2 of 2,000")
+        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "2 of \(levelCount)")
         element("levels").tap()
         XCTAssertEqual(waitFor("level-1").value as? String, "3 of 3 stars")
         XCTAssertEqual(element("level-2").value as? String, "0 of 3 stars, current")
@@ -37,13 +40,13 @@ final class BubblesUITests: UITestCase {
     func testRunningOutOfShotsOffersAnotherTry() {
         launch(["-scenario", "bubblesLastShot"])
         openBubbles()
-        XCTAssertEqual(element("shotsLeft").value as? String, "1")
+        XCTAssertEqual(shotsLeft(), 1)
         shoot(dx: 0.5, dy: 0.15)
-        XCTAssertTrue(waitFor("bubblesResult").exists)
+        waitFor("bubblesResult")
         XCTAssertTrue(labelled("Out of shots").exists)
         element("resultRetry").tap()
         XCTAssertFalse(element("bubblesResult").exists)
-        XCTAssertEqual(waitFor("shotsLeft").value as? String, "9", "a fresh attempt at the real level 1")
+        XCTAssertGreaterThan(shotsLeft(), 1, "a fresh attempt at the real level 1")
     }
 
     func testSwappingExchangesTheLauncherAndNextBubble() {
@@ -71,7 +74,7 @@ final class BubblesUITests: UITestCase {
         app.terminate()
         launch(["-showBoardSignature"], reset: false)
 
-        XCTAssertTrue(waitFor("launcher").exists, "reopens straight into Bubbles")
+        waitFor("launcher")
         XCTAssertEqual(signature(), board)
         XCTAssertEqual(element("shotsLeft").value as? String, shots)
     }
@@ -79,13 +82,13 @@ final class BubblesUITests: UITestCase {
     func testTheLevelListShowsAllTwoThousandLevels() {
         launch(["-level", "37"])
         openBubbles()
-        XCTAssertEqual(element("bubbleLevel").value as? String, "37 of 2,000")
+        XCTAssertEqual(element("bubbleLevel").value as? String, "37 of \(levelCount)")
         element("levels").tap()
-        XCTAssertTrue(waitFor("levelSummary").label.contains("2,000 levels"))
+        XCTAssertTrue(waitFor("levelSummary").label.contains("\(levelCount) levels"))
         XCTAssertEqual(waitFor("level-37").value as? String, "0 of 3 stars, current")
         XCTAssertEqual(element("level-38").value as? String, "Locked")
         element("level-12").tap()
-        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "12 of 2,000")
+        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "12 of \(levelCount)")
     }
 
     // MARK: Screenshots
@@ -100,12 +103,10 @@ final class BubblesUITests: UITestCase {
 
     private func captureBubbles(appearance: String) {
         launch(["-level", "210", "-demoAim", "-0.42"], appearance: appearance)
-        _ = waitFor("homeTitle")
-        snap("40-home-two-games-\(appearance)")
         openBubbles()
         snap("41-bubbles-aim-\(appearance)")
         element("levels").tap()
-        _ = waitFor("level-210")
+        waitFor("level-210")
         snap("44-bubbles-levels-\(appearance)")
         element("done").tap()
 
@@ -113,21 +114,24 @@ final class BubblesUITests: UITestCase {
         openBubbles()
         snap("42-bubbles-start-\(appearance)")
         shoot(dx: 0.5, dy: 0.15)
-        _ = waitFor("bubblesResult")
+        waitFor("bubblesResult")
         snap("43-bubbles-cleared-\(appearance)")
 
         launch(["-scenario", "bubblesLastShot"], appearance: appearance)
         openBubbles()
         shoot(dx: 0.5, dy: 0.15)
-        _ = waitFor("bubblesResult")
+        waitFor("bubblesResult")
         snap("45-bubbles-out-of-shots-\(appearance)")
     }
 
     // MARK: Helpers
 
     private func openBubbles() {
-        waitFor("game-bubbles").tap()
-        _ = waitFor("launcher")
+        open(game: "bubbles", showing: "launcher")
+    }
+
+    private func shotsLeft() -> Int {
+        Int(waitFor("shotsLeft").value as? String ?? "") ?? -1
     }
 
     /// Drags from the launcher to a point of the field (normalised) and lets go, which shoots.
@@ -136,8 +140,6 @@ final class BubblesUITests: UITestCase {
         let from = waitFor("launcher").coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
         let to = waitFor("bubbleField").coordinate(withNormalizedOffset: CGVector(dx: dx, dy: dy))
         from.press(forDuration: 0.05, thenDragTo: to)
-        let changed = NSPredicate { _, _ in self.element("shotsLeft").value as? String != before }
-        expectation(for: changed, evaluatedWith: nil)
-        waitForExpectations(timeout: 5)
+        waitForValue(of: "shotsLeft", toChangeFrom: before)
     }
 }

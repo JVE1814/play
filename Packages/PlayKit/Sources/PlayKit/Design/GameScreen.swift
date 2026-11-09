@@ -156,7 +156,6 @@ public struct ResultPanel<Content: View>: View {
     }
 }
 
-/// A result panel's headline.
 public struct ResultHeadline: View {
     let text: String
 

@@ -2,8 +2,6 @@ import ArcheryEngine
 import PlayKit
 import SwiftUI
 
-/// The Archery screen: level, score and arrows in the top bar, the range, and Levels, Tip and
-/// Restart in the toolbar.
 struct ArcheryScreen: View {
     @StateObject private var session: ArcherySession
     private let preferences: ArcheryPreferences

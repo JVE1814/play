@@ -22,18 +22,10 @@ for level in LevelCatalog.all {
     var line = String(format: "%3d  %-20@ %3d", level.number, level.name as NSString, level.maxScore)
     var sortedBySkill: [[Int]] = []
     for skill in [ArcherSkill.expert, .novice] {
-        var scores: [Int] = []
-        var passes = 0
-        var threes = 0
-        for attempt in 0..<attempts {
-            var round = ArcheryRound(level: level, attempt: attempt)
-            var archer = Archer(skill: skill, seed: UInt64(attempt * 7919 + level.number))
-            archer.play(&round)
-            scores.append(round.score)
-            if round.passed { passes += 1 }
-            if round.stars == 3 { threes += 1 }
-        }
-        scores.sort()
+        let rounds = Archer.play(level, skill: skill, attempts: attempts)
+        let scores = rounds.map(\.score).sorted()
+        let passes = rounds.filter(\.passed).count
+        let threes = rounds.filter { $0.stars == 3 }.count
         sortedBySkill.append(scores)
         line += String(format: " |        %3d %3d %3d  %3d%% %3d%%", percentile(scores, 0.25), percentile(scores, 0.5),
                        percentile(scores, 0.75), passes * 100 / attempts, threes * 100 / attempts)

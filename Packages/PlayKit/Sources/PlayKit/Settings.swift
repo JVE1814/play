@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Colour scheme preference.
 public enum Appearance: String, CaseIterable, Codable, Sendable, Identifiable {
     case system, light, dark
 
@@ -23,7 +22,7 @@ public enum Appearance: String, CaseIterable, Codable, Sendable, Identifiable {
     }
 }
 
-/// App-wide settings. Sound is off and light haptics are on by default.
+/// Sound is off and light haptics are on by default.
 @MainActor
 public final class AppSettings: ObservableObject {
     public static let soundKey = "settings.sound"

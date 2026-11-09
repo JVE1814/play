@@ -67,7 +67,6 @@ public struct SolitaireSave: Codable, Equatable {
     /// How many deals this install has started (used to vary seeded test deals).
     public var dealsStarted: Int
 
-    /// A started game whose result is not yet in the statistics.
     public var isInProgress: Bool { game.moveCount > 0 && !resultRecorded }
 
     /// The saved game, unless there is none or it fails the integrity check (52 unique cards,

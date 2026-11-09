@@ -25,7 +25,6 @@ public enum Format {
         "\(number) \(plural(number, noun))"
     }
 
-    /// "shot" for one, "shots" otherwise.
     public static func plural(_ number: Int, _ noun: String) -> String {
         number == 1 ? noun : noun + "s"
     }

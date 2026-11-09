@@ -1,6 +1,6 @@
 import Foundation
 
-/// One attempt at a level: the grid, the bubble queue and the shots used.
+/// One attempt at a level.
 public struct BubbleGame: Hashable, Codable, Sendable {
     public enum Status: String, Hashable, Codable, Sendable {
         case playing
@@ -28,7 +28,7 @@ public struct BubbleGame: Hashable, Codable, Sendable {
     public private(set) var status: Status = .playing
     private var generator: SeededGenerator
 
-    /// Starts an attempt at `level`. Each attempt deals its own bubble queue.
+    /// Each attempt deals its own bubble queue.
     public init(level: Level, attempt: Int = 0) {
         let layout = level.layout
         self.init(grid: layout.grid, palette: layout.palette, shotLimit: level.shotLimit, par: level.par,
@@ -70,7 +70,7 @@ public struct BubbleGame: Hashable, Codable, Sendable {
         return 1
     }
 
-    /// Exchanges the launcher bubble with the next one. Free and unlimited.
+    /// Swapping is free and unlimited.
     public mutating func swap() {
         guard status == .playing else { return }
         (current, next) = (next, current)
@@ -82,8 +82,8 @@ public struct BubbleGame: Hashable, Codable, Sendable {
         return grid.trace(direction: direction)
     }
 
-    /// Fires the launcher bubble. Returns nil (and changes nothing) if the game is over or the
-    /// direction does not point upwards.
+    /// Returns nil (and changes nothing) if the game is over or the direction does not point
+    /// upwards.
     @discardableResult
     public mutating func shoot(direction: Point) -> ShotOutcome? {
         guard status == .playing, let trace = grid.trace(direction: direction) else { return nil }
@@ -119,7 +119,6 @@ public struct BubbleGame: Hashable, Codable, Sendable {
     }
 }
 
-/// A fired shot: its path, colour and effect.
 public struct ShotOutcome: Hashable, Sendable {
     public let trace: ShotTrace
     public let color: BubbleColor

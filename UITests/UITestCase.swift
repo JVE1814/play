@@ -35,6 +35,19 @@ class UITestCase: XCTestCase {
         return found
     }
 
+    /// Opens a game from the home screen and waits for `landmark`, an element only its screen has.
+    func open(game id: String, showing landmark: String) {
+        waitFor("game-\(id)").tap()
+        waitFor(landmark)
+    }
+
+    /// Waits until the value of `identifier` is no longer `before`.
+    func waitForValue(of identifier: String, toChangeFrom before: String?) {
+        let changed = NSPredicate { _, _ in self.element(identifier).value as? String != before }
+        expectation(for: changed, evaluatedWith: nil)
+        waitForExpectations(timeout: 5)
+    }
+
     /// Taps the middle of an element by coordinate (cards overlap, so hit-testing decides).
     func tapCenter(_ target: XCUIElement) {
         target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()

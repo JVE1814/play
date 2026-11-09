@@ -19,7 +19,6 @@ public struct StarShape: Shape {
     }
 }
 
-/// A level's stars, filled for those earned.
 public struct StarRow: View {
     let stars: Int
     let size: CGFloat
@@ -56,7 +55,6 @@ public struct ResultStars: View {
     }
 }
 
-/// Toolbar button that opens the level list.
 public struct LevelsButton<Session: LevelSession>: View {
     let session: Session
 

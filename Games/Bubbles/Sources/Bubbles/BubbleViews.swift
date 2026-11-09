@@ -114,7 +114,6 @@ struct BubbleSymbol: Shape {
     }
 }
 
-/// One bubble: a flat disc with its symbol.
 struct BubbleView: View {
     let bubble: Bubble
     let diameter: CGFloat
@@ -133,7 +132,7 @@ struct BubbleView: View {
     }
 }
 
-/// The home screen illustration: a small cluster of bubbles.
+/// The home screen illustration.
 struct BubblesIcon: View {
     var body: some View {
         GeometryReader { proxy in

@@ -63,6 +63,18 @@ public struct Archer {
         leadShare = skill.leading
     }
 
+    /// Plays `level` `attempts` times, each a fresh attempt by a fresh archer of `skill`, and
+    /// returns the finished rounds. The level tests and `archery-calibrate` both judge the star
+    /// scores on these.
+    public static func play(_ level: Level, skill: ArcherSkill, attempts: Int) -> [ArcheryRound] {
+        (0..<attempts).map { attempt in
+            var round = ArcheryRound(level: level, attempt: attempt)
+            var archer = Archer(skill: skill, seed: UInt64(attempt * 104_729 + level.number))
+            archer.play(&round)
+            return round
+        }
+    }
+
     /// Shoots every arrow of `round` (or until its time runs out).
     public mutating func play(_ round: inout ArcheryRound) {
         while round.status == .playing {

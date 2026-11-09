@@ -65,7 +65,6 @@ public struct SeededGenerator: RandomNumberGenerator, Hashable, Codable, Sendabl
         Double(next() >> 11) / Double(1 << 53)
     }
 
-    /// Uniform double in `range`.
     public mutating func uniform(_ range: ClosedRange<Double>) -> Double {
         range.lowerBound + (range.upperBound - range.lowerBound) * nextUnit()
     }

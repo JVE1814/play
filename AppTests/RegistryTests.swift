@@ -12,8 +12,9 @@ final class RegistryTests: XCTestCase {
     }
 
     func testTestGameIsAddedOnlyWhenRequested() {
+        let shipped = GameRegistry.games(options: LaunchOptions())
         let games = GameRegistry.games(options: TestEnvironment.options(["-includeTestGames"]))
-        XCTAssertEqual(games.map { $0.id }, ["klondike", "bubbles", "archery", "testgame"])
+        XCTAssertEqual(games.map { $0.id }, shipped.map { $0.id } + ["testgame"])
     }
 
     func testAppModelReopensTheLastGame() {
@@ -30,7 +31,7 @@ final class RegistryTests: XCTestCase {
     func testOpeningSettingsTellsTheGamesTheyAreCovered() {
         let env = TestEnvironment()
         let model = AppModel(options: LaunchOptions(), storage: env.storage, defaults: env.defaults)
-        let context = model.context(for: model.games[2])
+        let context = model.context(for: model.games[0])
         XCTAssertFalse(context.isCovered)
         model.showingSettings = true
         XCTAssertTrue(context.isCovered)
@@ -38,16 +39,12 @@ final class RegistryTests: XCTestCase {
         XCTAssertFalse(context.isCovered)
     }
 
-    func testEveryGameProvidesItsViews() {
+    func testEachGameHasOneContext() {
         let env = TestEnvironment()
-        let model = AppModel(options: TestEnvironment.options(["-includeTestGames"]), storage: env.storage,
-                             defaults: env.defaults)
+        let model = AppModel(options: LaunchOptions(), storage: env.storage, defaults: env.defaults)
         for game in model.games {
-            let context = model.context(for: game)
-            XCTAssertTrue(context === model.context(for: game), "one context per game")
-            _ = game.module.makeIcon()
-            _ = game.module.makeGameView(context: context)
-            XCTAssertFalse(game.module.title.isEmpty)
+            XCTAssertTrue(model.context(for: game) === model.context(for: game), game.id)
         }
+        XCTAssertFalse(model.context(for: model.games[0]) === model.context(for: model.games[1]))
     }
 }

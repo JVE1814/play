@@ -20,7 +20,6 @@ final class ConditionsTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(lowest, 0.5 - 1e-9)
         XCTAssertLessThanOrEqual(highest, 3.5 + 1e-9)
         XCTAssertGreaterThan(highest - lowest, 2, "the gusts really do come and go")
-        XCTAssertEqual(wind.speed(at: 17.3), wind.speed(at: 17.3))
         XCTAssertEqual(wind.strongest, 3.5)
     }
 
@@ -47,7 +46,6 @@ final class ConditionsTests: XCTestCase {
             XCTAssertEqual(offset.y, 0)
         }
         XCTAssertEqual(motion.offset(at: 1).x, 0.5, accuracy: 1e-9, "a quarter period in, it is at the end")
-        XCTAssertEqual(motion.topSpeed, 0.5 * 2 * .pi / 4, accuracy: 1e-9)
         XCTAssertEqual(Motion.still.offset(at: 5), .zero)
         XCTAssertFalse(Motion.still.isMoving)
     }

@@ -51,7 +51,6 @@ public final class SolitaireSession: ObservableObject, GameSession {
 
     // MARK: State for the view
 
-    /// The player may move cards: the game is neither won nor finishing itself.
     public var canPlay: Bool { !isAutoFinishing && !game.isWon }
     public var canUndo: Bool { game.canUndo && canPlay }
     public var canAutoFinish: Bool { !isAutoFinishing && game.canAutoFinish }

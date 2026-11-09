@@ -31,7 +31,6 @@ public struct PlayClock {
         banked = elapsed
     }
 
-    /// True once the clock has ever run.
     public var hasStarted: Bool { banked > 0 || runningSince != nil }
 
     public func elapsed(at date: Date = Date()) -> TimeInterval {

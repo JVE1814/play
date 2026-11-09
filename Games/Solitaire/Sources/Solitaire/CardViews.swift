@@ -2,7 +2,7 @@ import KlondikeEngine
 import PlayKit
 import SwiftUI
 
-/// Card colours. Red and black suits differ in hue and in lightness, and every suit has its own shape.
+/// Red and black suits differ in hue and in lightness, and every suit has its own shape.
 enum CardPalette {
     static let face = Color(light: 0xFFFFFF, dark: 0x2B2E35)
     static let edge = Color(light: 0x000000, lightOpacity: 0.16, dark: 0xFFFFFF, darkOpacity: 0.16)
@@ -33,7 +33,6 @@ extension View {
     }
 }
 
-/// One playing card, face up or face down.
 struct CardView: View {
     let card: Card
     let faceUp: Bool

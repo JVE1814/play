@@ -36,7 +36,6 @@ public struct TableauColumn: Hashable, Codable, Sendable {
     public var top: Card? { visible.last }
 }
 
-/// Where a card currently lies.
 public struct CardLocation: Hashable, Sendable {
     public let pile: Pile
     /// Position within the pile, 0 = bottom. For tableau columns this counts hidden cards too.
@@ -99,10 +98,7 @@ public struct Board: Hashable, Codable, Sendable {
 
     public var isWon: Bool { foundations.allSatisfy { $0.count == 13 } }
 
-    /// True when no card is face down: the stock is empty and every tableau card is turned up.
     public var allCardsRevealed: Bool { stock.isEmpty && tableau.allSatisfy { $0.hidden.isEmpty } }
-
-    public var foundationCardCount: Int { foundations.reduce(0) { $0 + $1.count } }
 
     public func location(of card: Card) -> CardLocation? {
         if let i = stock.firstIndex(of: card) { return CardLocation(pile: .stock, index: i, isFaceUp: false) }

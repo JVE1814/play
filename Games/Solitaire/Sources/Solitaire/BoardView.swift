@@ -2,7 +2,6 @@ import KlondikeEngine
 import PlayKit
 import SwiftUI
 
-/// Cards being dragged.
 struct DragState: Equatable {
     var source: Pile
     var count: Int

@@ -1,6 +1,5 @@
 import Foundation
 
-/// One arrow shot.
 public struct Shot: Hashable, Codable, Sendable {
     /// Where the sight pointed when the arrow was released (target coordinates, boss at rest).
     public let aim: Vec2
@@ -85,8 +84,8 @@ public struct ArcheryRound: Hashable, Codable, Sendable {
 
     // MARK: Playing
 
-    /// Moves the level clock on. On a timed level, running out of time ends the attempt and the
-    /// arrows left in the quiver score as misses.
+    /// On a timed level, running out of time ends the attempt and the arrows left in the quiver
+    /// score as misses.
     public mutating func advance(by seconds: Double) {
         guard status == .playing, seconds > 0 else { return }
         clock += seconds
@@ -116,7 +115,7 @@ public struct ArcheryRound: Hashable, Codable, Sendable {
         return (level.layout.hit(at: landing, used: usedSpots), drift, offset)
     }
 
-    /// Releases an arrow now with the sight at `aim`. Returns nil once the attempt is over.
+    /// Returns nil once the attempt is over.
     @discardableResult
     public mutating func shoot(aim: Vec2) -> Shot? {
         guard status == .playing, arrowsLeft > 0 else { return nil }

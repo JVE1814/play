@@ -115,19 +115,31 @@ final class SolitaireTests: XCTestCase {
         XCTAssertEqual(s.game.waste.count, 3)
     }
 
-    func testHintSuggestsALegalMove() {
+    func testHintSuggestsALegalMove() throws {
         let env = TestEnvironment()
         let s = session(env, ["-seed", "4"])
         s.showHint()
-        let hint = try! XCTUnwrap(s.hint)
+        let hint = try XCTUnwrap(s.hint)
         XCTAssertTrue(s.game.isLegal(hint))
         XCTAssertFalse(s.hintedCards.isEmpty)
         XCTAssertNotNil(s.toast)
     }
 
-    func testCorruptSaveIsReplacedByAFreshDeal() {
+    func testAnUnreadableSaveIsReplacedByAFreshDeal() {
         let env = TestEnvironment()
-        env.storage.write(Data("{\"nonsense\":true}".utf8), to: "saves/klondike.json")
+        SaveSlot(storage: env.storage, gameID: SolitaireModule().id).save(["nonsense": true])
+        XCTAssertEqual(session(env).game.board, KlondikeGame(seed: 42).board)
+    }
+
+    func testASavedGameThatBreaksTheRulesIsReplacedByAFreshDeal() throws {
+        let env = TestEnvironment()
+        session(env).tapPile(.stock)
+        let slot = SaveSlot(storage: env.storage, gameID: SolitaireModule().id)
+        var save = try XCTUnwrap(slot.load(SolitaireSave.self))
+        let noCards = Board(stock: [], waste: [], foundations: Array(repeating: [], count: Board.foundationCount),
+                            tableau: Array(repeating: TableauColumn(), count: Board.columnCount))
+        save.game = KlondikeGame(board: noCards)
+        slot.save(save)
         XCTAssertEqual(session(env).game.board, KlondikeGame(seed: 42).board)
     }
 

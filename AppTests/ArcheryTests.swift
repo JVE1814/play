@@ -252,7 +252,7 @@ final class ArcheryTests: XCTestCase {
         let shot = try XCTUnwrap(s.round.shots.first)
         XCTAssertGreaterThan(shot.drift, 0.1, "1.8 m/s from the left at 30 m")
         let notice = try XCTUnwrap(s.notice)
-        XCTAssertTrue(notice.hasPrefix("The wind carried it \(Int((shot.drift * 100).rounded())) cm to the right."), notice)
+        XCTAssertTrue(notice.hasPrefix("The wind carried it 18 cm to the right."), notice)
         XCTAssertTrue(notice.hasSuffix("Aim a little further left."), notice)
         let calm = session(TestEnvironment())
         shoot(calm)

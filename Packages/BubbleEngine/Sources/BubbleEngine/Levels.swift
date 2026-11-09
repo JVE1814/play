@@ -245,7 +245,6 @@ public enum LevelCatalog {
         }
     }
 
-    /// Fills the masked cells with colours.
     static func paint(_ mask: [[Bool]], coloring: Coloring, palette: [BubbleColor], difficulty: Difficulty,
                       rng: inout SeededGenerator) -> BubbleGrid {
         var grid = BubbleGrid()

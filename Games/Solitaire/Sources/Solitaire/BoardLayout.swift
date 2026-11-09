@@ -1,7 +1,6 @@
 import CoreGraphics
 import KlondikeEngine
 
-/// Where one card is drawn.
 public struct CardPlacement: Identifiable {
     public let card: Card
     public let center: CGPoint

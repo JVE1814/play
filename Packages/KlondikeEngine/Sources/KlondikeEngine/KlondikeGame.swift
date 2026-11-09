@@ -6,14 +6,14 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
     public let drawMode: DrawMode
     public private(set) var history: [MoveRecord]
 
-    /// Deal a new game from `seed`. The same seed always gives the same deal.
+    /// The same seed always gives the same deal.
     public init(seed: UInt64, drawMode: DrawMode = .one) {
         self.board = Board(seed: seed)
         self.drawMode = drawMode
         self.history = []
     }
 
-    /// Start from an arbitrary position (used for fixtures and tests).
+    /// Used for fixtures and tests.
     public init(board: Board, drawMode: DrawMode = .one) {
         self.board = board
         self.drawMode = drawMode
@@ -29,8 +29,6 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
     public var isWon: Bool { board.isWon }
     public var moveCount: Int { history.count }
     public var canUndo: Bool { !history.isEmpty }
-    /// How many times the waste has been turned back into the stock.
-    public var redealCount: Int { history.filter { $0.move == .recycle }.count }
 
     // MARK: Rules
 
@@ -93,7 +91,7 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
         }
     }
 
-    /// Make a move. Returns false (and changes nothing) if the move is illegal.
+    /// Returns false (and changes nothing) if the move is illegal.
     @discardableResult
     public mutating func perform(_ move: Move) -> Bool {
         guard isLegal(move) else { return false }
@@ -140,7 +138,6 @@ public struct KlondikeGame: Hashable, Codable, Sendable {
         return true
     }
 
-    /// Take back every move, returning to the deal.
     public mutating func undoAll() {
         while undo() {}
     }

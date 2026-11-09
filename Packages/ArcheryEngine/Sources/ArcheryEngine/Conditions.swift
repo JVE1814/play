@@ -57,7 +57,6 @@ public struct Wind: Hashable, Codable, Sendable {
     }
 }
 
-/// How the target moves.
 public enum Motion: Hashable, Codable, Sendable {
     /// Stands still on its stand.
     case still
@@ -81,15 +80,6 @@ public enum Motion: Hashable, Codable, Sendable {
     }
 
     public var isMoving: Bool { self != .still }
-
-    /// Top speed across the range, in metres per second.
-    public var topSpeed: Double {
-        switch self {
-        case .still: return 0
-        case .slide(let amplitude, let period): return amplitude * 2 * .pi / period
-        case .swing(let length, let angle, let period): return length * angle * 2 * .pi / period
-        }
-    }
 }
 
 /// How the sight drifts while the bow is held at full draw. The first moments are shaky while

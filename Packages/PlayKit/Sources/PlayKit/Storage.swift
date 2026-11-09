@@ -10,7 +10,6 @@ public final class Storage {
         try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
     }
 
-    /// `Application Support/BetweenStops`.
     public static func defaultRoot() -> URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
@@ -25,7 +24,7 @@ public final class Storage {
         try? Data(contentsOf: url(for: name))
     }
 
-    public func write(_ data: Data, to name: String) {
+    private func write(_ data: Data, to name: String) {
         let target = url(for: name)
         try? FileManager.default.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
         try? data.write(to: target, options: .atomic)
@@ -45,7 +44,7 @@ public final class Storage {
         write(data, to: name)
     }
 
-    /// Delete everything (used by `-resetState`).
+    /// Used by `-resetState`.
     public func wipe() {
         try? FileManager.default.removeItem(at: root)
         try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)

@@ -2,8 +2,6 @@ import BubbleEngine
 import PlayKit
 import SwiftUI
 
-/// The Bubbles screen: level and shots in the top bar, the field, and Levels, Swap and Restart
-/// in the toolbar.
 struct BubblesScreen: View {
     @StateObject private var session: BubblesSession
     private let preferences: BubblesPreferences

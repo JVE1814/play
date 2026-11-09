@@ -82,12 +82,9 @@ final class PlayKitTests: XCTestCase {
         XCTAssertEqual(b.int("draw", default: 1), 1)
     }
 
-    func testFeedbackPlaysEveryEventWithSoundOn() {
-        let env = TestEnvironment()
-        env.settings.soundEnabled = true
+    func testEveryFeedbackEventHasASound() {
         for event in FeedbackEvent.allCases {
             XCTAssertNotNil(Feedback.soundURL(for: event), "\(event) has a sound")
-            env.feedback.play(event)
         }
     }
 

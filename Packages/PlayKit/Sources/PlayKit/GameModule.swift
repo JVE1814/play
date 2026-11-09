@@ -13,7 +13,6 @@ public protocol GameModule {
     var title: String { get }
     /// One short line under the title.
     var tagline: String { get }
-    /// The game's own accent colour, from the shared palette.
     var accent: Accent { get }
 
     /// A flat illustration for the home screen tile.
@@ -72,10 +71,8 @@ public final class GameContext: ObservableObject {
         self.settingsAction = openSettings
     }
 
-    /// Return to the home screen.
     public func exit() { exitAction() }
 
-    /// Show the shared Settings screen.
     public func openSettings() { settingsAction() }
 
     /// Called by the app when it covers or uncovers the game.
@@ -89,13 +86,11 @@ public final class GameContext: ObservableObject {
         !options.disableAnimations && !UIAccessibility.isReduceMotionEnabled
     }
 
-    /// Says `text` to VoiceOver users.
     public func announce(_ text: String) {
         guard UIAccessibility.isVoiceOverRunning else { return }
         UIAccessibility.post(notification: .announcement, argument: text)
     }
 
-    /// This game's statistics.
     public var gameStats: GameStats { stats.stats(for: gameID) }
 
     public func recordWin(time: TimeInterval) { stats.recordWin(gameID: gameID, time: time) }
