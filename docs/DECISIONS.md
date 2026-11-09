@@ -218,8 +218,8 @@ worth a look before you submit are marked **review**.
     animating keeps XCUITest waiting for the app to go idle before every step. With
     `-disableAnimations` (tests only) the range's timeline is paused and the wind readout is
     static, which keeps the CI job well inside its time limit with three games.
-64. **The engine tests run alongside the UI tests**, at low priority (`ci/engine_tests.sh`,
-    started by `ci/run.sh` once the simulator has booted). The UI tests leave the CPU mostly
-    idle while they drive the simulator, so this takes nearly four minutes off a job that,
-    with three games, was close to its 30-minute limit. Decision 45 still applies: release
-    mode with testability.
+64. **The engine tests run alongside the UI tests**, at low priority and on one of the
+    runner's three cores (`ci/engine_tests.sh`, started by `ci/run.sh` once the simulator has
+    booted). Run after the UI tests they added nearly four minutes to a job that, with three
+    games, was close to its 30-minute limit; built on every core alongside them, they slowed
+    the UI tests by over two minutes. Decision 45 still applies: release mode with testability.

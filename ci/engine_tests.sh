@@ -8,6 +8,8 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 OUT=${1:?output folder}
+# Optional: build jobs per engine (run.sh uses 1 so the UI tests keep the other cores).
+JOBS=${2:-}
 mkdir -p "$OUT"
 
 # A time limit (macOS has no `timeout`), so a hang fails one engine instead of the whole job.
@@ -28,7 +30,8 @@ with_timeout() {
 
 for engine in KlondikeEngine BubbleEngine ArcheryEngine; do
   start=$(date +%s)
-  (cd "Packages/$engine" && with_timeout 900 swift test -c release -Xswiftc -enable-testing) > "$OUT/engine-tests-$engine.log" 2>&1
+  (cd "Packages/$engine" && with_timeout 900 swift test -c release -Xswiftc -enable-testing ${JOBS:+--jobs "$JOBS"}) \
+    > "$OUT/engine-tests-$engine.log" 2>&1
   echo $? > "$OUT/engine-tests-$engine.rc"
   echo "$engine finished in $(( $(date +%s) - start ))s" >> "$OUT/engine-tests-$engine.log"
 done

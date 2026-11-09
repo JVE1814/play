@@ -107,11 +107,12 @@ if [ "$BUILD_RC" -eq 0 ]; then
   xcrun simctl status_bar "$UDID" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
     --cellularMode active --cellularBars 4 --operatorName "" --batteryState charged --batteryLevel 100 || true
 
-  # The engine tests compile and run at low priority while the UI tests drive the simulator
-  # (which leaves the CPU mostly idle). Starting them earlier, while the simulator boots, slowed
-  # both down; running them after the UI tests added nearly four minutes to the job.
+  # The engine tests compile and run at low priority, on one core of the three, while the UI
+  # tests drive the simulator. Starting them earlier, while the simulator boots, slowed both
+  # down; running them after the UI tests added nearly four minutes to the job; building on
+  # every core alongside the UI tests slowed those by over two minutes.
   step "Engine tests started in the background (results below)"
-  nice -n 15 bash ci/engine_tests.sh "$OUT" > "$OUT/engine-tests.log" 2>&1 &
+  nice -n 15 bash ci/engine_tests.sh "$OUT" 1 > "$OUT/engine-tests.log" 2>&1 &
   ENGINE_PID=$!
 
   step "Unit and UI tests"

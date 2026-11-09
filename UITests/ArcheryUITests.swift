@@ -12,6 +12,10 @@ final class ArcheryUITests: UITestCase {
         XCTAssertEqual(element("wind").value as? String, "calm")
         XCTAssertTrue(element("tipCard").exists)
         XCTAssertTrue(element("scoreCard").exists)
+        // A quick tap is let go before full draw: the bow comes down without shooting.
+        waitFor("range").tap()
+        XCTAssertTrue(waitFor("toast").exists, "explains how to shoot")
+        XCTAssertEqual(element("arrowsLeft").value as? String, "3")
         element("back").tap()
         XCTAssertTrue(waitFor("homeTitle").exists)
         XCTAssertTrue(labelled("Archery").exists)
@@ -49,14 +53,6 @@ final class ArcheryUITests: UITestCase {
         XCTAssertFalse(element("archeryResult").exists)
         XCTAssertEqual(waitFor("arrowsLeft").value as? String, "3", "a fresh attempt")
         XCTAssertEqual(element("archeryScore").value as? String, "0")
-    }
-
-    func testLettingGoBeforeFullDrawDoesNotShoot() {
-        launch()
-        openArchery()
-        waitFor("range").tap()
-        XCTAssertTrue(waitFor("toast").exists, "explains how to shoot")
-        XCTAssertEqual(element("arrowsLeft").value as? String, "3")
     }
 
     func testForceQuitMidLevelRestoresTheEnd() {
@@ -102,17 +98,14 @@ final class ArcheryUITests: UITestCase {
     private func captureArchery(appearance: String) {
         launch(appearance: appearance)
         _ = waitFor("homeTitle")
-        snap("50-home-three-games-\(appearance)")
+        // Solitaire's dark set already shows the home screen in dark mode.
+        if appearance == "light" { snap("50-home-three-games-\(appearance)") }
         openArchery()
         snap("51-archery-start-\(appearance)")
 
         launch(["-scenario", "archeryShowcase", "-demoAim", "0.16"], appearance: appearance)
         openArchery()
         snap("52-archery-aim-\(appearance)")
-
-        launch(["-scenario", "archeryShowcase"], appearance: appearance)
-        openArchery()
-        snap("53-archery-end-\(appearance)")
         element("levels").tap()
         _ = waitFor("level-22")
         snap("56-archery-levels-\(appearance)")
