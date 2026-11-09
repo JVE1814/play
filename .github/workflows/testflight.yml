@@ -1,0 +1,31 @@
+# Template: archive the app on a GitHub-hosted Mac and upload it to TestFlight, with no Mac of
+# your own. Copy this file to .github/workflows/testflight.yml (for example with GitHub's web
+# editor), add the four repository secrets listed in docs/RELEASE.md, then run it from the
+# Actions tab ("Run workflow").
+name: TestFlight
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  upload:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Select the newest Xcode
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)"
+      - name: Archive and upload
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          APP_TEAM_ID: ${{ secrets.APP_TEAM_ID }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          export ASC_KEY_PATH="$RUNNER_TEMP/AuthKey.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$ASC_KEY_PATH"
+          bash ci/release.sh
+          rm -f "$ASC_KEY_PATH"

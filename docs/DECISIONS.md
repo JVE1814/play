@@ -9,8 +9,8 @@ worth a look before you submit are marked **review**.
    found no App Store game with this name, but App Store Connect is the only authority. If the
    name is taken, change `CFBundleDisplayName` in `App/Info.plist` and the title in
    `App/Sources/HomeView.swift`.
-2. **review: Bundle ID `io.github.jve1814.betweenstops`** and an empty team, both in
-   `Config/Signing.xcconfig` (the only file to edit). Use an identifier you own.
+2. **Bundle ID `com.martinthommesen.betweenstops`** and team `G5K6V5U6QM`, both in
+   `Config/Signing.xcconfig` (the only file to edit).
 3. **Minimum iOS 17.0, iPhone only, portrait only.** iOS 17 runs on every iPhone from the XS
    onwards and gives the SwiftUI APIs used here. Built with Xcode 26 / iOS 26 SDK, as App
    Store Connect has required since April 28, 2026.
@@ -102,9 +102,9 @@ worth a look before you submit are marked **review**.
 
 ## Release tooling
 
-32. **review: The no-Mac release path is a workflow template** (`docs/release/testflight.yml`) for
-    you to copy into `.github/workflows/`. It is not installed because pushes that touch workflow
-    files may be rejected, and it needs secrets that only you can add.
+32. **The no-Mac release path is a manually run workflow** (`.github/workflows/testflight.yml`,
+    copied from the template in `docs/release/testflight.yml`). It needs the four repository
+    secrets listed in `docs/RELEASE.md`.
 33. **App Store screenshots** come from the CI UI tests on an iPhone 17 Pro Max simulator
     (1320 × 2868, the 6.9" size App Store Connect asks for), with the status bar set to 9:41 and
     full battery.

@@ -5,5 +5,5 @@
 //                      the App ID you create in App Store Connect.
 // APP_DEVELOPMENT_TEAM Your 10-character Team ID (developer.apple.com > Account > Membership).
 //                      Leave empty to build for the simulator only.
-APP_BUNDLE_ID = io.github.jve1814.betweenstops
-APP_DEVELOPMENT_TEAM =
+APP_BUNDLE_ID = com.martinthommesen.betweenstops
+APP_DEVELOPMENT_TEAM = G5K6V5U6QM
