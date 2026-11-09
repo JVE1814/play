@@ -30,12 +30,14 @@ else
   echo "  none found (no CocoaPods, Carthage or resolved remote packages)"
 fi
 
-echo "Imports used by the engine (must be Foundation only):"
-grep -rhoE '^import [A-Za-z]+' Packages/KlondikeEngine/Sources | sort | uniq -c
-if grep -rhE '^import ' Packages/KlondikeEngine/Sources | grep -vqE '^import Foundation$'; then
-  echo "  engine imports something other than Foundation"
-  status=1
-fi
+for engine in KlondikeEngine BubbleEngine; do
+  echo "Imports used by $engine (must be Foundation only, plus the engine itself in its tool):"
+  grep -rhoE '^import [A-Za-z]+' "Packages/$engine/Sources" | sort | uniq -c
+  if grep -rhE '^import ' "Packages/$engine/Sources" | grep -vqE "^import (Foundation|$engine)\$"; then
+    echo "  $engine imports something other than Foundation"
+    status=1
+  fi
+done
 
 echo "All imports across the app:"
 grep -rhoE '^(@testable )?import [A-Za-z]+' --exclude-dir=.build --include='*.swift' "${SOURCES[@]}" | sed 's/@testable //' | sort | uniq -c

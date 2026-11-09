@@ -17,6 +17,10 @@ public struct LaunchOptions: Equatable, Sendable {
     public var showBoardSignature = false
     /// `-disableAnimations`: skip animations to keep tests fast and deterministic.
     public var disableAnimations = false
+    /// `-level N`: games with levels start (and unlock up to) level N.
+    public var level: Int?
+    /// `-demoAim X`: games with aiming show a fixed aim (X is a horizontal offset per unit up).
+    public var demoAim: Double?
 
     public init() {}
 
@@ -33,6 +37,8 @@ public struct LaunchOptions: Equatable, Sendable {
         forcedAppearance = value(after: "-forceAppearance").flatMap { Appearance(rawValue: $0) }
         showBoardSignature = arguments.contains("-showBoardSignature")
         disableAnimations = arguments.contains("-disableAnimations")
+        level = value(after: "-level").flatMap { Int($0) }
+        demoAim = value(after: "-demoAim").flatMap { Double($0) }
         #endif
     }
 

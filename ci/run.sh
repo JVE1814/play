@@ -74,17 +74,29 @@ echo "simulator: $UDID"
 xcrun simctl boot "$UDID"
 DESTINATION="platform=iOS Simulator,id=$UDID"
 
-step "Engine tests: swift test in Packages/KlondikeEngine"
-(cd Packages/KlondikeEngine && with_timeout 900 swift test) > "$OUT/engine-tests.log" 2>&1
-ENGINE_RC=$?
-ENGINE_LINE=$(grep -E "Executed [0-9]+ tests?, with [0-9]+ failures?" "$OUT/engine-tests.log" | tail -1 | sed -E 's/^[[:space:]]+//')
-echo "${ENGINE_LINE:-no XCTest summary found} (exit $ENGINE_RC)"
-ENGINE_TOTAL=$(echo "$ENGINE_LINE" | sed -nE 's/.*Executed ([0-9]+) tests?.*/\1/p')
-ENGINE_FAILED=$(echo "$ENGINE_LINE" | sed -nE 's/.*with ([0-9]+) failures?.*/\1/p')
-if [ "$ENGINE_RC" -ne 0 ] || [ -z "$ENGINE_TOTAL" ] || [ "${ENGINE_FAILED:-1}" != "0" ]; then
-  fail "engine tests (exit $ENGINE_RC)"
-  grep -E "error:|failed" "$OUT/engine-tests.log" | head -50 | tee -a "$OUT/failures.txt"
-fi
+# Each game's rules engine is a Foundation-only package tested with `swift test`. Release mode
+# with testability runs the heavy invariant tests several times faster than a debug build.
+ENGINE_TOTAL=0
+ENGINE_FAILED=0
+ENGINE_SUMMARY=""
+for engine in KlondikeEngine BubbleEngine; do
+  step "Engine tests: swift test in Packages/$engine"
+  log="$OUT/engine-tests-$engine.log"
+  (cd "Packages/$engine" && with_timeout 900 swift test -c release -Xswiftc -enable-testing) > "$log" 2>&1
+  rc=$?
+  line=$(grep -E "Executed [0-9]+ tests?, with [0-9]+ failures?" "$log" | tail -1 | sed -E 's/^[[:space:]]+//')
+  echo "${line:-no XCTest summary found} (exit $rc)"
+  total=$(echo "$line" | sed -nE 's/.*Executed ([0-9]+) tests?.*/\1/p')
+  failed=$(echo "$line" | sed -nE 's/.*with ([0-9]+) failures?.*/\1/p')
+  ENGINE_TOTAL=$(( ENGINE_TOTAL + ${total:-0} ))
+  ENGINE_FAILED=$(( ENGINE_FAILED + ${failed:-0} ))
+  ENGINE_SUMMARY="$ENGINE_SUMMARY $engine ${total:-?}/${failed:-?}"
+  if [ "$rc" -ne 0 ] || [ -z "$total" ] || [ "${failed:-1}" != "0" ]; then
+    fail "$engine tests (exit $rc)"
+    ENGINE_FAILED=$(( ENGINE_FAILED + (${failed:-0} == 0 ? 1 : 0) ))
+    grep -E "error:|failed" "$log" | head -50 | tee -a "$OUT/failures.txt"
+  fi
+done
 
 step "Generate Xcode project with XcodeGen"
 if ! command -v xcodegen >/dev/null; then
@@ -150,7 +162,7 @@ fi
 
 step "Totals"
 {
-  echo "engine (swift test): ${ENGINE_TOTAL:-?} tests, ${ENGINE_FAILED:-?} failures"
+  echo "engines (swift test): ${ENGINE_TOTAL} tests, ${ENGINE_FAILED} failures (tests/failures:${ENGINE_SUMMARY})"
   if [ -f "$OUT/app-totals.txt" ]; then cat "$OUT/app-totals.txt"; else echo "app (xcodebuild): not run"; fi
   APP_TOTAL=$(sed -nE 's/.* ([0-9]+) tests,.*/\1/p' "$OUT/app-totals.txt" 2>/dev/null | head -1)
   APP_FAILED=$(sed -nE 's/.* ([0-9]+) failed.*/\1/p' "$OUT/app-totals.txt" 2>/dev/null | head -1)

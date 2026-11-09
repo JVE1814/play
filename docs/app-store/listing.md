@@ -16,7 +16,7 @@ Classic Klondike built for the commute: tap a card and it goes where it should. 
 
 ## Description (4000)
 
-Between Stops is a small collection of calm, colorful games for the moments between here and there. The first is Solitaire: classic Klondike, rebuilt for one-handed play on a moving train.
+Between Stops is a small collection of calm, colorful games for the moments between here and there. It has two games, both built for one-handed play on a moving train: Solitaire (classic Klondike) and Bubbles, a bubble shooter with 2,000 levels.
 
 MADE FOR ONE THUMB
 • Tap any card and it makes its best move. No precise dragging needed (but you can drag too).
@@ -26,6 +26,12 @@ MADE FOR ONE THUMB
 PICK UP WHERE YOU LEFT OFF
 • Every move is saved instantly. Close the app, lock your phone, or force quit at your stop: the same game will be waiting, down to the last card.
 • Unlimited undo, all the way back to the deal.
+
+BUBBLES: 2,000 LEVELS
+• Aim with your thumb: point where to shoot, or pull back like a slingshot. The guide shows exactly where the bubble will land, bounces included.
+• Match three to pop them, and cut bubbles loose to drop whole clusters.
+• Stones, bombs and new shapes keep arriving as you go, with a gentler level every so often.
+• Every level has been cleared by our own test player, so a solution always exists. Earn up to three stars on each.
 
 CLASSIC KLONDIKE
 • Draw 1 or Draw 3, with unlimited redeals.
@@ -45,7 +51,7 @@ PRIVATE BY DESIGN
 
 ## Keywords (100)
 
-solitaire,klondike,patience,card game,offline,one hand,commute,train,classic,draw 3,relax,cards  [95]
+solitaire,klondike,patience,card game,bubble shooter,bubbles,offline,one hand,commute,train,relax  [97]
 
 ## Support URL
 

@@ -33,6 +33,10 @@ packages:
     path: Packages/KlondikeEngine
   Solitaire:
     path: Games/Solitaire
+  BubbleEngine:
+    path: Packages/BubbleEngine
+  Bubbles:
+    path: Games/Bubbles
   TestGame:
     path: Games/TestGame
 
@@ -46,6 +50,7 @@ targets:
     dependencies:
       - package: PlayKit
       - package: Solitaire
+      - package: Bubbles
       - package: TestGame
     settings:
       base:
@@ -70,6 +75,8 @@ targets:
       - package: PlayKit
       - package: KlondikeEngine
       - package: Solitaire
+      - package: BubbleEngine
+      - package: Bubbles
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).tests

@@ -2,12 +2,7 @@ import XCTest
 
 /// End-to-end tests. Each launch wipes saved data (`-resetState`) unless a test is checking
 /// what survives a relaunch, and disables animations so taps settle immediately.
-final class BetweenStopsUITests: XCTestCase {
-    private var app: XCUIApplication!
-
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-    }
+final class BetweenStopsUITests: UITestCase {
 
     // MARK: Gameplay
 
@@ -248,62 +243,14 @@ final class BetweenStopsUITests: XCTestCase {
         element("done").tap()
     }
 
-    // MARK: Helpers
-
-    private func launch(_ arguments: [String] = [], reset: Bool = true, appearance: String? = nil) {
-        let app = XCUIApplication()
-        var all = ["-disableAnimations"]
-        if reset { all.append("-resetState") }
-        if let appearance { all += ["-forceAppearance", appearance] }
-        app.launchArguments = all + arguments
-        app.launch()
-        self.app = app
-    }
-
-    private func element(_ identifier: String) -> XCUIElement {
-        app.descendants(matching: .any).matching(identifier: identifier).firstMatch
-    }
-
-    private func labelled(_ label: String) -> XCUIElement {
-        app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
-    }
-
-    @discardableResult
-    private func waitFor(_ identifier: String, timeout: TimeInterval = 10,
-                         file: StaticString = #filePath, line: UInt = #line) -> XCUIElement {
-        let found = element(identifier)
-        XCTAssertTrue(found.waitForExistence(timeout: timeout), "\(identifier) did not appear", file: file, line: line)
-        return found
-    }
-
-    /// Taps the middle of an element by coordinate (cards overlap, so hit-testing decides).
-    private func tapCenter(_ target: XCUIElement) {
-        target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-    }
+    // MARK: Solitaire helpers
 
     private func openSolitaire() {
         waitFor("game-klondike").tap()
         _ = waitFor("stock")
     }
 
-    private func signature() -> String {
-        waitFor("boardSignature").label
-    }
-
     private func moves() -> String {
         waitFor("moves").value as? String ?? ""
-    }
-
-    /// Saves a screenshot to the result bundle and, on CI, straight into ci-output/screenshots.
-    private func snap(_ name: String) {
-        let shot = XCUIScreen.main.screenshot()
-        let attachment = XCTAttachment(screenshot: shot)
-        attachment.name = name
-        attachment.lifetime = .keepAlways
-        add(attachment)
-        if let directory = ProcessInfo.processInfo.environment["SCREENSHOT_DIR"], !directory.isEmpty {
-            let url = URL(fileURLWithPath: directory).appendingPathComponent("\(name).png")
-            try? shot.pngRepresentation.write(to: url)
-        }
     }
 }

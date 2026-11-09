@@ -56,6 +56,35 @@ worth a look before you submit are marked **review**.
     may not appear, and you finish by hand.
 17. **Starting a new deal mid-game asks for confirmation**, because it counts as a loss.
 
+## Bubbles
+
+36. **Original bubble shooter, named plainly "Bubbles"**, like "Solitaire". It uses its own art,
+    rules details and generated levels, and is not modelled on any particular game.
+37. **2,000 levels, generated, not stored.** Each level number always builds the same board from
+    one of 14 shapes and 6 colouring styles. Colours rise from 3 to 6, rows from 5 to 9, stones
+    arrive at level 30 and bombs at level 60, every tenth level is a gentler "breather", and
+    round numbers are bigger boards. Every shape appears within the first 52 levels.
+38. **review: Shot limits come from a bot.** A deterministic bot played every level. Its shot
+    count is the level's par, and the limit is par plus about 30% (at least 3 spare shots). A
+    layout the bot couldn't clear, cleared too quickly (one-shot giveaways) or slogged through
+    (more than 36 shots) was swapped for another variant of that level. So every level is known
+    to be winnable. Stars: 3 for matching par, 2 for using at most half the spare shots, 1 otherwise.
+39. **Puzzle pacing, not a timer.** There is no descending ceiling and no clock pressure: you
+    lose only by running out of shots or leaving a bubble below the dashed line. That suits short,
+    interruptible commutes, and levels can be put down at any moment.
+40. **Aiming with one thumb.** Touch anywhere above or beside the launcher to point where to
+    shoot, or drag below it to pull back like a slingshot, so the thumb can stay at the bottom.
+    Lift to fire, or slide back onto the launcher to cancel. The guide shows the exact path,
+    bounces included, and outlines where the bubble will settle. Settings can shorten it.
+41. **Shots slip through gaps** that look just wide enough: bubbles count as touching at 0.82 of
+    a diameter rather than 1.0.
+42. **Every colour has its own symbol** (triangle, dot, square, diamond, plus, star), so colours
+    never have to be told apart by hue. Stones carry a bar and bombs a burst. VoiceOver aims with
+    swipes (5° steps) and announces where the shot will land.
+43. **Restarting or switching levels is not a loss.** Only a lost level counts against the win
+    rate (wins ÷ levels won or lost). Each restart deals a new bubble queue, but the board is the same.
+44. **Levels unlock one at a time**, and any cleared level can be replayed for more stars.
+
 ## Statistics
 
 18. **A game counts as played once it is won or abandoned** (a new deal after at least one

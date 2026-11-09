@@ -1,3 +1,4 @@
+import Bubbles
 import PlayKit
 import Solitaire
 #if DEBUG
@@ -12,6 +13,7 @@ enum GameRegistry {
     static func games(options: LaunchOptions) -> [any GameModule] {
         var games: [any GameModule] = [
             SolitaireModule(),
+            BubblesModule(),
         ]
         #if DEBUG
         // Test-only placeholder, never compiled into release builds.

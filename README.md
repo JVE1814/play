@@ -1,7 +1,8 @@
 # Between Stops
 
 An offline collection of quick games for iPhone, built for one-handed play in short sessions on
-a train. The first game is **Solitaire** (Klondike).
+a train. It has two games: **Solitaire** (Klondike) and **Bubbles**, a bubble shooter with
+2,000 levels.
 
 - Native Swift and SwiftUI, iPhone, portrait, iOS 17+.
 - No network code, accounts, ads, analytics or tracking. No third-party runtime dependencies.
@@ -19,6 +20,8 @@ a train. The first game is **Solitaire** (Klondike).
 | `Packages/PlayKit/` | Shared code: the `GameModule` protocol and `GameContext`, design tokens and components, save slots, statistics, settings, haptics and sound. |
 | `Packages/KlondikeEngine/` | Klondike rules engine. Imports only Foundation. Seeded deals, every move rule, unlimited undo and redeals, hints, tap-to-move, auto-finish. |
 | `Games/Solitaire/` | The Solitaire game module (SwiftUI) built on the engine. |
+| `Packages/BubbleEngine/` | Bubble shooter rules engine. Imports only Foundation. Hex grid, shot tracing with wall bounces, matches, falling bubbles, stones, bombs, and 2,000 generated levels whose shot limits were set by a bot that cleared every one (`swift run -c release bubble-par` regenerates the table). |
+| `Games/Bubbles/` | The Bubbles game module (SwiftUI) built on that engine. |
 | `Games/TestGame/` | A tiny debug-only game that proves adding a game needs no home screen changes. |
 | `AppTests/`, `UITests/` | Unit tests and UI tests (including screenshot capture). |
 | `ci/` | `run.sh` (the CI pipeline), `audit.sh` (no networking or third-party code), `release.sh` (archive and upload). |
@@ -43,16 +46,21 @@ Run `xcodegen generate` again after adding or removing files or packages.
 
 ## Test
 
-**Rules engine** (fast, any platform, no Xcode needed):
+**Rules engines** (fast, any platform, no Xcode needed):
 
 ```sh
 cd Packages/KlondikeEngine && swift test
+cd Packages/BubbleEngine && swift test
 # or, on Linux or any machine with Docker:
-docker run --rm -v "$PWD/Packages/KlondikeEngine":/pkg -w /pkg swift:6.3 swift test
+docker run --rm -v "$PWD/Packages/BubbleEngine":/pkg -w /pkg swift:6.3 swift test
 ```
 
-These 71 tests cover every move rule, undo, redeals, win detection, hints, tap-to-move,
+The Klondike tests (71) cover every move rule, undo, redeals, win detection, hints, tap-to-move,
 auto-finish, saving, and 1,000 seeded random games that must always hold exactly 52 unique cards.
+The Bubbles tests (30) cover the geometry, shot paths and bounces, matching, falling bubbles,
+stones, bombs, the bubble queue and saving. They also check that all 2,000 levels are
+well-formed, different and calibrated, and that the bot still clears a spread of levels within
+their shot limits.
 
 **App unit and UI tests** (needs Xcode):
 
@@ -117,6 +125,7 @@ appears, and checks that the engine imports only Foundation.
    ```swift
    var games: [any GameModule] = [
        SolitaireModule(),
+       BubblesModule(),
        YourGameModule(),
    ]
    ```
