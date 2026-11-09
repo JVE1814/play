@@ -112,11 +112,18 @@ public struct Run: Codable, Equatable, Sendable {
         (obstacle.nearSide(at: time) - distance) / (speed + obstacle.rollSpeed)
     }
 
-    /// During the coached opening, the move to make now.
+    /// During the coached opening, the move to make now. A jump or a slide is asked for when
+    /// it is time to make it, so that doing as told at once, or a moment later, works.
     public var prompt: Move? {
-        guard status == .running, distance < lessonsEnd, let ahead = obstacleAhead,
-              ahead.position <= lessonsEnd, seconds(to: ahead) < 1.3 else { return nil }
-        return ahead.kind.answer ?? .left
+        guard status == .running, distance < lessonsEnd, let ahead = obstacleAhead, ahead.position <= lessonsEnd else { return nil }
+        let move = ahead.kind.answer ?? .left
+        let notice: Double
+        switch move {
+        case .jump: notice = 0.55
+        case .slide: notice = 0.5
+        case .left, .right: notice = 1.3
+        }
+        return seconds(to: ahead) < notice ? move : nil
     }
 
     /// Whole state as text, for UI tests.

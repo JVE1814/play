@@ -38,6 +38,8 @@ struct CourseBuilder: Codable, Equatable, Sendable {
     /// little further, for the time it takes to cross over).
     private var splitUntil = 0.0
     private var nextPickup: Double
+    /// Power-ups take turns, so neither kind stays away for long.
+    private var nextPickupKind: Pickup.Kind
     private var lessonsLeft: Int
 
     init(seed: UInt64, coached: Bool) {
@@ -47,6 +49,7 @@ struct CourseBuilder: Codable, Equatable, Sendable {
         path = coached ? [0, 1, 1] : []
         nextPickup = 180
         nextPickup += random.uniform(0...80)
+        nextPickupKind = random.chance(0.5) ? .magnet : .shield
         extendPath()
     }
 
@@ -162,7 +165,8 @@ struct CourseBuilder: Codable, Equatable, Sendable {
         let to = position - 4
         let middle = (from + to) / 2
         if pickupWanted {
-            row.pickups.append(Pickup(kind: random.chance(0.5) ? .magnet : .shield, lane: lane, position: middle + Self.coinSpacing))
+            row.pickups.append(Pickup(kind: nextPickupKind, lane: lane, position: middle + Self.coinSpacing))
+            nextPickupKind = nextPickupKind == .magnet ? .shield : .magnet
             nextPickup = position + random.uniform(280...420)
         }
         guard lineWanted else { return }

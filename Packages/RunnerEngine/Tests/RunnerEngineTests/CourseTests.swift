@@ -262,29 +262,32 @@ final class CourseTests: XCTestCase {
         XCTAssertTrue(coins.contains { $0.height > 1.5 }, "arcs over what has to be jumped")
         XCTAssertTrue(coins.contains { $0.height < 0.6 }, "low coins under beams")
         XCTAssertTrue((3...8).contains(pickups.count), "\(pickups.count) power-ups in two kilometres")
-        XCTAssertEqual(Set(pickups.map(\.kind)).count, 2)
+        XCTAssertTrue(zip(pickups, pickups.dropFirst()).allSatisfy { $0.kind != $1.kind }, "the magnet and the shield take turns")
     }
 
     func testTheCoachedOpeningTeachesEachMoveInTurn() {
         let opening = rows(seed: 1, coached: true, to: 80).prefix(3).map { $0.row.obstacles.map(\.kind) }
         XCTAssertEqual(opening, [[.stack, .stack], [.barrier, .barrier, .barrier], [.beam, .beam, .beam]])
 
-        var run = Run(seed: 1, coached: true)
-        var prompts: [Move] = []
-        var done: [Move] = []
-        while run.status == .running, run.distance < 80 {
-            if let prompt = run.prompt, let ahead = run.obstacleAhead {
-                if prompts.last != prompt { prompts.append(prompt) }
-                // The prompt comes early; a jump or a slide still has to be timed.
-                if done.last != prompt, prompt == .left || run.seconds(to: ahead) < 0.3 {
-                    run.perform(prompt)
-                    done.append(prompt)
+        // Doing as told gets through the opening, whether at once or after a moment's thought.
+        for reaction in [0, 0.15, 0.3] {
+            var run = Run(seed: 1, coached: true)
+            var prompts: [Move] = []
+            var due: (move: Move, at: Double)?
+            while run.status == .running, run.distance < 80 {
+                if let prompt = run.prompt, prompts.last != prompt {
+                    prompts.append(prompt)
+                    due = (prompt, run.time + reaction)
                 }
+                if let move = due, run.time >= move.at {
+                    run.perform(move.move)
+                    due = nil
+                }
+                run.advance(by: Run.step)
             }
-            run.advance(by: Run.step)
+            XCTAssertEqual(prompts, [.left, .jump, .slide], "reacting after \(reaction) s")
+            XCTAssertEqual(run.status, .running, "reacting after \(reaction) s")
         }
-        XCTAssertEqual(prompts, [.left, .jump, .slide])
-        XCTAssertEqual(run.status, .running, "doing as told gets through the opening")
         XCTAssertNil(Run(seed: 1).prompt)
     }
 

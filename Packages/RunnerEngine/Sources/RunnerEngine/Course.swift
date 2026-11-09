@@ -11,8 +11,8 @@ public enum Body {
     public static let startLane = 1
     /// Seconds to cross from one lane to the next.
     public static let laneChangeTime = 0.13
-    public static let jumpSpeed = 8.2
-    public static let gravity = 27.0
+    public static let jumpSpeed = 8.75
+    public static let gravity = 25.0
     /// A slide asked for in the air brings the runner down at least this fast.
     public static let dropSpeed = 14.0
     public static let slideTime = 0.62
@@ -46,13 +46,14 @@ public struct Obstacle: Codable, Equatable, Sendable {
         /// A barrel rolling towards the runner: jump it.
         case barrel
 
-        /// The heights it fills, in metres above the planks.
+        /// The heights it fills, in metres above the planks. A little less than it looks, for
+        /// the low ones: a foot that seems to clip the top gets over.
         public var blocked: ClosedRange<Double> {
             switch self {
-            case .barrier: return 0...0.65
+            case .barrier: return 0...0.55
             case .beam: return 1.05...2.6
             case .stack: return 0...2.6
-            case .barrel: return 0...0.7
+            case .barrel: return 0...0.6
             }
         }
 
@@ -158,7 +159,7 @@ public enum Pace {
 
     /// Seconds between one row of obstacles and the next.
     static func rowGap(at distance: Double) -> Double {
-        0.64 + 0.76 * exp(-max(0, distance) / 900)
+        0.62 + 0.78 * exp(-max(0, distance) / 900)
     }
 
     /// Metres from a row at `position` to the row after it.

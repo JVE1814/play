@@ -280,9 +280,11 @@ worth a look before you submit are marked **review**.
     every tested course for three kilometres. An earlier version passed the first rule and
     still trapped that bot behind a container: hence the last one.
 76. **Difficulty comes from speed and spacing, set with bots.** The run speeds up from 9.5 to
-    about 22 metres a second and the rows close from 1.4 to 0.64 seconds apart, which is still
-    longer than a jump. Bots that see less far and hesitate stand in for people: the newcomer
-    bot's middle run is about 430 metres (40 seconds), the regular's about 1,300.
+    about 22 metres a second and the rows close from 1.4 to 0.62 seconds apart: a jump begun
+    at the last moment that clears one row is still down before the next. Bots that see less
+    far and hesitate stand in for people: the newcomer bot's middle run is about 500 metres
+    (45 seconds), the regular's close to four kilometres. A jump lasts 0.7 seconds and the low
+    obstacles count for a little less than they look, so a foot that seems to clip one gets over.
 77. **The run moves in fixed steps of 1/120 second and is not published.** The same seed and
     the same moves give the same run at any frame rate. The session plays it forward sixty
     times a second for sounds, the score and the end; the pier draws from a copy played up to
@@ -295,7 +297,9 @@ worth a look before you submit are marked **review**.
     seconds and whenever it stops, so a force quit costs two seconds at most and comes back
     paused. After the tap the run stands still for a second and a half.
 80. **The first runs are coached.** Until a run has scored 100, the course opens with three
-    easy rows (go round, jump, slide) and says which swipe each needs.
+    easy rows (go round, jump, slide) and says which swipe each needs. The jump and the slide
+    are asked for when it is time to make them, not before: doing as told at once, or a
+    third of a second later, works.
 81. **Sunset in light mode, a moonlit night in dark mode.** As with Archery's venues the scene
     keeps its own light, here one for each appearance. Reduce Motion stops the twinkling,
     drifting, bobbing and shaking; the course itself still comes towards the runner.
