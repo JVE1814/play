@@ -137,13 +137,6 @@ if [ "$BUILD_RC" -eq 0 ]; then
     fail "unit/UI tests (xcodebuild exit $TEST_RC)"
   fi
 
-  # What the failed tests left behind (the screen when they failed), to tell a fault in the app
-  # from a tap that never arrived.
-  if [ "$TEST_RC" -ne 0 ]; then
-    xcrun xcresulttool export attachments --path "$BUILD/Tests.xcresult" --output-path "$OUT/failed-tests" \
-      --only-failures > /dev/null 2>&1 || echo "nothing exported for the failed tests"
-  fi
-
   # Screenshots normally arrive straight from the test runner; fall back to the result bundle.
   if [ -z "$(ls -A "$OUT/screenshots" 2>/dev/null)" ]; then
     echo "exporting screenshots from the result bundle"

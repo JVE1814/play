@@ -48,6 +48,8 @@ final class RunnerUITests: UITestCase {
         XCTAssertNotEqual(element("runnerBest").value as? String, "0")
         element("back").tap()
         waitFor("statsButton").tap()
+        waitFor("done")
+        app.swipeUp()                        // Runner's panel is the last one, below the fold
         XCTAssertTrue(labelled("Played: 1").waitForExistence(timeout: 5))
     }
 
