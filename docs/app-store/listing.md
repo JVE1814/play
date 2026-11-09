@@ -4,7 +4,7 @@ Copy for App Store Connect. Character limits are Apple's, and the counts are in 
 
 ## Name (30)
 
-Between Stops  [13]
+Between Stops: Commute Games  [28]
 
 ## Subtitle (30)
 

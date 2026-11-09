@@ -35,9 +35,9 @@ xcodegen generate          # creates BetweenStops.xcodeproj from project.yml
 open BetweenStops.xcodeproj
 ```
 
-Choose the **BetweenStops** scheme and an iPhone simulator, then press Run. To run it on your own
-iPhone, first set `APP_BUNDLE_ID` and `APP_DEVELOPMENT_TEAM` in `Config/Signing.xcconfig`. See
-[docs/RELEASE.md](docs/RELEASE.md) for the full steps, including the route without a Mac.
+Choose the **BetweenStops** scheme and an iPhone simulator, then press Run. Device builds sign with
+the bundle ID and team in `Config/Signing.xcconfig`. See [docs/RELEASE.md](docs/RELEASE.md) for the
+full steps, including the route without a Mac.
 
 Run `xcodegen generate` again after adding or removing files or packages.
 

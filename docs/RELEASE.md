@@ -1,7 +1,7 @@
 # Releasing Between Stops
 
-Your manual steps to put the app on your own iPhone and submit it to the App Store. Nothing here
-has been done for you: no App Store Connect records, certificates or keys exist yet.
+How to ship new builds to TestFlight and submit the app to the App Store. The one-time setup is
+done, and build 1.0.0 (1) is on TestFlight. The App Store submission is still to do.
 
 Current Apple rules that apply (checked November 2026):
 
@@ -15,26 +15,21 @@ Current Apple rules that apply (checked November 2026):
   mandatory in September 2026), and at least one set of **6.9" iPhone screenshots**.
 - To be available in the EU you must declare your **trader status** under the Digital Services Act.
 
-## 0. One-time setup (both routes)
+## Current setup
 
-1. Join the Apple Developer Program at <https://developer.apple.com/programs/> (individual is
-   fine). Note your **Team ID** (developer.apple.com → Account → Membership details).
-2. Pick a bundle ID you own, e.g. `com.yourname.betweenstops`, and put it with your Team ID in
-   **`Config/Signing.xcconfig`**:
+| Item | Value |
+| --- | --- |
+| Team | `G5K6V5U6QM` (individual Apple Developer Program membership) |
+| Bundle ID | `com.martinthommesen.betweenstops`, set in `Config/Signing.xcconfig` |
+| App Store name | Between Stops: Commute Games ("Between Stops" was already in use) |
+| Home-screen name | Between Stops (`CFBundleDisplayName` in `App/Info.plist`) |
+| App record | App Store Connect app `6832542119`, SKU `betweenstops-1` |
+| API key | Team key "GitHub upload", Admin access, stored as repository secrets |
+| TestFlight group | "Internal", with automatic distribution on |
 
-   ```
-   APP_BUNDLE_ID = com.yourname.betweenstops
-   APP_DEVELOPMENT_TEAM = AB12CD34EF
-   ```
-
-   Commit that change. It contains no secrets.
-3. Register the bundle ID: developer.apple.com → Certificates, Identifiers & Profiles →
-   Identifiers → **+** → App IDs → App. Use description "Between Stops", the explicit bundle ID
-   above, and no extra capabilities.
-4. Create the app record: <https://appstoreconnect.apple.com> → Apps → **+** → New App.
-   - Platform: iOS. Name: **Between Stops** (if it is taken, pick another and update
-     `CFBundleDisplayName` in `App/Info.plist`). Primary language: English (U.S.).
-   - Bundle ID: the one above. SKU: anything, e.g. `betweenstops-1`. User access: Full Access.
+If Apple reports "Access Unavailable" or a workflow run fails with an agreement error, accept the
+updated Program License Agreement at <https://developer.apple.com/account>. The Account Holder
+must do this.
 
 ## Route A: with a Mac
 
@@ -54,8 +49,9 @@ Current Apple rules that apply (checked November 2026):
 1. Set the destination to **Any iOS Device (arm64)**, then **Product → Archive**.
 2. When the Organizer opens: **Distribute App → App Store Connect → Distribute**. Xcode signs
    and uploads the build.
-   - Alternatively, from Terminal: create an App Store Connect API key (see Route B, step 1) and
-     run `ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_PATH=~/AuthKey_….p8 APP_TEAM_ID=… bash ci/release.sh`.
+   - Alternatively, from Terminal: use an App Store Connect API key (see **Replacing the API key**
+     under Route B) and run
+     `ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_PATH=~/AuthKey_….p8 APP_TEAM_ID=… bash ci/release.sh`.
 3. Before each further upload, raise the build number (`CURRENT_PROJECT_VERSION` in
    `project.yml`, or `BUILD_NUMBER=` for `ci/release.sh`). Raise `MARKETING_VERSION` for each new
    App Store version.
@@ -63,35 +59,35 @@ Current Apple rules that apply (checked November 2026):
 
 ## Route B: without a Mac (GitHub Actions + TestFlight)
 
-A GitHub-hosted Mac builds, signs and uploads the app. You install it on your iPhone with the
-TestFlight app.
+This is the route in use. A GitHub-hosted Mac builds, signs and uploads the app. You install it on
+your iPhone with the TestFlight app.
 
-1. **Create an App Store Connect API key**: App Store Connect → Users and Access →
-   Integrations → App Store Connect API → Team Keys → **+**. Name it "GitHub upload", with
-   Access **Admin**. Admin is needed because the build creates its distribution certificate and
-   profile in the cloud. Download the `.p8` file (you can only download it once). Note the
-   **Key ID** and the **Issuer ID** shown above the list.
-2. **Add four repository secrets**: GitHub → this repository → Settings → Secrets and variables
-   → Actions → New repository secret:
+1. **Run the workflow**: Actions → TestFlight → Run workflow. The build number is the workflow's
+   run number, so it increases automatically. The first run took about 3 minutes.
+2. **Wait for processing**: the build appears in App Store Connect → your app → TestFlight once
+   Apple has processed it (5 to 30 minutes). The app declares that it uses no non-exempt
+   encryption, so no export compliance question is normally asked.
+3. **Install on your iPhone**: the Internal group gets new builds automatically. Install
+   **TestFlight** from the App Store, accept the invite, and tap Install. TestFlight builds expire
+   after 90 days.
+
+To add internal testers, first add them in Users and Access, then add them to the group.
+
+### Replacing the API key
+
+1. App Store Connect → Users and Access → Integrations → App Store Connect API → Team Keys → **+**.
+   Use Access **Admin**, because the build creates its distribution certificate and profile in the
+   cloud. Download the `.p8` file (you can only download it once). Note the **Key ID** and the
+   **Issuer ID** shown above the list.
+2. Update the repository secrets (GitHub → this repository → Settings → Secrets and variables →
+   Actions), then revoke the old key:
 
    | Secret | Value |
    | --- | --- |
    | `ASC_KEY_ID` | the Key ID |
    | `ASC_ISSUER_ID` | the Issuer ID |
    | `ASC_KEY_P8` | the whole text of the `.p8` file, including the BEGIN/END lines |
-   | `APP_TEAM_ID` | your Team ID |
-
-3. **Install the workflow**: on github.com, open `docs/release/testflight.yml`, copy its
-   contents, then Add file → Create new file → name it `.github/workflows/testflight.yml` →
-   paste → commit to `main`. Don't change `.github/workflows/ci.yml`.
-4. **Run it**: Actions → TestFlight → Run workflow. It takes about 10 to 15 minutes. The build
-   number is the workflow's run number, so it increases automatically.
-5. **Install on your iPhone**: wait until the build shows in App Store Connect → your app →
-   TestFlight (processing takes 5 to 30 minutes). Answer the export compliance question if it
-   appears. The app declares that it uses no non-exempt encryption, so normally nothing is asked.
-   Under Internal Testing, create a group, add yourself, and enable the build. Install
-   **TestFlight** from the App Store on your iPhone, accept the invite, and tap Install.
-   TestFlight builds expire after 90 days.
+   | `APP_TEAM_ID` | the Team ID |
 
 ## Submit for review (both routes)
 

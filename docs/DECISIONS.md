@@ -5,10 +5,10 @@ worth a look before you submit are marked **review**.
 
 ## Product
 
-1. **review: Name: "Between Stops".** Original name for a commute game collection. A web search
-   found no App Store game with this name, but App Store Connect is the only authority. If the
-   name is taken, change `CFBundleDisplayName` in `App/Info.plist` and the title in
-   `App/Sources/HomeView.swift`.
+1. **Name: "Between Stops".** Original name for a commute game collection. App Store Connect
+   rejected it as already in use, so the store name is "Between Stops: Commute Games". The home
+   screen (`CFBundleDisplayName` in `App/Info.plist`) and the title in
+   `App/Sources/HomeView.swift` still say "Between Stops".
 2. **Bundle ID `com.martinthommesen.betweenstops`** and team `G5K6V5U6QM`, both in
    `Config/Signing.xcconfig` (the only file to edit).
 3. **Minimum iOS 17.0, iPhone only, portrait only.** iOS 17 runs on every iPhone from the XS
