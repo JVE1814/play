@@ -186,9 +186,10 @@ public final class RunnerSession: ObservableObject, GameSession {
 
     // MARK: Lifecycle
 
-    /// Out of view (the home screen, the background, Settings over the game), a run pauses.
+    /// Going out of view (to the home screen, the background, or under Settings), a run pauses.
     public func setInView(_ inView: Bool) {
-        if self.inView != inView { self.inView = inView }
+        guard self.inView != inView else { return }
+        self.inView = inView
         if !inView { pause() }
     }
 
@@ -204,12 +205,12 @@ public final class RunnerSession: ObservableObject, GameSession {
         }
     }
 
-    /// A swipe. The first one also starts the run.
+    /// A swipe. The first one also starts the run; one made while a paused run is getting
+    /// ready to go on is ignored, like any other made while nothing moves.
     public func perform(_ move: Move, at now: Date = Date()) {
         if phase == .ready { start(at: now) }
-        guard phase == .running else { return }
         advance(to: now)
-        guard phase == .running else { return }
+        guard phase == .running, resumesAt == nil else { return }
         switch run.perform(move) {
         case .jumped?: context.feedback.play(.jump)
         case .slid?: context.feedback.play(.draw)

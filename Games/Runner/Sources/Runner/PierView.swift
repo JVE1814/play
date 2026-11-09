@@ -14,8 +14,9 @@ struct PierView: View {
     /// every frame, so the app goes idle between steps.
     let live: Bool
     @Environment(\.colorScheme) private var colorScheme
-    /// This touch has already made its move.
-    @State private var swiped = false
+    /// Where the touch that has already made its move began. (A touch the system takes away
+    /// never ends, so a plain flag would leave the next one ignored.)
+    @State private var spentTouch: CGPoint?
 
     /// How far a thumb has to travel to count as a swipe.
     private static let swipeDistance: CGFloat = 22
@@ -81,20 +82,20 @@ struct PierView: View {
     private var swipes: some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                guard !swiped else { return }
+                guard spentTouch != value.startLocation else { return }
                 let across = value.translation.width
                 let down = value.translation.height
                 guard max(abs(across), abs(down)) >= Self.swipeDistance else { return }
-                swiped = true
+                spentTouch = value.startLocation
                 if abs(across) > abs(down) {
                     session.perform(across < 0 ? .left : .right)
                 } else {
                     session.perform(down < 0 ? .jump : .slide)
                 }
             }
-            .onEnded { _ in
-                if !swiped { session.tap() }
-                swiped = false
+            .onEnded { value in
+                if spentTouch != value.startLocation { session.tap() }
+                spentTouch = nil
             }
     }
 

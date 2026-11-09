@@ -227,6 +227,33 @@ final class CourseTests: XCTestCase {
         XCTAssertGreaterThan(splits, 20, "such stacks do occur")
     }
 
+    func testNobodyHasToSwerveInRightBehindALongStack() {
+        for seed in 1...40 as ClosedRange<UInt64> {
+            let laid = rows(seed: seed, to: 5_000)
+            let stacks = laid.flatMap(\.row.obstacles).filter { $0.kind == .stack }
+            for long in stacks where long.length > 5 {
+                let end = long.position + long.length
+                // Until there has been room to move over, some other lane must be runnable.
+                for (position, _) in laid where position > long.position && position <= end + CourseBuilder.crossingRoom {
+                    let walled = Set(stacks.filter { $0.position <= position && $0.position + $0.length >= position }.map(\.lane))
+                    XCTAssertFalse(walled.union([long.lane]).count == Body.lanes, "seed \(seed) at \(Int(position)) m")
+                }
+            }
+        }
+    }
+
+    func testNothingToPickUpLiesInsideALongStack() {
+        for seed in 1...40 as ClosedRange<UInt64> {
+            let laid = rows(seed: seed, to: 5_000)
+            let long = laid.flatMap(\.row.obstacles).filter { $0.kind == .stack && $0.length > 5 }
+            func buried(_ lane: Int, _ position: Double) -> Bool {
+                long.contains { $0.lane == lane && position > $0.position - 0.5 && position < $0.position + $0.length + 0.5 }
+            }
+            XCTAssertFalse(laid.flatMap(\.row.coins).contains { buried($0.lane, $0.position) }, "seed \(seed): a coin")
+            XCTAssertFalse(laid.flatMap(\.row.pickups).contains { buried($0.lane, $0.position) }, "seed \(seed): a power-up")
+        }
+    }
+
     func testTheCourseGetsHarderWithDistance() {
         var early = 0, late = 0
         for seed in 1...20 as ClosedRange<UInt64> {

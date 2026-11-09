@@ -20,7 +20,7 @@ struct CourseBuilder: Codable, Equatable, Sendable {
     /// The rows of the coached opening: go round, jump, slide.
     static let lessons = 3
     static let coinSpacing = 1.7
-    /// Metres it takes, at any speed, to see the end of a long stack and cross the pier behind it.
+    /// Metres it takes, at any speed, to see the end of a long stack and move over behind it.
     static let crossingRoom = 12.0
 
     private var random: SeededGenerator
@@ -34,6 +34,8 @@ struct CourseBuilder: Codable, Equatable, Sendable {
     /// Per lane, how far along nothing more may be placed: a long stack lies there, or a
     /// barrel is rolling in.
     private var reservedUntil = [Double](repeating: 0, count: Body.lanes)
+    /// Per lane, where the last long stack ends: nothing to pick up is laid inside it.
+    private var walledUntil = [Double](repeating: 0, count: Body.lanes)
     /// How far along a long stack in the middle lane keeps the outer lanes apart (and a
     /// little further, for the time it takes to cross over).
     private var splitUntil = 0.0
@@ -123,8 +125,9 @@ struct CourseBuilder: Codable, Equatable, Sendable {
                 let obstacle = Obstacle(kind, lane: index, position: position, length: lengths[index])
                 row.obstacles.append(obstacle)
                 if lengths[index] != nil {
-                    reservedUntil[index] = position + obstacle.length + 3
-                    if index == 1 { splitUntil = position + obstacle.length + Self.crossingRoom }
+                    walledUntil[index] = position + obstacle.length
+                    reservedUntil[index] = walledUntil[index] + Self.crossingRoom
+                    if index == 1 { splitUntil = reservedUntil[index] }
                 }
             }
         }
@@ -142,14 +145,15 @@ struct CourseBuilder: Codable, Equatable, Sendable {
     }
 
     /// A long stack's length, if one may lie in `lane` from `position`: far enough in, and
-    /// the path stays out of that lane for as long as the stack runs.
+    /// the path stays out of that lane for as long as the stack runs and a little beyond, so
+    /// nobody has to swerve in right behind it.
     private mutating func longStackLength(in lane: Int, at position: Double, level: Double) -> Double? {
         guard position > 250, random.chance(0.12 + 0.2 * level) else { return nil }
         let length = random.uniform(9...20)
         var row = position
         for pathLane in path {
             row += Pace.rowSpacing(at: row)
-            if row > position + length + 3 { return length }
+            if row > position + length + Self.crossingRoom { return length }
             if pathLane == lane { return nil }
         }
         return nil
@@ -164,7 +168,9 @@ struct CourseBuilder: Codable, Equatable, Sendable {
         let from = max(previousRow, position - 16) + 4
         let to = position - 4
         let middle = (from + to) / 2
-        if pickupWanted {
+        // The path may move into a lane just behind a long stack: nothing is laid inside one.
+        func isClear(_ lane: Int, _ at: Double) -> Bool { at > walledUntil[lane] + 1 }
+        if pickupWanted, isClear(lane, middle + Self.coinSpacing) {
             row.pickups.append(Pickup(kind: nextPickupKind, lane: lane, position: middle + Self.coinSpacing))
             nextPickupKind = nextPickupKind == .magnet ? .shield : .magnet
             nextPickup = position + random.uniform(280...420)
@@ -174,7 +180,7 @@ struct CourseBuilder: Codable, Equatable, Sendable {
         while at <= to {
             let coinLane = at < middle ? previousLane : lane
             let taken = row.pickups.contains { abs($0.position - at) < Self.coinSpacing }
-            if !taken { row.coins.append(Coin(lane: coinLane, position: at, height: Coin.usualHeight)) }
+            if !taken, isClear(coinLane, at) { row.coins.append(Coin(lane: coinLane, position: at, height: Coin.usualHeight)) }
             at += Self.coinSpacing
         }
         switch kind?.answer {
@@ -185,7 +191,7 @@ struct CourseBuilder: Codable, Equatable, Sendable {
             for step in -2...2 {
                 let offset = Double(step) * speed * jump / 6
                 let height = Coin.usualHeight + Body.jumpHeight(after: jump / 2 + offset / speed)
-                row.coins.append(Coin(lane: lane, position: position + offset, height: height))
+                if isClear(lane, position + offset) { row.coins.append(Coin(lane: lane, position: position + offset, height: height)) }
             }
         case .slide?:
             for step in -1...1 {

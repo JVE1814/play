@@ -10,6 +10,8 @@ final class RunnerTests: XCTestCase {
     /// until a touch moves it on.
     private func session(_ env: TestEnvironment, _ arguments: [String] = [], animated: Bool = false) -> RunnerSession {
         let session = RunnerSession(context: env.context(for: RunnerModule(), arguments: arguments, animated: animated))
+        // As the game's screen does: out of view until it has appeared.
+        session.setInView(false)
         session.setInView(true)
         return session
     }
@@ -95,8 +97,10 @@ final class RunnerTests: XCTestCase {
         s.tap(at: back)
         XCTAssertEqual(s.phase, .running)
         XCTAssertEqual(s.resumesAt, back.addingTimeInterval(RunnerSession.resumeDelay))
+        s.perform(.jump, at: back.addingTimeInterval(0.5))
         s.advance(to: back.addingTimeInterval(1))
         XCTAssertEqual(s.run.distance, paused, "still counting down")
+        XCTAssertFalse(s.run.isAirborne, "a swipe made while nothing moves is not saved up")
         s.advance(to: back.addingTimeInterval(RunnerSession.resumeDelay + 0.2))
         XCTAssertGreaterThan(s.run.distance, paused)
         XCTAssertNil(s.resumesAt)
