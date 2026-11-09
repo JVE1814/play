@@ -490,8 +490,9 @@ struct RangePainter {
         let speed = windNow
         let strength = min(1, abs(speed) / 4.5)
         // Which way it streams, eased through calm so the flag swings across the pole (edge on
-        // for a moment) rather than flipping when the wind changes sides.
-        let side = max(-1, min(1, speed / 0.4))
+        // for a moment) rather than flipping when the wind changes sides. On a still day it
+        // simply hangs limp beside the pole.
+        let side = f.wind.isCalm ? 1 : max(-1, min(1, speed / 0.4))
         let angle = (0.2 + 1.32 * strength) * side  // radians from hanging straight down
         let direction = Vec2(sin(angle), -cos(angle))
         let normal = Vec2(-cos(angle) * side, -abs(sin(angle)))
