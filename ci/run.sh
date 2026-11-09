@@ -30,7 +30,8 @@ with_timeout() {
   local limit=$1; shift
   "$@" &
   local pid=$!
-  ( sleep "$limit"; echo "TIMEOUT: killed after ${limit}s: $*"; kill -TERM "$pid" 2>/dev/null; sleep 15; kill -KILL "$pid" 2>/dev/null ) &
+  # `&&`: when the command finishes first, its `sleep` is killed and nothing is reported.
+  ( sleep "$limit" && { echo "TIMEOUT: killed after ${limit}s: $*"; kill -TERM "$pid" 2>/dev/null; sleep 15; kill -KILL "$pid" 2>/dev/null; } ) &
   local watchdog=$!
   wait "$pid"
   local rc=$?
@@ -106,6 +107,13 @@ if [ "$BUILD_RC" -eq 0 ]; then
   xcrun simctl status_bar "$UDID" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
     --cellularMode active --cellularBars 4 --operatorName "" --batteryState charged --batteryLevel 100 || true
 
+  # The engine tests compile and run at low priority while the UI tests drive the simulator
+  # (which leaves the CPU mostly idle). Starting them earlier, while the simulator boots, slowed
+  # both down; running them after the UI tests added nearly four minutes to the job.
+  step "Engine tests started in the background (results below)"
+  nice -n 15 bash ci/engine_tests.sh "$OUT" > "$OUT/engine-tests.log" 2>&1 &
+  ENGINE_PID=$!
+
   step "Unit and UI tests"
   rm -rf "$BUILD/Tests.xcresult"
   TEST_RUNNER_SCREENSHOT_DIR="$OUT/screenshots" with_timeout 1200 xcodebuild test-without-building \
@@ -136,17 +144,22 @@ if [ "$BUILD_RC" -eq 0 ]; then
   echo "screenshots: $(ls "$OUT/screenshots" | wc -l | tr -d ' ')"
 fi
 
-# Each game's rules engine is a Foundation-only package tested with `swift test`. Release mode
-# with testability runs the heavy invariant tests several times faster than a debug build.
-# They run after the UI tests: compiling them while the new simulator boots slows both down.
+# Each game's rules engine is a Foundation-only package tested with `swift test` (see
+# ci/engine_tests.sh). If the build failed they never started, so run them now.
+if [ -n "${ENGINE_PID:-}" ]; then
+  step "Engine tests: waiting for the background run"
+  wait "$ENGINE_PID"
+else
+  step "Engine tests"
+  bash ci/engine_tests.sh "$OUT" > "$OUT/engine-tests.log" 2>&1
+fi
 ENGINE_TOTAL=0
 ENGINE_FAILED=0
 ENGINE_SUMMARY=""
 for engine in KlondikeEngine BubbleEngine ArcheryEngine; do
-  step "Engine tests: swift test in Packages/$engine"
   log="$OUT/engine-tests-$engine.log"
-  (cd "Packages/$engine" && with_timeout 900 swift test -c release -Xswiftc -enable-testing) > "$log" 2>&1
-  rc=$?
+  rc=$(cat "$OUT/engine-tests-$engine.rc" 2>/dev/null || echo 1)
+  echo "$engine: $(tail -1 "$log" 2>/dev/null)"
   line=$(grep -E "Executed [0-9]+ tests?, with [0-9]+ failures?" "$log" | tail -1 | sed -E 's/^[[:space:]]+//')
   echo "${line:-no XCTest summary found} (exit $rc)"
   total=$(echo "$line" | sed -nE 's/.*Executed ([0-9]+) tests?.*/\1/p')
