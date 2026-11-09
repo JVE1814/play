@@ -102,9 +102,8 @@ worth a look before you submit are marked **review**.
 
 ## Release tooling
 
-32. **The no-Mac release path is a manually run workflow** (`.github/workflows/testflight.yml`,
-    copied from the template in `docs/release/testflight.yml`). It needs the four repository
-    secrets listed in `docs/RELEASE.md`.
+32. **The no-Mac release path is a manually run workflow** (`.github/workflows/testflight.yml`).
+    It needs the four repository secrets listed in `docs/RELEASE.md`.
 33. **App Store screenshots** come from the CI UI tests on an iPhone 17 Pro Max simulator
     (1320 × 2868, the 6.9" size App Store Connect asks for), with the status bar set to 9:41 and
     full battery.

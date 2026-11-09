@@ -306,8 +306,10 @@ public enum LevelCatalog {
             attempts += 1
             let used = Set(top.compactMap { grid[$0]?.color })
             guard let missing = palette.first(where: { !used.contains($0) }) else { break }
-            let counts = Dictionary(grouping: top, by: { grid[$0]?.color })
-            guard let crowded = counts.max(by: { $0.value.count < $1.value.count })?.value, crowded.count > 1 else { break }
+            // The most crowded colour gives one up. On a tie it is the colour that comes first in
+            // the row: a dictionary's own order changes from one launch to the next.
+            let groups = Dictionary(grouping: top, by: { grid[$0]?.color }).values
+            guard let crowded = groups.max(by: { ($0.count, $1[0]) < ($1.count, $0[0]) }), crowded.count > 1 else { break }
             grid[rng.pick(crowded)] = .color(missing)
         }
     }

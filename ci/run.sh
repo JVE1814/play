@@ -11,6 +11,7 @@
 set -uo pipefail
 
 cd "$(dirname "$0")/.."
+source ci/lib.sh
 ROOT="$PWD"
 OUT="$ROOT/ci-output"
 BUILD="$ROOT/build"
@@ -23,23 +24,6 @@ SCHEME=BetweenStops
 
 step() { echo; echo "=== [$(( $(date +%s) - START ))s] $*"; }
 fail() { echo "FAIL: $*" | tee -a "$OUT/failures.txt"; STATUS=1; }
-
-# Runs a command with a time limit (macOS has no `timeout`), so a hang fails this step instead
-# of the whole job hitting the workflow timeout before results are published.
-with_timeout() {
-  local limit=$1; shift
-  "$@" &
-  local pid=$!
-  # `&&`: when the command finishes first, its `sleep` is killed and nothing is reported.
-  ( sleep "$limit" && { echo "TIMEOUT: killed after ${limit}s: $*"; kill -TERM "$pid" 2>/dev/null; sleep 15; kill -KILL "$pid" 2>/dev/null; } ) &
-  local watchdog=$!
-  wait "$pid"
-  local rc=$?
-  pkill -P "$watchdog" 2>/dev/null
-  kill "$watchdog" 2>/dev/null
-  wait "$watchdog" 2>/dev/null
-  return $rc
-}
 
 step "Environment"
 {
@@ -90,7 +74,7 @@ if ! command -v xcodegen >/dev/null; then
   fi
 fi
 xcodegen --version
-if ! xcodegen generate --spec project.yml > "$OUT/xcodegen.log" 2>&1; then
+if ! xcodegen generate > "$OUT/xcodegen.log" 2>&1; then
   cat "$OUT/xcodegen.log"
   fail "xcodegen generate"
 fi
@@ -99,7 +83,6 @@ step "Build for testing"
 with_timeout 1200 xcodebuild build-for-testing \
   -project "$PROJECT" -scheme "$SCHEME" -destination "$DESTINATION" \
   -derivedDataPath "$BUILD/DerivedData" \
-  -skipPackagePluginValidation -skipMacroValidation \
   COMPILER_INDEX_STORE_ENABLE=NO > "$OUT/build.log" 2>&1
 BUILD_RC=$?
 grep -E "(error|warning): " "$OUT/build.log" | grep -v "^ld: warning" | sort -u > "$OUT/build-diagnostics.txt"
@@ -167,7 +150,7 @@ fi
 ENGINE_TOTAL=0
 ENGINE_FAILED=0
 ENGINE_SUMMARY=""
-for engine in KlondikeEngine BubbleEngine ArcheryEngine; do
+for engine in $ENGINES; do
   log="$OUT/engine-tests-$engine.log"
   rc=$(cat "$OUT/engine-tests-$engine.rc" 2>/dev/null || echo 1)
   echo "$engine: $(tail -1 "$log" 2>/dev/null)"

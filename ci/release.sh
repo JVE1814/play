@@ -1,6 +1,6 @@
 #!/bin/bash
 # Archives Between Stops and uploads it to App Store Connect (TestFlight), or exports an .ipa.
-# Runs on a Mac with Xcode 26+ or on a macOS CI runner (see docs/release/testflight.yml).
+# Runs on a Mac with Xcode 26+ or on a macOS CI runner (see .github/workflows/testflight.yml).
 #
 # Required environment:
 #   ASC_KEY_ID      App Store Connect API key ID

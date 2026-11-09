@@ -29,11 +29,13 @@ final class LevelTests: XCTestCase {
         XCTAssertEqual(signatures.count, LevelCatalog.count, "every level is different")
     }
 
-    func testLevelsAreDeterministic() {
-        for n in [1, 2, 50, 999, 2000] {
-            XCTAssertEqual(LevelCatalog.level(n), LevelCatalog.level(n))
-        }
+    /// A level number builds the same board on every launch. Levels 35 and 1006 are among those
+    /// whose generation has to break a tie between colours, which once depended on the launch.
+    func testLevelsAreTheSameOnEveryLaunch() {
         XCTAssertEqual(LevelCatalog.layout(1).grid.signature, LevelTests.goldenLevelOne)
+        XCTAssertEqual(LevelCatalog.level(35).layout.grid.signature, "..brcc../...bccr./.....crr/...bccc.")
+        XCTAssertEqual(LevelCatalog.level(1006).layout.grid.signature,
+                       ".rccb.../..rbSg../....cyp./....Sygb/....ySy./..prpg../.ppSg.../Sgy.....")
     }
 
     static let goldenLevelOne = "pccbccpp/ppcccppp/ppcppppp/ppbbpcpp/bppbbcpp"
