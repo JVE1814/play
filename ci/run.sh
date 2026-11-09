@@ -53,7 +53,7 @@ step "Source audit (networking APIs, third-party dependencies)"
 bash ci/audit.sh | tee "$OUT/source-audit.txt"
 if [ "${PIPESTATUS[0]}" -ne 0 ]; then fail "source audit found networking APIs or third-party dependencies"; fi
 
-step "Create and boot a simulator (it finishes booting while the engine tests and build run)"
+step "Create and boot a simulator (it finishes booting while the app builds)"
 RUNTIME_ID=$(xcrun simctl list runtimes -j | python3 -c '
 import json, sys
 rts = [r for r in json.load(sys.stdin)["runtimes"]
@@ -73,30 +73,6 @@ UDID=$(xcrun simctl create "CI iPhone" "$DEVICE_TYPE_ID" "$RUNTIME_ID")
 echo "simulator: $UDID"
 xcrun simctl boot "$UDID"
 DESTINATION="platform=iOS Simulator,id=$UDID"
-
-# Each game's rules engine is a Foundation-only package tested with `swift test`. Release mode
-# with testability runs the heavy invariant tests several times faster than a debug build.
-ENGINE_TOTAL=0
-ENGINE_FAILED=0
-ENGINE_SUMMARY=""
-for engine in KlondikeEngine BubbleEngine; do
-  step "Engine tests: swift test in Packages/$engine"
-  log="$OUT/engine-tests-$engine.log"
-  (cd "Packages/$engine" && with_timeout 900 swift test -c release -Xswiftc -enable-testing) > "$log" 2>&1
-  rc=$?
-  line=$(grep -E "Executed [0-9]+ tests?, with [0-9]+ failures?" "$log" | tail -1 | sed -E 's/^[[:space:]]+//')
-  echo "${line:-no XCTest summary found} (exit $rc)"
-  total=$(echo "$line" | sed -nE 's/.*Executed ([0-9]+) tests?.*/\1/p')
-  failed=$(echo "$line" | sed -nE 's/.*with ([0-9]+) failures?.*/\1/p')
-  ENGINE_TOTAL=$(( ENGINE_TOTAL + ${total:-0} ))
-  ENGINE_FAILED=$(( ENGINE_FAILED + ${failed:-0} ))
-  ENGINE_SUMMARY="$ENGINE_SUMMARY $engine ${total:-?}/${failed:-?}"
-  if [ "$rc" -ne 0 ] || [ -z "$total" ] || [ "${failed:-1}" != "0" ]; then
-    fail "$engine tests (exit $rc)"
-    ENGINE_FAILED=$(( ENGINE_FAILED + (${failed:-0} == 0 ? 1 : 0) ))
-    grep -E "error:|failed" "$log" | head -50 | tee -a "$OUT/failures.txt"
-  fi
-done
 
 step "Generate Xcode project with XcodeGen"
 if ! command -v xcodegen >/dev/null; then
@@ -159,6 +135,31 @@ if [ "$BUILD_RC" -eq 0 ]; then
   fi
   echo "screenshots: $(ls "$OUT/screenshots" | wc -l | tr -d ' ')"
 fi
+
+# Each game's rules engine is a Foundation-only package tested with `swift test`. Release mode
+# with testability runs the heavy invariant tests several times faster than a debug build.
+# They run after the UI tests: compiling them while the new simulator boots slows both down.
+ENGINE_TOTAL=0
+ENGINE_FAILED=0
+ENGINE_SUMMARY=""
+for engine in KlondikeEngine BubbleEngine; do
+  step "Engine tests: swift test in Packages/$engine"
+  log="$OUT/engine-tests-$engine.log"
+  (cd "Packages/$engine" && with_timeout 900 swift test -c release -Xswiftc -enable-testing) > "$log" 2>&1
+  rc=$?
+  line=$(grep -E "Executed [0-9]+ tests?, with [0-9]+ failures?" "$log" | tail -1 | sed -E 's/^[[:space:]]+//')
+  echo "${line:-no XCTest summary found} (exit $rc)"
+  total=$(echo "$line" | sed -nE 's/.*Executed ([0-9]+) tests?.*/\1/p')
+  failed=$(echo "$line" | sed -nE 's/.*with ([0-9]+) failures?.*/\1/p')
+  ENGINE_TOTAL=$(( ENGINE_TOTAL + ${total:-0} ))
+  ENGINE_FAILED=$(( ENGINE_FAILED + ${failed:-0} ))
+  ENGINE_SUMMARY="$ENGINE_SUMMARY $engine ${total:-?}/${failed:-?}"
+  if [ "$rc" -ne 0 ] || [ -z "$total" ] || [ "${failed:-1}" != "0" ]; then
+    fail "$engine tests (exit $rc)"
+    ENGINE_FAILED=$(( ENGINE_FAILED + (${failed:-0} == 0 ? 1 : 0) ))
+    grep -E "error:|failed" "$log" | head -50 | tee -a "$OUT/failures.txt"
+  fi
+done
 
 step "Totals"
 {
