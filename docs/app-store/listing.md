@@ -83,8 +83,10 @@ stock (bottom right) to draw. Settings (gear icon) switches between Draw 1 and D
 
 Use the 1320 × 2868 PNGs in `docs/app-store/screenshots/` (6.9" display), in this order:
 
-1. `1-game.png`: a game in progress
-2. `2-hint.png`: a hint highlighting the next move
-3. `3-win.png`: the win screen with statistics
-4. `4-home.png`: the game collection
-5. `5-dark.png`: dark mode
+1. `1-solitaire.png`: a Solitaire game in progress
+2. `2-bubbles.png`: Bubbles, aiming with the guide (level 210, with stones and bombs)
+3. `3-hint.png`: a Solitaire hint highlighting the next move
+4. `4-bubbles-cleared.png`: a Bubbles level cleared with three stars
+5. `5-win.png`: the Solitaire win screen with statistics
+6. `6-home.png`: the game collection
+7. `7-dark.png`: dark mode

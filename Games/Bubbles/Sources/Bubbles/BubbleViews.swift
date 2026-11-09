@@ -45,8 +45,8 @@ enum BubbleStyle {
     }
 
     /// The field panel behind the bubbles.
-    static let panel = Color(light: 0xF3F8FF, dark: 0x0E1726)
-    static let guide = Color(light: 0x10203A, lightOpacity: 0.45, dark: 0xFFFFFF, darkOpacity: 0.55)
+    static let panel = Color(light: 0xF3F8FF, dark: 0x17273F)
+    static let guide = Color(light: 0x10203A, lightOpacity: 0.6, dark: 0xFFFFFF, darkOpacity: 0.72)
     static let line = Color(light: 0xC81E3A, lightOpacity: 0.35, dark: 0xFF6B72, darkOpacity: 0.45)
 }
 

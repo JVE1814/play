@@ -6,11 +6,14 @@ git fetch -q origin ci-results
 OUT=docs/app-store/screenshots
 mkdir -p "$OUT"
 copy() { git show "origin/ci-results:screenshots/$1.png" > "$OUT/$2.png"; }
-copy 02-game-light 1-game
-copy 03-hint-light 2-hint
-copy 04-win-light 3-win
-copy 01-home-light 4-home
-copy 02-game-dark 5-dark
+rm -f "$OUT"/*.png
+copy 02-game-light 1-solitaire
+copy 41-bubbles-aim-light 2-bubbles
+copy 03-hint-light 3-hint
+copy 43-bubbles-cleared-light 4-bubbles-cleared
+copy 04-win-light 5-win
+copy 40-home-two-games-light 6-home
+copy 41-bubbles-aim-dark 7-dark
 echo "screenshots from CI run of $(git show origin/ci-results:SHA)"
 python3 -c "
 import struct, sys, glob

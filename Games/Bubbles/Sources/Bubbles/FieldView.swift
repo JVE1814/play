@@ -66,8 +66,8 @@ struct FieldView: View {
                 path.move(to: first)
                 for point in points.dropFirst() { path.addLine(to: point) }
             }
-            .stroke(BubbleStyle.guide, style: StrokeStyle(lineWidth: max(2, layout.diameter * 0.08), lineCap: .round,
-                                                          dash: [0.1, layout.diameter * 0.32]))
+            .stroke(BubbleStyle.guide, style: StrokeStyle(lineWidth: max(3, layout.diameter * 0.11), lineCap: .round,
+                                                          dash: [0.1, layout.diameter * 0.3]))
             .accessibilityHidden(true)
             if preferences.fullAimGuide {
                 Circle()

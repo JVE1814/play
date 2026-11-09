@@ -6,7 +6,7 @@ final class BubblesUITests: UITestCase {
         launch()
         XCTAssertTrue(waitFor("game-klondike").exists)
         openBubbles()
-        XCTAssertEqual(element("bubbleLevel").value as? String, "1 of 2000")
+        XCTAssertEqual(element("bubbleLevel").value as? String, "1 of 2,000")
         XCTAssertEqual(element("shotsLeft").value as? String, "9")
         XCTAssertTrue(element("bubble-0-0").exists)
         XCTAssertTrue(element("swapBubble").exists)
@@ -23,7 +23,7 @@ final class BubblesUITests: UITestCase {
         XCTAssertTrue(labelled("Level 1 cleared!").exists)
         XCTAssertEqual(element("resultStars").label, "3 of 3 stars")
         element("bubblesNext").tap()
-        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "2 of 2000")
+        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "2 of 2,000")
         element("levels").tap()
         XCTAssertEqual(waitFor("level-1").value as? String, "3 of 3 stars")
         XCTAssertEqual(element("level-2").value as? String, "0 of 3 stars, current")
@@ -79,13 +79,13 @@ final class BubblesUITests: UITestCase {
     func testTheLevelListShowsAllTwoThousandLevels() {
         launch(["-level", "37"])
         openBubbles()
-        XCTAssertEqual(element("bubbleLevel").value as? String, "37 of 2000")
+        XCTAssertEqual(element("bubbleLevel").value as? String, "37 of 2,000")
         element("levels").tap()
         XCTAssertTrue(waitFor("levelSummary").label.contains("2,000 levels"))
         XCTAssertEqual(waitFor("level-37").value as? String, "0 of 3 stars, current")
         XCTAssertEqual(element("level-38").value as? String, "Locked")
         element("level-12").tap()
-        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "12 of 2000")
+        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "12 of 2,000")
     }
 
     // MARK: Screenshots
