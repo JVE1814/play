@@ -1,0 +1,117 @@
+
+=== [0s] Environment
+ProductName:		macOS
+ProductVersion:		26.7.2
+BuildVersion:		25G332
+Xcode 26.6
+Build version 17F113
+/Applications/Xcode_26.6.app/Contents/Developer
+swift-driver version: 1.148.6 Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)
+Apple M1 (Virtual)
+3
+
+=== [4s] Source audit (networking APIs, third-party dependencies)
+Networking APIs in Swift sources:
+  none found
+Remote package dependencies (Package.swift, project.yml):
+  none found (all packages are local paths)
+Other dependency managers:
+  none found (no CocoaPods, Carthage or resolved remote packages)
+Imports used by ArcheryEngine (must be Foundation only, plus the engine itself in its tool):
+   1 import ArcheryEngine
+   8 import Foundation
+Imports used by BubbleEngine (must be Foundation only, plus the engine itself in its tool):
+   1 import BubbleEngine
+   5 import Foundation
+Imports used by KlondikeEngine (must be Foundation only, plus the engine itself in its tool):
+   8 import Foundation
+Imports used by MinesEngine (must be Foundation only, plus the engine itself in its tool):
+   9 import Foundation
+   1 import MinesEngine
+Imports used by RunnerEngine (must be Foundation only, plus the engine itself in its tool):
+   6 import Foundation
+   1 import RunnerEngine
+All imports across the app:
+   2 import Archery
+  16 import ArcheryEngine
+   1 import AVFoundation
+   1 import BetweenStops
+  12 import BubbleEngine
+   2 import Bubbles
+   4 import CoreGraphics
+   1 import Darwin
+  49 import Foundation
+  16 import KlondikeEngine
+   2 import Mines
+  14 import MinesEngine
+   1 import os
+  12 import PackageDescription
+  45 import PlayKit
+   4 import QuartzCore
+   3 import Runner
+  13 import RunnerEngine
+   2 import Solitaire
+  39 import SwiftUI
+   1 import TestGame
+   3 import UIKit
+  38 import XCTest
+
+=== [4s] Create and boot a simulator (it finishes booting while the app builds)
+runtime: com.apple.CoreSimulator.SimRuntime.iOS-26-5
+device type: com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max
+simulator: AA89803E-56A5-43F8-A22E-E3E7E504DEF1
+
+=== [14s] Generate Xcode project with XcodeGen
+Version: 2.46.0
+
+=== [73s] Build for testing
+build exit 0, 0 errors, 7 warnings
+
+=== [458s] Prepare simulator
+
+=== [474s] Engine tests started in the background (results below)
+
+=== [474s] Unit and UI tests (up to 1176s)
+xcodebuild test exit 143
+	 Executed 99 tests, with 0 failures (0 unexpected) in 5.460 (5.936) seconds
+	 Executed 6 tests, with 0 failures (0 unexpected) in 231.487 (231.497) seconds
+	 Executed 15 tests, with 0 failures (0 unexpected) in 287.811 (287.828) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 185.386 (185.393) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 47.006 (47.009) seconds
+
+=== [1652s] Runner smoothness (RUNNER-PERF lines from the tests)
+RUNNER-PERF raster course dark p50=2.72 p95=5.99 max=10.23 ms
+RUNNER-PERF raster course light p50=2.32 p95=5.61 max=8.38 ms
+RUNNER-PERF raster empty-canvas p50=0.05 ms
+RUNNER-PERF raster probe dark p50=4.06 p95=13.81 max=35.73 ms
+RUNNER-PERF raster probe light p50=4.33 p95=12.38 max=21.36 ms
+
+=== [1652s] Collect results
+result bundle unreadable (Error: Failed to create a new result bundle reader, underlying error: Info.plist at /Users/runner/work/play/play/build/Tests.xcresult/Info.plist does not exist, the result bundle might be corrupted or the provided path is not a result bundle
+Usage: xcresulttool <subcommand>
+  See 'xcresulttool --help' for more information.); using the xcodebuild log
+app unit + UI (xcodebuild log): 198 tests, 198 passed, 0 failed, 0 skipped
+FAIL: unit/UI tests (xcodebuild exit 143)
+screenshots: 50
+
+=== [1660s] Engine tests: waiting for the background run
+ArcheryEngine: ArcheryEngine finished in 78s
+Executed 41 tests, with 0 failures (0 unexpected) in 0.158 (0.170) seconds (exit 0)
+BubbleEngine: BubbleEngine finished in 51s
+Executed 29 tests, with 0 failures (0 unexpected) in 0.949 (0.968) seconds (exit 0)
+KlondikeEngine: KlondikeEngine finished in 114s
+Executed 71 tests, with 0 failures (0 unexpected) in 13.295 (13.348) seconds (exit 0)
+MinesEngine: MinesEngine finished in 70s
+Executed 34 tests, with 0 failures (0 unexpected) in 0.287 (0.322) seconds (exit 0)
+RunnerEngine: RunnerEngine finished in 135s
+Executed 34 tests, with 0 failures (0 unexpected) in 63.441 (63.470) seconds (exit 0)
+
+=== [1661s] Totals
+engines (swift test): 209 tests, 0 failures (tests/failures: ArcheryEngine 41/0 BubbleEngine 29/0 KlondikeEngine 71/0 MinesEngine 34/0 RunnerEngine 34/0)
+app unit + UI (xcodebuild log): 198 tests, 198 passed, 0 failed, 0 skipped
+TOTAL: 407 tests, 0 failures
+RESULT: FAILED
+
+=== [1661s] Failures
+FAIL: unit/UI tests (xcodebuild exit 143)
+finished in 1673s

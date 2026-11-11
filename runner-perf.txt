@@ -1,0 +1,5 @@
+RUNNER-PERF raster course dark p50=2.72 p95=5.99 max=10.23 ms
+RUNNER-PERF raster course light p50=2.32 p95=5.61 max=8.38 ms
+RUNNER-PERF raster empty-canvas p50=0.05 ms
+RUNNER-PERF raster probe dark p50=4.06 p95=13.81 max=35.73 ms
+RUNNER-PERF raster probe light p50=4.33 p95=12.38 max=21.36 ms

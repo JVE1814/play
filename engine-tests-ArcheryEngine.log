@@ -1,0 +1,121 @@
+Building for production...
+[0/10] /Users/runner/work/play/play/Packages/ArcheryEngine/.build/arm64-apple-macosx/release/ArcheryEnginePackageTests.derived/runner.swift
+[1/10] Write swift-version-7974D3F7F03D5E95.txt
+[2/10] Write sources
+[7/11] Compiling ArcheryEngine Ballistics.swift
+[8/12] Compiling archery_calibrate main.swift
+[9/13] Compiling ArcheryEngineTests BallisticsTests.swift
+[9/13] Write Objects.LinkFileList
+[11/14] Compiling ArcheryEnginePackageTests runner.swift
+[11/14] Linking archery-calibrate
+[12/14] Write Objects.LinkFileList
+[13/14] Linking ArcheryEnginePackageTests
+Build complete! (55.50s)
+Test Suite 'All tests' started at 2026-11-11 17:13:52.331.
+Test Suite 'ArcheryEnginePackageTests.xctest' started at 2026-11-11 17:13:52.335.
+Test Suite 'BallisticsTests' started at 2026-11-11 17:13:52.335.
+Test Case '-[ArcheryEngineTests.BallisticsTests testDriftGrowsWithDistanceAndWindSpeed]' started.
+Test Case '-[ArcheryEngineTests.BallisticsTests testDriftGrowsWithDistanceAndWindSpeed]' passed (0.003 seconds).
+Test Case '-[ArcheryEngineTests.BallisticsTests testEarlyWindCountsForMore]' started.
+Test Case '-[ArcheryEngineTests.BallisticsTests testEarlyWindCountsForMore]' passed (0.001 seconds).
+Test Case '-[ArcheryEngineTests.BallisticsTests testFarTargetsLookSmallerButNotTiny]' started.
+Test Case '-[ArcheryEngineTests.BallisticsTests testFarTargetsLookSmallerButNotTiny]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.BallisticsTests testStillAirMeansNoDrift]' started.
+Test Case '-[ArcheryEngineTests.BallisticsTests testStillAirMeansNoDrift]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.BallisticsTests testTheFlightStartsAtTheBowAndEndsInTheTarget]' started.
+Test Case '-[ArcheryEngineTests.BallisticsTests testTheFlightStartsAtTheBowAndEndsInTheTarget]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.BallisticsTests testTheWindIsFollowedThroughTheFlight]' started.
+Test Case '-[ArcheryEngineTests.BallisticsTests testTheWindIsFollowedThroughTheFlight]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.BallisticsTests testWindPushesArrowsDownwind]' started.
+Test Case '-[ArcheryEngineTests.BallisticsTests testWindPushesArrowsDownwind]' passed (0.000 seconds).
+Test Suite 'BallisticsTests' passed at 2026-11-11 17:13:52.341.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.004 (0.006) seconds
+Test Suite 'ConditionsTests' started at 2026-11-11 17:13:52.341.
+Test Case '-[ArcheryEngineTests.ConditionsTests testGustsStayWithinTheirRangeAndRepeat]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testGustsStayWithinTheirRangeAndRepeat]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.ConditionsTests testSlidingTargetsStayOnTheirRail]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testSlidingTargetsStayOnTheirRail]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.ConditionsTests testSteadyWindNeverChanges]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testSteadyWindNeverChanges]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.ConditionsTests testSwayGrowsWithDistanceAndDiffersPerArrow]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testSwayGrowsWithDistanceAndDiffersPerArrow]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.ConditionsTests testSwayIsZeroWhileDrawingAndEasesIn]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testSwayIsZeroWhileDrawingAndEasesIn]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.ConditionsTests testSwingingTargetsRiseAtTheEndsOfTheSwing]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testSwingingTargetsRiseAtTheEndsOfTheSwing]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.ConditionsTests testTheSightIsSteadiestBeforeTheArmsTire]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testTheSightIsSteadiestBeforeTheArmsTire]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.ConditionsTests testTravelIsTheWindAddedUpOverTime]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testTravelIsTheWindAddedUpOverTime]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.ConditionsTests testWindIsReadToATenthAndCalmBelowThat]' started.
+Test Case '-[ArcheryEngineTests.ConditionsTests testWindIsReadToATenthAndCalmBelowThat]' passed (0.000 seconds).
+Test Suite 'ConditionsTests' passed at 2026-11-11 17:13:52.344.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'LevelTests' started at 2026-11-11 17:13:52.344.
+Test Case '-[ArcheryEngineTests.LevelTests testABotThatIgnoresTheWindStrugglesLater]' started.
+Test Case '-[ArcheryEngineTests.LevelTests testABotThatIgnoresTheWindStrugglesLater]' passed (0.001 seconds).
+Test Case '-[ArcheryEngineTests.LevelTests testAnExpertPassesEveryLevel]' started.
+Test Case '-[ArcheryEngineTests.LevelTests testAnExpertPassesEveryLevel]' passed (0.053 seconds).
+Test Case '-[ArcheryEngineTests.LevelTests testEachNewIdeaIsIntroducedOnItsOwn]' started.
+Test Case '-[ArcheryEngineTests.LevelTests testEachNewIdeaIsIntroducedOnItsOwn]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.LevelTests testEveryLevelIsWellFormed]' started.
+Test Case '-[ArcheryEngineTests.LevelTests testEveryLevelIsWellFormed]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.LevelTests testStarsAreHardEarnedAndTheVenuesGetHarder]' started.
+Test Case '-[ArcheryEngineTests.LevelTests testStarsAreHardEarnedAndTheVenuesGetHarder]' passed (0.089 seconds).
+Test Case '-[ArcheryEngineTests.LevelTests testSummariesDescribeTheConditions]' started.
+Test Case '-[ArcheryEngineTests.LevelTests testSummariesDescribeTheConditions]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.LevelTests testTheGameGetsHarderVenueByVenue]' started.
+Test Case '-[ArcheryEngineTests.LevelTests testTheGameGetsHarderVenueByVenue]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.LevelTests testThereAreThirtyLevelsInFiveVenues]' started.
+Test Case '-[ArcheryEngineTests.LevelTests testThereAreThirtyLevelsInFiveVenues]' passed (0.001 seconds).
+Test Suite 'LevelTests' passed at 2026-11-11 17:13:52.490.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.145 (0.146) seconds
+Test Suite 'RoundTests' started at 2026-11-11 17:13:52.490.
+Test Case '-[ArcheryEngineTests.RoundTests testARoundSurvivesBeingSavedAndLoaded]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testARoundSurvivesBeingSavedAndLoaded]' passed (0.002 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testEachAttemptMeetsDifferentConditions]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testEachAttemptMeetsDifferentConditions]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testInStillAirArrowsLandWhereTheSightPoints]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testInStillAirArrowsLandWhereTheSightPoints]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testMovingTargetsMustBeLed]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testMovingTargetsMustBeLed]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testSwayIsTheLevelsAndThePlayersSetting]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testSwayIsTheLevelsAndThePlayersSetting]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testTheAttemptEndsAfterTheLastArrowAndAwardsStars]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testTheAttemptEndsAfterTheLastArrowAndAwardsStars]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testTheClockStartsAtTheFirstDrawAndRunningOutEndsTheAttempt]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testTheClockStartsAtTheFirstDrawAndRunningOutEndsTheAttempt]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testThreeSpotsScoreOneArrowEach]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testThreeSpotsScoreOneArrowEach]' passed (0.001 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testUntimedLevelsHaveNoClock]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testUntimedLevelsHaveNoClock]' passed (0.001 seconds).
+Test Case '-[ArcheryEngineTests.RoundTests testWindCarriesTheArrowAndCanBeAllowedFor]' started.
+Test Case '-[ArcheryEngineTests.RoundTests testWindCarriesTheArrowAndCanBeAllowedFor]' passed (0.000 seconds).
+Test Suite 'RoundTests' passed at 2026-11-11 17:13:52.497.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.005 (0.007) seconds
+Test Suite 'TargetTests' started at 2026-11-11 17:13:52.497.
+Test Case '-[ArcheryEngineTests.TargetTests testAnArrowTouchingALineScoresTheHigherRing]' started.
+Test Case '-[ArcheryEngineTests.TargetTests testAnArrowTouchingALineScoresTheHigherRing]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.TargetTests testMissingTheBossFliesPast]' started.
+Test Case '-[ArcheryEngineTests.TargetTests testMissingTheBossFliesPast]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.TargetTests testRingColoursMatchARealFace]' started.
+Test Case '-[ArcheryEngineTests.TargetTests testRingColoursMatchARealFace]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.TargetTests testRingsAreTenthsOfTheRadius]' started.
+Test Case '-[ArcheryEngineTests.TargetTests testRingsAreTenthsOfTheRadius]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.TargetTests testScoresFromTheMiddleOut]' started.
+Test Case '-[ArcheryEngineTests.TargetTests testScoresFromTheMiddleOut]' passed (0.001 seconds).
+Test Case '-[ArcheryEngineTests.TargetTests testSpotFacesScoreNothingOutsideTheBlue]' started.
+Test Case '-[ArcheryEngineTests.TargetTests testSpotFacesScoreNothingOutsideTheBlue]' passed (0.000 seconds).
+Test Case '-[ArcheryEngineTests.TargetTests testThreeSpotsTakeOneArrowEach]' started.
+Test Case '-[ArcheryEngineTests.TargetTests testThreeSpotsTakeOneArrowEach]' passed (0.000 seconds).
+Test Suite 'TargetTests' passed at 2026-11-11 17:13:52.501.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.002 (0.004) seconds
+Test Suite 'ArcheryEnginePackageTests.xctest' passed at 2026-11-11 17:13:52.501.
+	 Executed 41 tests, with 0 failures (0 unexpected) in 0.158 (0.165) seconds
+Test Suite 'All tests' passed at 2026-11-11 17:13:52.501.
+	 Executed 41 tests, with 0 failures (0 unexpected) in 0.158 (0.170) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+ArcheryEngine finished in 78s

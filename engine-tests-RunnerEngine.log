@@ -1,0 +1,102 @@
+Building for production...
+[0/10] /Users/runner/work/play/play/Packages/RunnerEngine/.build/arm64-apple-macosx/release/RunnerEnginePackageTests.derived/runner.swift
+[1/10] Write swift-version-7974D3F7F03D5E95.txt
+[2/10] Write sources
+[7/11] Compiling RunnerEngine Bot.swift
+[8/12] Compiling runner_calibrate main.swift
+[9/13] Compiling RunnerEngineTests BotTests.swift
+[9/13] Write Objects.LinkFileList
+[11/14] Compiling RunnerEnginePackageTests runner.swift
+[11/14] Linking runner-calibrate
+[12/14] Write Objects.LinkFileList
+[13/14] Linking RunnerEnginePackageTests
+Build complete! (66.56s)
+Test Suite 'All tests' started at 2026-11-11 17:18:57.319.
+Test Suite 'RunnerEnginePackageTests.xctest' started at 2026-11-11 17:18:57.324.
+Test Suite 'BotTests' started at 2026-11-11 17:18:57.324.
+Test Case '-[RunnerEngineTests.BotTests testANewcomerGetsStartedAndPracticeTakesThemFurther]' started.
+Test Case '-[RunnerEngineTests.BotTests testANewcomerGetsStartedAndPracticeTakesThemFurther]' passed (7.171 seconds).
+Test Case '-[RunnerEngineTests.BotTests testEveryCourseCanBeRun]' started.
+Test Case '-[RunnerEngineTests.BotTests testEveryCourseCanBeRun]' passed (54.407 seconds).
+Test Case '-[RunnerEngineTests.BotTests testStandingStillNeverGetsFar]' started.
+Test Case '-[RunnerEngineTests.BotTests testStandingStillNeverGetsFar]' passed (0.003 seconds).
+Test Suite 'BotTests' passed at 2026-11-11 17:19:58.909.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 61.581 (61.585) seconds
+Test Suite 'CourseTests' started at 2026-11-11 17:19:58.910.
+Test Case '-[RunnerEngineTests.CourseTests testABarrelRollsInAndMeetsTheRunnerWhereItShould]' started.
+Test Case '-[RunnerEngineTests.CourseTests testABarrelRollsInAndMeetsTheRunnerWhereItShould]' passed (0.002 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testABarrierIsJumpedOrRunInto]' started.
+Test Case '-[RunnerEngineTests.CourseTests testABarrierIsJumpedOrRunInto]' passed (0.001 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testABeamIsSlidUnder]' started.
+Test Case '-[RunnerEngineTests.CourseTests testABeamIsSlidUnder]' passed (0.001 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testAChangeOfLaneLeftTooLateStillHits]' started.
+Test Case '-[RunnerEngineTests.CourseTests testAChangeOfLaneLeftTooLateStillHits]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testALongStackDownTheMiddleLeavesBothSidesRunnable]' started.
+Test Case '-[RunnerEngineTests.CourseTests testALongStackDownTheMiddleLeavesBothSidesRunnable]' passed (0.142 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testARunSavedAndLoadedCarriesOnExactly]' started.
+Test Case '-[RunnerEngineTests.CourseTests testARunSavedAndLoadedCarriesOnExactly]' passed (0.258 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testAStackHasToBeGoneRound]' started.
+Test Case '-[RunnerEngineTests.CourseTests testAStackHasToBeGoneRound]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testCoinsAndPowerUpsAreLaidAlongTheWay]' started.
+Test Case '-[RunnerEngineTests.CourseTests testCoinsAndPowerUpsAreLaidAlongTheWay]' passed (0.001 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testCoinsInTheRunnersLaneAreCollectedAndCountInTheScore]' started.
+Test Case '-[RunnerEngineTests.CourseTests testCoinsInTheRunnersLaneAreCollectedAndCountInTheScore]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testHighCoinsNeedAJump]' started.
+Test Case '-[RunnerEngineTests.CourseTests testHighCoinsNeedAJump]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testNobodyHasToSwerveInRightBehindALongStack]' started.
+Test Case '-[RunnerEngineTests.CourseTests testNobodyHasToSwerveInRightBehindALongStack]' passed (0.668 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testNoRowWallsThePierIn]' started.
+Test Case '-[RunnerEngineTests.CourseTests testNoRowWallsThePierIn]' passed (0.302 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testNothingStandsWhereABarrelRollsIn]' started.
+Test Case '-[RunnerEngineTests.CourseTests testNothingStandsWhereABarrelRollsIn]' passed (0.189 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testNothingToPickUpLiesInsideALongStack]' started.
+Test Case '-[RunnerEngineTests.CourseTests testNothingToPickUpLiesInsideALongStack]' passed (0.236 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testSwervingIntoTheSideOfALongStackCrashes]' started.
+Test Case '-[RunnerEngineTests.CourseTests testSwervingIntoTheSideOfALongStackCrashes]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testTheCoachedOpeningTeachesEachMoveInTurn]' started.
+Test Case '-[RunnerEngineTests.CourseTests testTheCoachedOpeningTeachesEachMoveInTurn]' passed (0.003 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testTheCourseGetsHarderWithDistance]' started.
+Test Case '-[RunnerEngineTests.CourseTests testTheCourseGetsHarderWithDistance]' passed (0.049 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testTheMagnetPullsInEveryLaneForAWhile]' started.
+Test Case '-[RunnerEngineTests.CourseTests testTheMagnetPullsInEveryLaneForAWhile]' passed (0.001 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testTheObstacleAheadIsTheNearestInTheRunnersLane]' started.
+Test Case '-[RunnerEngineTests.CourseTests testTheObstacleAheadIsTheNearestInTheRunnersLane]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testTheSameSeedLaysTheSameCourse]' started.
+Test Case '-[RunnerEngineTests.CourseTests testTheSameSeedLaysTheSameCourse]' passed (0.001 seconds).
+Test Case '-[RunnerEngineTests.CourseTests testTheShieldTakesOneHit]' started.
+Test Case '-[RunnerEngineTests.CourseTests testTheShieldTakesOneHit]' passed (0.001 seconds).
+Test Suite 'CourseTests' passed at 2026-11-11 17:20:00.784.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 1.857 (1.874) seconds
+Test Suite 'RunnerTests' started at 2026-11-11 17:20:00.784.
+Test Case '-[RunnerEngineTests.RunnerTests testAJumpAskedForJustBeforeLandingHappensOnLanding]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testAJumpAskedForJustBeforeLandingHappensOnLanding]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testAJumpCutsASlideShort]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testAJumpCutsASlideShort]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testAJumpPeaksAndLandsOnTime]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testAJumpPeaksAndLandsOnTime]' passed (0.001 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testASlideEndsByItself]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testASlideEndsByItself]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testASlideInTheAirDropsTheRunnerIntoASlide]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testASlideInTheAirDropsTheRunnerIntoASlide]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testASwipeMovesOneLaneOverAMoment]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testASwipeMovesOneLaneOverAMoment]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testGoalsClimbAndAlwaysLieAhead]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testGoalsClimbAndAlwaysLieAhead]' passed (0.001 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testTheEdgesOfThePierStopTheRunner]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testTheEdgesOfThePierStopTheRunner]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testTheFrameRateDoesNotChangeTheRun]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testTheFrameRateDoesNotChangeTheRun]' passed (0.000 seconds).
+Test Case '-[RunnerEngineTests.RunnerTests testTheRunSpeedsUpButNeverBeyondItsTopSpeed]' started.
+Test Case '-[RunnerEngineTests.RunnerTests testTheRunSpeedsUpButNeverBeyondItsTopSpeed]' passed (0.000 seconds).
+Test Suite 'RunnerTests' passed at 2026-11-11 17:20:00.789.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.003 (0.005) seconds
+Test Suite 'RunnerEnginePackageTests.xctest' passed at 2026-11-11 17:20:00.789.
+	 Executed 34 tests, with 0 failures (0 unexpected) in 63.441 (63.464) seconds
+Test Suite 'All tests' passed at 2026-11-11 17:20:00.789.
+	 Executed 34 tests, with 0 failures (0 unexpected) in 63.441 (63.470) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.003 seconds.
+ci/lib.sh: line 12: 15791 Terminated: 15          sleep "$limit"
+RunnerEngine finished in 135s

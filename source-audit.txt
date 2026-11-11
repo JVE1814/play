@@ -1,0 +1,44 @@
+Networking APIs in Swift sources:
+  none found
+Remote package dependencies (Package.swift, project.yml):
+  none found (all packages are local paths)
+Other dependency managers:
+  none found (no CocoaPods, Carthage or resolved remote packages)
+Imports used by ArcheryEngine (must be Foundation only, plus the engine itself in its tool):
+   1 import ArcheryEngine
+   8 import Foundation
+Imports used by BubbleEngine (must be Foundation only, plus the engine itself in its tool):
+   1 import BubbleEngine
+   5 import Foundation
+Imports used by KlondikeEngine (must be Foundation only, plus the engine itself in its tool):
+   8 import Foundation
+Imports used by MinesEngine (must be Foundation only, plus the engine itself in its tool):
+   9 import Foundation
+   1 import MinesEngine
+Imports used by RunnerEngine (must be Foundation only, plus the engine itself in its tool):
+   6 import Foundation
+   1 import RunnerEngine
+All imports across the app:
+   2 import Archery
+  16 import ArcheryEngine
+   1 import AVFoundation
+   1 import BetweenStops
+  12 import BubbleEngine
+   2 import Bubbles
+   4 import CoreGraphics
+   1 import Darwin
+  49 import Foundation
+  16 import KlondikeEngine
+   2 import Mines
+  14 import MinesEngine
+   1 import os
+  12 import PackageDescription
+  45 import PlayKit
+   4 import QuartzCore
+   3 import Runner
+  13 import RunnerEngine
+   2 import Solitaire
+  39 import SwiftUI
+   1 import TestGame
+   3 import UIKit
+  38 import XCTest

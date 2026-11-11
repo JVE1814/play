@@ -1,0 +1,2327 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project BetweenStops.xcodeproj -scheme BetweenStops -destination "platform=iOS Simulator,id=AA89803E-56A5-43F8-A22E-E3E7E504DEF1" -derivedDataPath /Users/runner/work/play/play/build/DerivedData -resultBundlePath /Users/runner/work/play/play/build/Tests.xcresult -parallel-testing-enabled NO -test-timeouts-enabled YES -default-test-execution-time-allowance 300 -maximum-test-execution-time-allowance 600
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  KlondikeEngine: /Users/runner/work/play/play/Packages/KlondikeEngine
+  TestGame: /Users/runner/work/play/play/Games/TestGame
+  RunnerEngine: /Users/runner/work/play/play/Packages/RunnerEngine
+  Runner: /Users/runner/work/play/play/Games/Runner
+  Archery: /Users/runner/work/play/play/Games/Archery
+  BubbleEngine: /Users/runner/work/play/play/Packages/BubbleEngine
+  Mines: /Users/runner/work/play/play/Games/Mines
+  ArcheryEngine: /Users/runner/work/play/play/Packages/ArcheryEngine
+  Solitaire: /Users/runner/work/play/play/Games/Solitaire
+  Bubbles: /Users/runner/work/play/play/Games/Bubbles
+  MinesEngine: /Users/runner/work/play/play/Packages/MinesEngine
+  PlayKit: /Users/runner/work/play/play/Packages/PlayKit
+
+Writing result bundle at path:
+	/Users/runner/work/play/play/build/Tests.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:AA89803E-56A5-43F8-A22E-E3E7E504DEF1, OS:26.5, name:CI iPhone }
+{ platform:iOS Simulator, arch:x86_64, id:AA89803E-56A5-43F8-A22E-E3E7E504DEF1, OS:26.5, name:CI iPhone }
+IOSurfaceClientSetSurfaceNotify failed e00002c7
+2026-11-11 17:15:54.895875+0000 BetweenStops[12255:42299] fopen failed for data file: errno = 2 (No such file or directory)
+2026-11-11 17:15:55.453805+0000 BetweenStops[12255:42299] fopen failed for data file: errno = 2 (No such file or directory)
+2026-11-11 17:15:55.519299+0000 BetweenStops[12255:42299] [error] building pipeline stroke_lines-oaca5pa8feba4 took 0.623840 seconds
+Test Suite 'All tests' started at 2026-11-11 17:15:57.988.
+Test Suite 'BetweenStopsTests.xctest' started at 2026-11-11 17:15:57.989.
+Test Suite 'ArcheryTests' started at 2026-11-11 17:15:57.989.
+Test Case '-[BetweenStopsTests.ArcheryTests testAFlickAfterAStillHoldIsIgnoredToo]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testAFlickAfterAStillHoldIsIgnoredToo]' passed (0.038 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testANewArcherStartsAtLevelOneWithTheTip]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testANewArcherStartsAtLevelOneWithTheTip]' passed (0.007 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testAPoorEndRecordsALoss]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testAPoorEndRecordsALoss]' passed (0.015 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testClosingTheAppWhileTheLastArrowFliesStillRecordsTheEnd]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testClosingTheAppWhileTheLastArrowFliesStillRecordsTheEnd]' passed (0.030 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testDrawingAndLettingGoShootsAnArrow]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testDrawingAndLettingGoShootsAnArrow]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testEarlyLevelsSayWhatTheWindDid]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testEarlyLevelsSayWhatTheWindDid]' passed (0.011 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testEveryArrowIsSavedSoARelaunchRestoresTheEnd]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testEveryArrowIsSavedSoARelaunchRestoresTheEnd]' passed (0.131 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testFinishingALevelRecordsAWinAndUnlocksTheNext]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testFinishingALevelRecordsAWinAndUnlocksTheNext]' passed (0.007 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testLeavingWhileTheLastArrowFliesLandsItAndRecordsTheEnd]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testLeavingWhileTheLastArrowFliesLandsItAndRecordsTheEnd]' passed (0.012 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testLettingGoBeforeFullDrawLetsTheBowDown]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testLettingGoBeforeFullDrawLetsTheBowDown]' passed (0.005 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testLiftingTheThumbDoesNotNudgeTheShot]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testLiftingTheThumbDoesNotNudgeTheShot]' passed (0.150 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testLockedLevelsCannotBeStarted]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testLockedLevelsCannotBeStarted]' passed (0.007 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testPreferencesAreRemembered]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testPreferencesAreRemembered]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testRestartAsksOnlyOnceArrowsAreShot]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testRestartAsksOnlyOnceArrowsAreShot]' passed (0.008 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testRestartWaitsForAFlyingArrowAndAChosenLevelRecordsTheEndFirst]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testRestartWaitsForAFlyingArrowAndAChosenLevelRecordsTheEndFirst]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testRunningOutOfTimeEndsTheLevel]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testRunningOutOfTimeEndsTheLevel]' passed (0.077 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testSettingsOverTheGamePausesTheClock]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testSettingsOverTheGamePausesTheClock]' passed (0.012 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testSteadyAimReducesTheSway]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testSteadyAimReducesTheSway]' passed (0.015 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testTheSightFollowsTheThumbWithinTheView]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testTheSightFollowsTheThumbWithinTheView]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testVoiceOverCanAimAndShoot]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testVoiceOverCanAimAndShoot]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.ArcheryTests testVoiceOverFindsTheSpotsOnAThreeSpotFace]' started.
+Test Case '-[BetweenStopsTests.ArcheryTests testVoiceOverFindsTheSpotsOnAThreeSpotFace]' passed (0.006 seconds).
+Test Suite 'ArcheryTests' passed at 2026-11-11 17:15:58.619.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 0.571 (0.630) seconds
+Test Suite 'BubblesTests' started at 2026-11-11 17:15:58.619.
+Test Case '-[BetweenStopsTests.BubblesTests testANewPlayerStartsAtLevelOne]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testANewPlayerStartsAtLevelOne]' passed (0.030 seconds).
+Test Case '-[BetweenStopsTests.BubblesTests testClearingALevelRecordsAWinAndUnlocksTheNext]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testClearingALevelRecordsAWinAndUnlocksTheNext]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.BubblesTests testEveryShotIsSavedSoARelaunchRestoresTheBoard]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testEveryShotIsSavedSoARelaunchRestoresTheBoard]' passed (0.008 seconds).
+Test Case '-[BetweenStopsTests.BubblesTests testLockedLevelsCannotBeStarted]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testLockedLevelsCannotBeStarted]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.BubblesTests testRestartAsksOnlyOnceShotsHaveBeenFired]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testRestartAsksOnlyOnceShotsHaveBeenFired]' passed (0.008 seconds).
+Test Case '-[BetweenStopsTests.BubblesTests testRunningOutOfShotsRecordsALoss]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testRunningOutOfShotsRecordsALoss]' passed (0.083 seconds).
+Test Case '-[BetweenStopsTests.BubblesTests testSwapExchangesTheBubbles]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testSwapExchangesTheBubbles]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.BubblesTests testTouchAimingPointsOrPullsBack]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testTouchAimingPointsOrPullsBack]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.BubblesTests testVoiceOverAimingTurnsAndFires]' started.
+Test Case '-[BetweenStopsTests.BubblesTests testVoiceOverAimingTurnsAndFires]' passed (0.013 seconds).
+Test Suite 'BubblesTests' passed at 2026-11-11 17:15:58.790.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.166 (0.171) seconds
+Test Suite 'MinesTests' started at 2026-11-11 17:15:58.836.
+Test Case '-[BetweenStopsTests.MinesTests testADamagedSaveGivesAFreshBoardButKeepsTheBestTimes]' started.
+Test Case '-[BetweenStopsTests.MinesTests testADamagedSaveGivesAFreshBoardButKeepsTheBestTimes]' passed (0.036 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testADifficultyChangeWaitsForTheNextBoardUnlessNothingIsOpen]' started.
+Test Case '-[BetweenStopsTests.MinesTests testADifficultyChangeWaitsForTheNextBoardUnlessNothingIsOpen]' passed (0.020 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testANewBoardMidGameAsksFirstAndCountsAsALoss]' started.
+Test Case '-[BetweenStopsTests.MinesTests testANewBoardMidGameAsksFirstAndCountsAsALoss]' passed (0.012 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testAnUnreadableSaveGivesAFreshBoard]' started.
+Test Case '-[BetweenStopsTests.MinesTests testAnUnreadableSaveGivesAFreshBoard]' passed (0.007 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testClearingTheBoardIsAWinRecordedOnceWithABestTime]' started.
+Test Case '-[BetweenStopsTests.MinesTests testClearingTheBoardIsAWinRecordedOnceWithABestTime]' passed (0.018 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testEndingTheBoardAfterASlipIsALoss]' started.
+Test Case '-[BetweenStopsTests.MinesTests testEndingTheBoardAfterASlipIsALoss]' passed (0.008 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testEveryChangeIsSavedSoARelaunchRestoresTheBoard]' started.
+Test Case '-[BetweenStopsTests.MinesTests testEveryChangeIsSavedSoARelaunchRestoresTheBoard]' passed (0.011 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testFlagsComeFromALongPressOrFlagMode]' started.
+Test Case '-[BetweenStopsTests.MinesTests testFlagsComeFromALongPressOrFlagMode]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testNoFlagsBeforeTheFirstTap]' started.
+Test Case '-[BetweenStopsTests.MinesTests testNoFlagsBeforeTheFirstTap]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testSeeingTheBoardPutsTheResultAsideUntilTheNextTap]' started.
+Test Case '-[BetweenStopsTests.MinesTests testSeeingTheBoardPutsTheResultAsideUntilTheNextTap]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testTappingANumberWhoseFlagsMatchOpensAroundIt]' started.
+Test Case '-[BetweenStopsTests.MinesTests testTappingANumberWhoseFlagsMatchOpensAroundIt]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testTheBoardFitsTheSmallestPhoneAndGrowsOnLargerOnes]' started.
+Test Case '-[BetweenStopsTests.MinesTests testTheBoardFitsTheSmallestPhoneAndGrowsOnLargerOnes]' passed (0.002 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testTheClockRunsOnlyWhileABoardIsPlayedInView]' started.
+Test Case '-[BetweenStopsTests.MinesTests testTheClockRunsOnlyWhileABoardIsPlayedInView]' passed (0.016 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testTheFirstMineCanBeTakenBackAndTheSecondEndsTheBoard]' started.
+Test Case '-[BetweenStopsTests.MinesTests testTheFirstMineCanBeTakenBackAndTheSecondEndsTheBoard]' passed (0.013 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testTheFirstTapLaysTheSeededBoardAndOpensAnArea]' started.
+Test Case '-[BetweenStopsTests.MinesTests testTheFirstTapLaysTheSeededBoardAndOpensAnArea]' passed (0.005 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testTheHomeTileShowsABoardInProgress]' started.
+Test Case '-[BetweenStopsTests.MinesTests testTheHomeTileShowsABoardInProgress]' passed (0.008 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testTheScenarioBoardsAreWhatTheUITestsExpect]' started.
+Test Case '-[BetweenStopsTests.MinesTests testTheScenarioBoardsAreWhatTheUITestsExpect]' passed (0.011 seconds).
+Test Case '-[BetweenStopsTests.MinesTests testWithoutForgivenessTheFirstMineEndsTheBoard]' started.
+Test Case '-[BetweenStopsTests.MinesTests testWithoutForgivenessTheFirstMineEndsTheBoard]' passed (0.006 seconds).
+Test Suite 'MinesTests' passed at 2026-11-11 17:15:59.211.
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.208 (0.375) seconds
+Test Suite 'PlayKitTests' started at 2026-11-11 17:15:59.212.
+Test Case '-[BetweenStopsTests.PlayKitTests testEachGameHasItsOwnSaveSlot]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testEachGameHasItsOwnSaveSlot]' passed (0.004 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testEveryFeedbackEventHasASound]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testEveryFeedbackEventHasASound]' passed (0.003 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testFormatting]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testFormatting]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testGamePreferencesAreNamespaced]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testGamePreferencesAreNamespaced]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testLaunchOptionsParsing]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testLaunchOptionsParsing]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testLevelProgressKeepsTheBestAndUnlocksTheNextLevelOnAStar]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testLevelProgressKeepsTheBestAndUnlocksTheNextLevelOnAStar]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testLevelProgressReadsASaveWithoutBestScores]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testLevelProgressReadsASaveWithoutBestScores]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testOpenGameIsRemembered]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testOpenGameIsRemembered]' passed (0.004 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testSoundIsOffAndHapticsOnByDefault]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testSoundIsOffAndHapticsOnByDefault]' passed (0.004 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testStatsAreKeptPerGameAndPersisted]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testStatsAreKeptPerGameAndPersisted]' passed (0.004 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testWinsLossesStreaksAndBestTime]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testWinsLossesStreaksAndBestTime]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.PlayKitTests testWipeRemovesEverything]' started.
+Test Case '-[BetweenStopsTests.PlayKitTests testWipeRemovesEverything]' passed (0.007 seconds).
+Test Suite 'PlayKitTests' passed at 2026-11-11 17:15:59.331.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.042 (0.120) seconds
+Test Suite 'RegistryTests' started at 2026-11-11 17:15:59.332.
+Test Case '-[BetweenStopsTests.RegistryTests testAppModelReopensTheLastGame]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testAppModelReopensTheLastGame]' passed (0.012 seconds).
+Test Case '-[BetweenStopsTests.RegistryTests testEachGameHasOneContext]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testEachGameHasOneContext]' passed (0.004 seconds).
+Test Case '-[BetweenStopsTests.RegistryTests testOpeningSettingsTellsTheGamesTheyAreCovered]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testOpeningSettingsTellsTheGamesTheyAreCovered]' passed (0.004 seconds).
+Test Case '-[BetweenStopsTests.RegistryTests testSolitaireIsListedAndIdsAreUnique]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testSolitaireIsListedAndIdsAreUnique]' passed (0.021 seconds).
+Test Case '-[BetweenStopsTests.RegistryTests testTestGameIsAddedOnlyWhenRequested]' started.
+Test Case '-[BetweenStopsTests.RegistryTests testTestGameIsAddedOnlyWhenRequested]' passed (0.001 seconds).
+Test Suite 'RegistryTests' passed at 2026-11-11 17:15:59.377.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.041 (0.045) seconds
+Test Suite 'RunnerFrameBenchmarkTests' started at 2026-11-11 17:15:59.377.
+Test Case '-[BetweenStopsTests.RunnerFrameBenchmarkTests testRasterizingAFrameOfThePier]' started.
+RUNNER-PERF raster empty-canvas p50=0.05 ms
+RUNNER-PERF raster probe dark p50=4.06 p95=13.81 max=35.73 ms
+RUNNER-PERF raster probe light p50=4.33 p95=12.38 max=21.36 ms
+RUNNER-PERF raster course dark p50=2.72 p95=5.99 max=10.23 ms
+RUNNER-PERF raster course light p50=2.32 p95=5.61 max=8.38 ms
+Test Case '-[BetweenStopsTests.RunnerFrameBenchmarkTests testRasterizingAFrameOfThePier]' passed (2.479 seconds).
+Test Suite 'RunnerFrameBenchmarkTests' passed at 2026-11-11 17:16:01.859.
+	 Executed 1 test, with 0 failures (0 unexpected) in 2.479 (2.482) seconds
+Test Suite 'RunnerTests' started at 2026-11-11 17:16:01.860.
+Test Case '-[BetweenStopsTests.RunnerTests testAForceQuitMidRunComesBackPausedWhereItWasLastSaved]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testAForceQuitMidRunComesBackPausedWhereItWasLastSaved]' passed (0.152 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testAHitchCountsForAQuarterOfASecondAtMost]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testAHitchCountsForAQuarterOfASecondAtMost]' passed (0.013 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testANewPlayerWaitsOnTheStartLineWithTheFirstGoal]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testANewPlayerWaitsOnTheStartLineWithTheFirstGoal]' passed (0.012 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testARunThatReachesItsGoalIsAWinAndTheNextGoalIsHigher]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testARunThatReachesItsGoalIsAWinAndTheNextGoalIsHigher]' passed (0.241 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testAskingForANewRunMidRunPausesAndEndsItOnlyWhenConfirmed]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testAskingForANewRunMidRunPausesAndEndsItOnlyWhenConfirmed]' passed (0.058 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testATouchStartsTheRunAndTimeCarriesIt]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testATouchStartsTheRunAndTimeCarriesIt]' passed (0.017 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testInUITestsEveryTouchMovesTheClockOn]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testInUITestsEveryTouchMovesTheClockOn]' passed (0.013 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testLeavingPausesAndTheRunWaitsForATouchAndAMomentMore]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testLeavingPausesAndTheRunWaitsForATouchAndAMomentMore]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testPauseAndCarryOnFromTheToolbar]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testPauseAndCarryOnFromTheToolbar]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testReachingTheGoalMidRunIsMarkedAndTheRunGoesOn]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testReachingTheGoalMidRunIsMarkedAndTheRunGoesOn]' passed (0.286 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testRunningIntoSomethingEndsTheRunBelowTheGoalAsALoss]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testRunningIntoSomethingEndsTheRunBelowTheGoalAsALoss]' passed (0.119 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testTheFirstRunSaysWhatToDo]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testTheFirstRunSaysWhatToDo]' passed (0.035 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testTheFirstSwipeStartsTheRunAndCounts]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testTheFirstSwipeStartsTheRunAndCounts]' passed (0.012 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testThePierIsDrawnAheadOfThePlayedRunWithoutChangingIt]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testThePierIsDrawnAheadOfThePlayedRunWithoutChangingIt]' passed (0.010 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testThePreparedRunsAreWhatTheScreenshotsNeed]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testThePreparedRunsAreWhatTheScreenshotsNeed]' passed (0.722 seconds).
+Test Case '-[BetweenStopsTests.RunnerTests testWhatVoiceOverHearsAboutThePier]' started.
+Test Case '-[BetweenStopsTests.RunnerTests testWhatVoiceOverHearsAboutThePier]' passed (0.011 seconds).
+Test Suite 'RunnerTests' passed at 2026-11-11 17:16:03.611.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 1.720 (1.751) seconds
+Test Suite 'SolitaireTests' started at 2026-11-11 17:16:03.611.
+Test Case '-[BetweenStopsTests.SolitaireTests testAnUnreadableSaveIsReplacedByAFreshDeal]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testAnUnreadableSaveIsReplacedByAFreshDeal]' passed (0.022 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testASavedGameThatBreaksTheRulesIsReplacedByAFreshDeal]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testASavedGameThatBreaksTheRulesIsReplacedByAFreshDeal]' passed (0.024 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testDrawThreeAppliesFromTheNextDeal]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testDrawThreeAppliesFromTheNextDeal]' passed (0.012 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testDrawThreeFanShowsRanksWithoutTouchingTheFoundations]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testDrawThreeFanShowsRanksWithoutTouchingTheFoundations]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testDropOnlyAcceptsLegalMoves]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testDropOnlyAcceptsLegalMoves]' passed (0.018 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testEveryMoveIsSavedSoARelaunchRestoresTheExactBoard]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testEveryMoveIsSavedSoARelaunchRestoresTheExactBoard]' passed (0.023 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testFirstDealFollowsTheSeed]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testFirstDealFollowsTheSeed]' passed (0.009 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testHintSuggestsALegalMove]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testHintSuggestsALegalMove]' passed (0.036 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testLayoutFitsTheSmallestPhoneWithBigTouchTargets]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testLayoutFitsTheSmallestPhoneWithBigTouchTargets]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testLeftHandedLayoutMirrorsTheBottomRow]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testLeftHandedLayoutMirrorsTheBottomRow]' passed (0.001 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testNewGameAfterPlayingCountsAsALoss]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testNewGameAfterPlayingCountsAsALoss]' passed (0.011 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testStatusLineShowsGameInProgress]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testStatusLineShowsGameInProgress]' passed (0.011 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testTapPlaysTheBestMove]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testTapPlaysTheBestMove]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testTapWithNoMoveChangesNothing]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testTapWithNoMoveChangesNothing]' passed (0.005 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testTimerOnlyRunsWhileOnScreen]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testTimerOnlyRunsWhileOnScreen]' passed (0.006 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testUndoRestoresThePreviousBoard]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testUndoRestoresThePreviousBoard]' passed (0.013 seconds).
+Test Case '-[BetweenStopsTests.SolitaireTests testWinningRecordsStatsOnceAndShowsTheWinScreen]' started.
+Test Case '-[BetweenStopsTests.SolitaireTests testWinningRecordsStatsOnceAndShowsTheWinScreen]' passed (0.035 seconds).
+Test Suite 'SolitaireTests' passed at 2026-11-11 17:16:03.924.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.232 (0.312) seconds
+Test Suite 'BetweenStopsTests.xctest' passed at 2026-11-11 17:16:03.924.
+	 Executed 99 tests, with 0 failures (0 unexpected) in 5.460 (5.934) seconds
+Test Suite 'All tests' passed at 2026-11-11 17:16:03.924.
+	 Executed 99 tests, with 0 failures (0 unexpected) in 5.460 (5.936) seconds
+2026-11-11 17:18:11.015316+0000 BetweenStopsUITests-Runner[16434:53342] [Default] Running tests...
+objc[16434]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x109e0c310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x109ea0398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'All tests' started at 2026-11-11 17:19:28.253.
+Test Suite 'BetweenStopsUITests.xctest' started at 2026-11-11 17:19:28.268.
+Test Suite 'ArcheryUITests' started at 2026-11-11 17:19:28.268.
+Test Case '-[BetweenStopsUITests.ArcheryUITests testAFullEndPlaysThroughToTheResultAndUnlocksTheNextLevel]' started.
+    t =     0.00s Start Test at 2026-11-11 17:19:28.270
+    t =     0.80s Set Up
+    t =     0.81s Open com.martinthommesen.betweenstops
+    t =     0.81s     Launch com.martinthommesen.betweenstops
+2026-11-11 17:19:31.585 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:19:31.586 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     9.15s         Setting up automation session
+    t =    10.88s         Wait for com.martinthommesen.betweenstops to idle
+    t =    13.32s Checking existence of `"game-archery" Any`
+    t =    15.04s Tap "game-archery" Any
+    t =    15.04s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.04s     Find the "game-archery" Any
+    t =    15.26s     Check for interrupting elements affecting "game-archery" Button
+    t =    15.40s     Synthesize event
+    t =    15.87s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.26s Checking existence of `"range" Any`
+    t =    17.49s Find the "arrowsLeft" Any
+    t =    17.55s Find the "arrowsLeft" Any
+    t =    17.63s Checking existence of `"range" Any`
+    t =    17.73s Press "range" Any for 1.0 seconds
+    t =    17.73s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.73s     Find the "range" Any
+    t =    17.80s     Check for interrupting elements affecting "range" Button
+    t =    17.90s     Synthesize event
+    t =    19.16s     Wait for com.martinthommesen.betweenstops to idle
+    t =    20.19s Find the "arrowsLeft" Any
+    t =    20.27s Checking existence of `"archeryResult" Any`
+    t =    20.39s Checking existence of `Any (First Match)`
+    t =    20.48s Find the "resultStars" Any
+    t =    20.74s Tap "resultNext" Any
+    t =    20.74s     Wait for com.martinthommesen.betweenstops to idle
+    t =    20.76s     Find the "resultNext" Any
+    t =    21.14s     Check for interrupting elements affecting "resultNext" Button
+    t =    21.28s     Synthesize event
+    t =    21.59s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.00s Checking existence of `"archeryLevel" Any`
+    t =    26.13s Find the "archeryLevel" Any
+    t =    26.34s Find the "arrowsLeft" Any
+    t =    26.45s Tap "levels" Any
+    t =    26.45s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.45s     Find the "levels" Any
+    t =    26.82s     Check for interrupting elements affecting "levels" Button
+    t =    26.96s     Synthesize event
+    t =    27.29s     Wait for com.martinthommesen.betweenstops to idle
+    t =    27.91s Checking existence of `"level-1" Any`
+    t =    29.37s Find the "level-1" Any
+    t =    29.84s Find the "level-2" Any
+    t =    30.23s Find the "level-3" Any
+    t =    30.63s Tap "done" Any
+    t =    30.63s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.63s     Find the "done" Any
+    t =    30.90s     Check for interrupting elements affecting "done" Other
+    t =    31.08s     Synthesize event
+    t =    31.43s     Wait for com.martinthommesen.betweenstops to idle
+    t =    32.26s Tap "back" Any
+    t =    32.27s     Wait for com.martinthommesen.betweenstops to idle
+    t =    32.27s     Find the "back" Any
+    t =    32.33s     Check for interrupting elements affecting "back" Button
+    t =    32.39s     Synthesize event
+    t =    32.69s     Wait for com.martinthommesen.betweenstops to idle
+    t =    32.70s Checking existence of `"statsButton" Any`
+    t =    32.80s Tap "statsButton" Any
+    t =    32.80s     Wait for com.martinthommesen.betweenstops to idle
+    t =    32.81s     Find the "statsButton" Any
+    t =    32.91s     Check for interrupting elements affecting "statsButton" Button
+    t =    32.99s     Synthesize event
+    t =    33.31s     Wait for com.martinthommesen.betweenstops to idle
+    t =    40.01s Waiting 5.0s for Any (First Match) to exist
+    t =    41.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    41.02s         Checking existence of `Any (First Match)`
+    t =    42.09s Tear Down
+Test Case '-[BetweenStopsUITests.ArcheryUITests testAFullEndPlaysThroughToTheResultAndUnlocksTheNextLevel]' passed (42.505 seconds).
+Test Case '-[BetweenStopsUITests.ArcheryUITests testAPoorEndOffersAnotherTry]' started.
+    t =     0.00s Start Test at 2026-11-11 17:20:10.779
+    t =     0.08s Set Up
+    t =     0.08s Open com.martinthommesen.betweenstops
+    t =     0.08s     Launch com.martinthommesen.betweenstops
+    t =     0.08s         Terminate com.martinthommesen.betweenstops:18741
+2026-11-11 17:20:11.908 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:20:11.908 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     9.44s         Setting up automation session
+    t =    13.78s         Wait for com.martinthommesen.betweenstops to idle
+    t =    23.36s Checking existence of `"game-archery" Any`
+    t =    24.20s Tap "game-archery" Any
+    t =    24.20s     Wait for com.martinthommesen.betweenstops to idle
+    t =    24.21s     Find the "game-archery" Any
+    t =    24.45s     Check for interrupting elements affecting "game-archery" Button
+    t =    24.62s     Synthesize event
+    t =    24.96s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.28s Checking existence of `"range" Any`
+    t =    25.38s Find the "arrowsLeft" Any
+    t =    25.46s Checking existence of `"range" Any`
+    t =    25.63s Press "range" Any for 1.0 seconds
+    t =    25.63s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.64s     Find the "range" Any
+    t =    26.16s     Check for interrupting elements affecting "range" Button
+    t =    27.05s     Synthesize event
+    t =    28.55s     Wait for com.martinthommesen.betweenstops to idle
+    t =    29.58s Find the "arrowsLeft" Any
+    t =    29.64s Checking existence of `"archeryResult" Any`
+    t =    29.73s Checking existence of `Any (First Match)`
+    t =    29.82s Find the "resultStars" Any
+    t =    30.02s Tap "resultRetry" Any
+    t =    30.02s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.03s     Find the "resultRetry" Any
+    t =    30.31s     Check for interrupting elements affecting "resultRetry" Button
+    t =    30.45s     Synthesize event
+    t =    30.78s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.79s Checking existence of `"archeryResult" Any`
+    t =    31.10s Checking existence of `"arrowsLeft" Any`
+    t =    31.13s Find the "arrowsLeft" Any
+    t =    31.18s Find the "archeryScore" Any
+    t =    31.21s Tear Down
+Test Case '-[BetweenStopsUITests.ArcheryUITests testAPoorEndOffersAnotherTry]' passed (31.472 seconds).
+Test Case '-[BetweenStopsUITests.ArcheryUITests testArcheryIsOnHomeAndStartsAtLevelOne]' started.
+    t =     0.00s Start Test at 2026-11-11 17:20:42.251
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:20347
+2026-11-11 17:20:43.382 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:20:43.382 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.33s         Setting up automation session
+    t =     5.21s         Wait for com.martinthommesen.betweenstops to idle
+    t =     7.07s Checking existence of `"game-bubbles" Any`
+    t =     8.89s Checking existence of `"game-archery" Any`
+    t =     9.30s Tap "game-archery" Any
+    t =     9.30s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.31s     Find the "game-archery" Any
+    t =     9.67s     Check for interrupting elements affecting "game-archery" Button
+    t =     9.76s     Synthesize event
+    t =    10.56s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.87s Checking existence of `"range" Any`
+    t =    14.16s Find the "archeryLevel" Any
+    t =    14.67s Find the "arrowsLeft" Any
+    t =    14.90s Find the "distance" Any
+    t =    15.12s Find the "wind" Any
+    t =    15.67s Checking existence of `"tipCard" Any`
+    t =    17.30s Checking existence of `"scoreCard" Any`
+    t =    18.31s Checking existence of `"range" Any`
+    t =    18.73s Tap "range" Any
+    t =    18.73s     Wait for com.martinthommesen.betweenstops to idle
+    t =    18.74s     Find the "range" Any
+    t =    19.19s     Check for interrupting elements affecting "range" Button
+    t =    19.61s     Synthesize event
+    t =    20.00s     Wait for com.martinthommesen.betweenstops to idle
+    t =    20.44s Checking existence of `"toast" Any`
+    t =    21.37s Find the "arrowsLeft" Any
+    t =    21.53s Tap "back" Any
+    t =    21.53s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.55s     Find the "back" Any
+    t =    21.60s     Check for interrupting elements affecting "back" Button
+    t =    21.68s     Synthesize event
+    t =    21.99s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.99s Checking existence of `"homeTitle" Any`
+    t =    22.12s Checking existence of `Any (First Match)`
+    t =    22.17s Tear Down
+Test Case '-[BetweenStopsUITests.ArcheryUITests testArcheryIsOnHomeAndStartsAtLevelOne]' passed (22.506 seconds).
+Test Case '-[BetweenStopsUITests.ArcheryUITests testArcheryScreenshotsDark]' started.
+    t =     0.00s Start Test at 2026-11-11 17:21:04.759
+    t =     0.07s Set Up
+    t =     0.07s Open com.martinthommesen.betweenstops
+    t =     0.07s     Launch com.martinthommesen.betweenstops
+    t =     0.07s         Terminate com.martinthommesen.betweenstops:20928
+2026-11-11 17:21:05.954 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:21:05.954 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.95s         Setting up automation session
+    t =     4.86s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.72s Checking existence of `"homeTitle" Any`
+    t =     7.35s Checking existence of `"game-archery" Any`
+    t =     7.55s Tap "game-archery" Any
+    t =     7.55s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.56s     Find the "game-archery" Any
+    t =     7.79s     Check for interrupting elements affecting "game-archery" Button
+    t =     7.90s     Synthesize event
+    t =     8.22s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.02s Checking existence of `"range" Any`
+    t =     9.56s Added attachment named '51-archery-start-dark'
+    t =     9.57s Open com.martinthommesen.betweenstops
+    t =     9.57s     Launch com.martinthommesen.betweenstops
+    t =     9.57s         Terminate com.martinthommesen.betweenstops:21273
+2026-11-11 17:21:15.363 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:21:15.363 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    11.72s         Setting up automation session
+    t =    20.18s         Wait for com.martinthommesen.betweenstops to idle
+    t =    22.11s Checking existence of `"game-archery" Any`
+    t =    22.41s Tap "game-archery" Any
+    t =    22.41s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.42s     Find the "game-archery" Any
+    t =    22.56s     Check for interrupting elements affecting "game-archery" Button
+    t =    22.79s     Synthesize event
+    t =    23.13s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.00s Checking existence of `"range" Any`
+    t =    26.87s Added attachment named '52-archery-aim-dark'
+    t =    26.87s Tap "levels" Any
+    t =    26.87s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.88s     Find the "levels" Any
+    t =    27.05s     Check for interrupting elements affecting "levels" Button
+    t =    27.13s     Synthesize event
+    t =    27.44s     Wait for com.martinthommesen.betweenstops to idle
+    t =    33.90s Checking existence of `"levelSummary" Any`
+    t =    34.81s Find the "levelSummary" Any
+    t =    35.46s Checking existence of `"level-22" Any`
+    t =    36.49s Find the "level-22" Any
+    t =    37.33s Find the "level-23" Any
+    t =    37.90s Added attachment named '56-archery-levels-dark'
+    t =    37.90s Tap "done" Any
+    t =    37.90s     Wait for com.martinthommesen.betweenstops to idle
+    t =    37.90s     Find the "done" Any
+    t =    38.24s     Check for interrupting elements affecting "done" Other
+    t =    38.48s     Synthesize event
+    t =    38.85s     Wait for com.martinthommesen.betweenstops to idle
+    t =    39.67s Open com.martinthommesen.betweenstops
+    t =    39.67s     Launch com.martinthommesen.betweenstops
+    t =    39.67s         Terminate com.martinthommesen.betweenstops:21373
+2026-11-11 17:21:45.438 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:21:45.439 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    41.53s         Setting up automation session
+    t =    46.17s         Wait for com.martinthommesen.betweenstops to idle
+    t =    55.00s Checking existence of `"game-archery" Any`
+    t =    56.87s Tap "game-archery" Any
+    t =    56.87s     Wait for com.martinthommesen.betweenstops to idle
+    t =    56.89s     Find the "game-archery" Any
+    t =    57.60s     Check for interrupting elements affecting "game-archery" Button
+    t =    57.81s     Synthesize event
+    t =    58.15s     Wait for com.martinthommesen.betweenstops to idle
+    t =    59.34s Checking existence of `"range" Any`
+    t =    60.32s Added attachment named '54-archery-night-dark'
+    t =    60.33s Open com.martinthommesen.betweenstops
+    t =    60.33s     Launch com.martinthommesen.betweenstops
+    t =    60.33s         Terminate com.martinthommesen.betweenstops:22451
+2026-11-11 17:22:06.121 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:22:06.122 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    62.61s         Setting up automation session
+    t =    65.01s         Wait for com.martinthommesen.betweenstops to idle
+    t =    67.12s Checking existence of `"game-archery" Any`
+    t =    67.43s Tap "game-archery" Any
+    t =    67.43s     Wait for com.martinthommesen.betweenstops to idle
+    t =    67.43s     Find the "game-archery" Any
+    t =    67.64s     Check for interrupting elements affecting "game-archery" Button
+    t =    67.71s     Synthesize event
+    t =    68.04s     Wait for com.martinthommesen.betweenstops to idle
+    t =    68.13s Checking existence of `"range" Any`
+    t =    68.25s Find the "arrowsLeft" Any
+    t =    68.34s Checking existence of `"range" Any`
+    t =    68.47s Press "range" Any for 1.0 seconds
+    t =    68.47s     Wait for com.martinthommesen.betweenstops to idle
+    t =    68.47s     Find the "range" Any
+    t =    68.57s     Check for interrupting elements affecting "range" Button
+    t =    68.64s     Synthesize event
+    t =    69.89s     Wait for com.martinthommesen.betweenstops to idle
+    t =    70.94s Find the "arrowsLeft" Any
+    t =    70.98s Checking existence of `"archeryResult" Any`
+    t =    71.25s Added attachment named '55-archery-result-dark'
+    t =    71.26s Tear Down
+Test Case '-[BetweenStopsUITests.ArcheryUITests testArcheryScreenshotsDark]' passed (71.587 seconds).
+Test Case '-[BetweenStopsUITests.ArcheryUITests testArcheryScreenshotsLight]' started.
+    t =     0.00s Start Test at 2026-11-11 17:22:16.346
+    t =     0.06s Set Up
+    t =     0.06s Open com.martinthommesen.betweenstops
+    t =     0.06s     Launch com.martinthommesen.betweenstops
+    t =     0.06s         Terminate com.martinthommesen.betweenstops:23004
+2026-11-11 17:22:17.476 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:22:17.477 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.12s         Setting up automation session
+    t =     4.26s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.66s Checking existence of `"homeTitle" Any`
+    t =     6.99s Added attachment named '50-home-three-games-light'
+    t =     7.00s Checking existence of `"game-archery" Any`
+    t =     7.06s Tap "game-archery" Any
+    t =     7.06s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.06s     Find the "game-archery" Any
+    t =     7.15s     Check for interrupting elements affecting "game-archery" Button
+    t =     7.35s     Synthesize event
+    t =     7.69s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.79s Checking existence of `"range" Any`
+    t =     8.18s Added attachment named '51-archery-start-light'
+    t =     8.18s Open com.martinthommesen.betweenstops
+    t =     8.18s     Launch com.martinthommesen.betweenstops
+    t =     8.18s         Terminate com.martinthommesen.betweenstops:23473
+2026-11-11 17:22:25.551 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:22:25.551 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     9.85s         Setting up automation session
+    t =    12.04s         Wait for com.martinthommesen.betweenstops to idle
+    t =    13.74s Checking existence of `"game-archery" Any`
+    t =    13.98s Tap "game-archery" Any
+    t =    13.98s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.98s     Find the "game-archery" Any
+    t =    14.27s     Check for interrupting elements affecting "game-archery" Button
+    t =    14.36s     Synthesize event
+    t =    14.66s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.73s Checking existence of `"range" Any`
+    t =    15.66s Added attachment named '52-archery-aim-light'
+    t =    15.67s Tap "levels" Any
+    t =    15.67s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.67s     Find the "levels" Any
+    t =    16.15s     Check for interrupting elements affecting "levels" Button
+    t =    16.49s     Synthesize event
+    t =    16.84s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.23s Checking existence of `"levelSummary" Any`
+    t =    19.43s Find the "levelSummary" Any
+    t =    20.18s Checking existence of `"level-22" Any`
+    t =    21.02s Find the "level-22" Any
+    t =    22.23s Find the "level-23" Any
+    t =    23.28s Added attachment named '56-archery-levels-light'
+    t =    23.29s Tap "done" Any
+    t =    23.29s     Wait for com.martinthommesen.betweenstops to idle
+    t =    23.29s     Find the "done" Any
+    t =    23.83s     Check for interrupting elements affecting "done" Other
+    t =    24.16s     Synthesize event
+    t =    24.49s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.34s Open com.martinthommesen.betweenstops
+    t =    25.35s     Launch com.martinthommesen.betweenstops
+    t =    25.35s         Terminate com.martinthommesen.betweenstops:23616
+2026-11-11 17:22:42.757 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:22:42.757 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    27.56s         Setting up automation session
+    t =    29.45s         Wait for com.martinthommesen.betweenstops to idle
+    t =    31.10s Checking existence of `"game-archery" Any`
+    t =    31.23s Tap "game-archery" Any
+    t =    31.23s     Wait for com.martinthommesen.betweenstops to idle
+    t =    31.24s     Find the "game-archery" Any
+    t =    31.32s     Check for interrupting elements affecting "game-archery" Button
+    t =    31.43s     Synthesize event
+    t =    31.73s     Wait for com.martinthommesen.betweenstops to idle
+    t =    31.80s Checking existence of `"range" Any`
+    t =    32.36s Added attachment named '54-archery-night-light'
+    t =    32.37s Open com.martinthommesen.betweenstops
+    t =    32.37s     Launch com.martinthommesen.betweenstops
+    t =    32.37s         Terminate com.martinthommesen.betweenstops:24247
+2026-11-11 17:22:49.756 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:22:49.757 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    33.65s         Setting up automation session
+    t =    35.83s         Wait for com.martinthommesen.betweenstops to idle
+    t =    37.62s Checking existence of `"game-archery" Any`
+    t =    37.87s Tap "game-archery" Any
+    t =    37.87s     Wait for com.martinthommesen.betweenstops to idle
+    t =    37.88s     Find the "game-archery" Any
+    t =    37.98s     Check for interrupting elements affecting "game-archery" Button
+    t =    38.03s     Synthesize event
+    t =    38.33s     Wait for com.martinthommesen.betweenstops to idle
+    t =    38.35s Checking existence of `"range" Any`
+    t =    38.38s Find the "arrowsLeft" Any
+    t =    38.40s Checking existence of `"range" Any`
+    t =    38.42s Press "range" Any for 1.0 seconds
+    t =    38.42s     Wait for com.martinthommesen.betweenstops to idle
+    t =    38.43s     Find the "range" Any
+    t =    38.45s     Check for interrupting elements affecting "range" Button
+    t =    38.49s     Synthesize event
+    t =    39.72s     Wait for com.martinthommesen.betweenstops to idle
+    t =    40.75s Find the "arrowsLeft" Any
+    t =    40.78s Checking existence of `"archeryResult" Any`
+    t =    40.97s Added attachment named '55-archery-result-light'
+    t =    40.97s Tear Down
+Test Case '-[BetweenStopsUITests.ArcheryUITests testArcheryScreenshotsLight]' passed (41.242 seconds).
+Test Case '-[BetweenStopsUITests.ArcheryUITests testForceQuitMidLevelRestoresTheEnd]' started.
+    t =     0.00s Start Test at 2026-11-11 17:22:57.588
+    t =     0.03s Set Up
+    t =     0.03s Open com.martinthommesen.betweenstops
+    t =     0.03s     Launch com.martinthommesen.betweenstops
+    t =     0.03s         Terminate com.martinthommesen.betweenstops:24688
+2026-11-11 17:22:58.631 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:22:58.631 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.27s         Setting up automation session
+    t =     2.84s         Wait for com.martinthommesen.betweenstops to idle
+    t =     7.64s Checking existence of `"game-archery" Any`
+    t =     8.05s Tap "game-archery" Any
+    t =     8.05s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.05s     Find the "game-archery" Any
+    t =     8.23s     Check for interrupting elements affecting "game-archery" Button
+    t =     8.34s     Synthesize event
+    t =     8.66s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.78s Checking existence of `"range" Any`
+    t =     8.86s Find the "arrowsLeft" Any
+    t =     8.93s Checking existence of `"range" Any`
+    t =     8.99s Press "range" Any for 1.0 seconds
+    t =     8.99s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.00s     Find the "range" Any
+    t =     9.12s     Check for interrupting elements affecting "range" Button
+    t =     9.20s     Synthesize event
+    t =    10.43s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.61s Find the "arrowsLeft" Any
+    t =    11.66s Find the "arrowsLeft" Any
+    t =    11.70s Checking existence of `"range" Any`
+    t =    11.76s Press "range" Any for 1.0 seconds
+    t =    11.76s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.76s     Find the "range" Any
+    t =    11.84s     Check for interrupting elements affecting "range" Button
+    t =    11.90s     Synthesize event
+    t =    13.16s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.31s Find the "arrowsLeft" Any
+    t =    14.41s Checking existence of `"boardSignature" Any`
+    t =    14.47s Find the "boardSignature" Any
+    t =    14.54s Find the "arrowsLeft" Any
+    t =    14.69s Terminate com.martinthommesen.betweenstops:24731
+    t =    15.69s Open com.martinthommesen.betweenstops
+    t =    15.69s     Launch com.martinthommesen.betweenstops
+2026-11-11 17:23:13.296 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:23:13.296 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    16.65s         Setting up automation session
+    t =    18.97s         Wait for com.martinthommesen.betweenstops to idle
+    t =    21.50s Checking existence of `"range" Any`
+    t =    21.64s Checking existence of `"boardSignature" Any`
+    t =    21.71s Find the "boardSignature" Any
+    t =    21.78s Find the "arrowsLeft" Any
+    t =    21.84s Find the "archeryLevel" Any
+    t =    21.89s Tear Down
+Test Case '-[BetweenStopsUITests.ArcheryUITests testForceQuitMidLevelRestoresTheEnd]' passed (22.176 seconds).
+Test Suite 'ArcheryUITests' passed at 2026-11-11 17:23:19.765.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 231.487 (231.497) seconds
+Test Suite 'BetweenStopsUITests' started at 2026-11-11 17:23:19.766.
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testAccessibilityAudit]' started.
+    t =     0.00s Start Test at 2026-11-11 17:23:19.769
+    t =     0.05s Set Up
+    t =     0.06s Open com.martinthommesen.betweenstops
+    t =     0.06s     Launch com.martinthommesen.betweenstops
+    t =     0.06s         Terminate com.martinthommesen.betweenstops:25392
+2026-11-11 17:23:20.853 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:23:20.853 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.51s         Setting up automation session
+    t =     4.60s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.69s Checking existence of `"homeTitle" Any`
+    t =     7.92s Checking existence of `"game-klondike" Any`
+    t =     8.53s Tap "game-klondike" Any
+    t =     8.53s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.56s     Find the "game-klondike" Any
+    t =     8.77s     Check for interrupting elements affecting "game-klondike" Button
+    t =     8.94s     Synthesize event
+    t =     9.31s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.52s Checking existence of `"stock" Any`
+    t =    10.47s Tap "back" Any
+    t =    10.48s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.48s     Find the "back" Any
+    t =    10.53s     Check for interrupting elements affecting "back" Button
+    t =    10.67s     Synthesize event
+    t =    11.02s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.03s Checking existence of `"settingsButton" Any`
+    t =    11.15s Tap "settingsButton" Any
+    t =    11.15s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.15s     Find the "settingsButton" Any
+    t =    11.21s     Check for interrupting elements affecting "settingsButton" Button
+    t =    11.34s     Synthesize event
+    t =    11.66s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.69s Checking existence of `"done" Any`
+    t =    14.80s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testAccessibilityAudit]' passed (15.133 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDraggingACardOntoAColumn]' started.
+    t =     0.00s Start Test at 2026-11-11 17:23:34.905
+    t =     0.10s Set Up
+    t =     0.10s Open com.martinthommesen.betweenstops
+    t =     0.10s     Launch com.martinthommesen.betweenstops
+    t =     0.10s         Terminate com.martinthommesen.betweenstops:25714
+2026-11-11 17:23:36.069 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:23:36.071 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.26s         Setting up automation session
+    t =     5.08s         Wait for com.martinthommesen.betweenstops to idle
+    t =     7.10s Checking existence of `"game-klondike" Any`
+    t =     7.67s Tap "game-klondike" Any
+    t =     7.67s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.67s     Find the "game-klondike" Any
+    t =     7.90s     Check for interrupting elements affecting "game-klondike" Button
+    t =     8.08s     Synthesize event
+    t =     8.45s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.61s Checking existence of `"stock" Any`
+    t =     9.02s Checking existence of `"card-9D" Any`
+    t =    10.29s Checking existence of `"card-10C" Any`
+    t =    10.85s Press "card-9D" Any for 0.2 seconds, drag to "card-10C" Any with velocity of 500.00 pixels per second, and then hold for 0.0 seconds
+    t =    10.85s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.86s     Find the "card-9D" Any
+    t =    11.59s     Check for interrupting elements affecting "card-9D" Button
+    t =    11.76s     Synthesize event
+    t =    11.76s         Find the "card-10C" Any
+    t =    12.47s         Compute first hitpoint
+    t =    12.53s         Compute second hitpoint
+    t =    13.23s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.23s Checking existence of `"moves" Any`
+    t =    13.35s Find the "moves" Any
+    t =    13.49s Checking existence of `"boardSignature" Any`
+    t =    13.95s Find the "boardSignature" Any
+    t =    14.20s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDraggingACardOntoAColumn]' passed (14.461 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDrawingFromTheStockAndUndo]' started.
+    t =     0.00s Start Test at 2026-11-11 17:23:49.366
+    t =     0.06s Set Up
+    t =     0.06s Open com.martinthommesen.betweenstops
+    t =     0.06s     Launch com.martinthommesen.betweenstops
+    t =     0.06s         Terminate com.martinthommesen.betweenstops:26072
+2026-11-11 17:23:50.516 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:23:50.516 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     9.64s         Setting up automation session
+    t =    11.78s         Wait for com.martinthommesen.betweenstops to idle
+    t =    13.57s Checking existence of `"game-klondike" Any`
+    t =    14.01s Tap "game-klondike" Any
+    t =    14.01s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.06s     Find the "game-klondike" Any
+    t =    14.22s     Check for interrupting elements affecting "game-klondike" Button
+    t =    14.29s     Synthesize event
+    t =    14.61s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.75s Checking existence of `"stock" Any`
+    t =    14.86s Checking existence of `"boardSignature" Any`
+    t =    14.91s Find the "boardSignature" Any
+    t =    14.98s Tap "stock" Any[0.50, 0.50]
+    t =    14.98s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.99s     Find the "stock" Any
+    t =    15.10s     Check for interrupting elements affecting "stock" Button
+    t =    15.19s     Synthesize event
+    t =    15.19s         Find the "stock" Button
+    t =    15.26s         Find the "stock" Button
+    t =    15.37s         Find the "stock" Button
+    t =    15.75s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.76s Checking existence of `"moves" Any`
+    t =    15.80s Find the "moves" Any
+    t =    15.85s Checking existence of `"boardSignature" Any`
+    t =    15.88s Find the "boardSignature" Any
+    t =    15.92s Checking existence of `"boardSignature" Any`
+    t =    15.98s Find the "boardSignature" Any
+    t =    16.04s Tap "undo" Any
+    t =    16.04s     Wait for com.martinthommesen.betweenstops to idle
+    t =    16.04s     Find the "undo" Any
+    t =    16.36s     Check for interrupting elements affecting "undo" Button
+    t =    16.42s     Synthesize event
+    t =    16.72s     Wait for com.martinthommesen.betweenstops to idle
+    t =    16.73s Checking existence of `"boardSignature" Any`
+    t =    16.80s Find the "boardSignature" Any
+    t =    16.88s Checking existence of `"moves" Any`
+    t =    16.96s Find the "moves" Any
+    t =    17.03s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDrawingFromTheStockAndUndo]' passed (17.283 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDrawThreeSettingAppliesToTheNextDeal]' started.
+    t =     0.00s Start Test at 2026-11-11 17:24:06.649
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:26398
+2026-11-11 17:24:07.780 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:24:07.780 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.29s         Setting up automation session
+    t =     4.52s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.50s Checking existence of `"settingsButton" Any`
+    t =     6.73s Tap "settingsButton" Any
+    t =     6.73s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.73s     Find the "settingsButton" Any
+    t =     6.86s     Check for interrupting elements affecting "settingsButton" Button
+    t =     7.03s     Synthesize event
+    t =     7.36s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.94s Waiting 5.0s for "Draw 3" Button to exist
+    t =     8.95s     Checking `Expect predicate `existsNoRetry == 1` for object "Draw 3" Button`
+    t =     8.95s         Checking existence of `"Draw 3" Button`
+    t =     9.19s Tap "Draw 3" Button
+    t =     9.19s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.19s     Find the "Draw 3" Button
+    t =     9.35s     Check for interrupting elements affecting "Draw 3" Button
+    t =     9.46s     Synthesize event
+    t =     9.80s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.12s Tap "done" Any
+    t =    11.13s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.13s     Find the "done" Any
+    t =    12.53s     Check for interrupting elements affecting "done" Other
+    t =    13.18s     Synthesize event
+    t =    13.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.41s Checking existence of `"game-klondike" Any`
+    t =    16.01s Tap "game-klondike" Any
+    t =    16.01s     Wait for com.martinthommesen.betweenstops to idle
+    t =    16.02s     Find the "game-klondike" Any
+    t =    17.18s     Check for interrupting elements affecting "game-klondike" Button
+    t =    17.42s     Synthesize event
+    t =    17.72s     Wait for com.martinthommesen.betweenstops to idle
+    t =    19.24s Checking existence of `"stock" Any`
+    t =    20.05s Checking existence of `"boardSignature" Any`
+    t =    20.20s Find the "boardSignature" Any
+    t =    20.28s Tap "stock" Any[0.50, 0.50]
+    t =    20.28s     Wait for com.martinthommesen.betweenstops to idle
+    t =    20.29s     Find the "stock" Any
+    t =    20.44s     Check for interrupting elements affecting "stock" Button
+    t =    20.55s     Synthesize event
+    t =    20.56s         Find the "stock" Button
+    t =    20.66s         Find the "stock" Button
+    t =    20.74s         Find the "stock" Button
+    t =    21.11s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.12s Checking existence of `"boardSignature" Any`
+    t =    21.27s Find the "boardSignature" Any
+    t =    21.63s Added attachment named '09-draw-three-light'
+    t =    21.63s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testDrawThreeSettingAppliesToTheNextDeal]' passed (21.910 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testForceQuitMidGameRestoresTheExactBoard]' started.
+    t =     0.00s Start Test at 2026-11-11 17:24:28.560
+    t =     0.11s Set Up
+    t =     0.12s Open com.martinthommesen.betweenstops
+    t =     0.12s     Launch com.martinthommesen.betweenstops
+    t =     0.12s         Terminate com.martinthommesen.betweenstops:26982
+2026-11-11 17:24:30.016 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:24:30.017 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.43s         Setting up automation session
+    t =     4.68s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.52s Checking existence of `"game-klondike" Any`
+    t =     7.12s Tap "game-klondike" Any
+    t =     7.12s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.13s     Find the "game-klondike" Any
+    t =     7.40s     Check for interrupting elements affecting "game-klondike" Button
+    t =     7.63s     Synthesize event
+    t =     8.01s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.07s Checking existence of `"stock" Any`
+    t =     8.28s Tap "stock" Any[0.50, 0.50]
+    t =     8.28s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.28s     Find the "stock" Any
+    t =     8.40s     Check for interrupting elements affecting "stock" Button
+    t =     8.53s     Synthesize event
+    t =     8.53s         Find the "stock" Button
+    t =     8.82s         Find the "stock" Button
+    t =     9.05s         Find the "stock" Button
+    t =     9.69s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.70s Tap "stock" Any[0.50, 0.50]
+    t =     9.70s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.71s     Find the "stock" Any
+    t =     9.86s     Check for interrupting elements affecting "stock" Button
+    t =     9.95s     Synthesize event
+    t =     9.95s         Find the "stock" Button
+    t =    10.10s         Find the "stock" Button
+    t =    10.32s         Find the "stock" Button
+    t =    10.78s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.79s Tap "stock" Any[0.50, 0.50]
+    t =    10.79s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.79s     Find the "stock" Any
+    t =    10.88s     Check for interrupting elements affecting "stock" Button
+    t =    10.96s     Synthesize event
+    t =    10.96s         Find the "stock" Button
+    t =    11.04s         Find the "stock" Button
+    t =    11.14s         Find the "stock" Button
+    t =    11.59s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.60s Checking existence of `"card-6H" Any`
+    t =    11.98s Tap "card-6H" Any[0.50, 0.50]
+    t =    11.98s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.00s     Find the "card-6H" Any
+    t =    12.20s     Check for interrupting elements affecting "card-6H" Button
+    t =    12.29s     Synthesize event
+    t =    12.29s         Find the "card-6H" Button
+    t =    12.55s         Find the "card-6H" Button
+    t =    13.02s         Find the "card-6H" Button
+    t =    13.58s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.59s Checking existence of `"boardSignature" Any`
+    t =    13.69s Find the "boardSignature" Any
+    t =    13.78s Checking existence of `"moves" Any`
+    t =    13.83s Find the "moves" Any
+    t =    13.89s Terminate com.martinthommesen.betweenstops:27603
+    t =    14.91s Open com.martinthommesen.betweenstops
+    t =    14.91s     Launch com.martinthommesen.betweenstops
+2026-11-11 17:24:43.475 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:24:43.475 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    15.68s         Setting up automation session
+    t =    18.20s         Wait for com.martinthommesen.betweenstops to idle
+    t =    19.97s Checking existence of `"stock" Any`
+    t =    20.25s Checking existence of `"homeTitle" Any`
+    t =    20.87s Checking existence of `"boardSignature" Any`
+    t =    21.02s Find the "boardSignature" Any
+    t =    21.15s Checking existence of `"moves" Any`
+    t =    21.27s Find the "moves" Any
+    t =    21.38s Tap "undo" Any
+    t =    21.38s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.38s     Find the "undo" Any
+    t =    21.89s     Check for interrupting elements affecting "undo" Button
+    t =    22.03s     Synthesize event
+    t =    22.38s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.38s Checking existence of `"moves" Any`
+    t =    22.50s Find the "moves" Any
+    t =    22.56s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testForceQuitMidGameRestoresTheExactBoard]' passed (22.866 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testHintShowsAMove]' started.
+    t =     0.00s Start Test at 2026-11-11 17:24:51.426
+    t =     0.06s Set Up
+    t =     0.06s Open com.martinthommesen.betweenstops
+    t =     0.06s     Launch com.martinthommesen.betweenstops
+    t =     0.06s         Terminate com.martinthommesen.betweenstops:27881
+2026-11-11 17:24:52.543 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:24:52.544 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.88s         Setting up automation session
+    t =     4.26s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.09s Checking existence of `"game-klondike" Any`
+    t =     6.33s Tap "game-klondike" Any
+    t =     6.33s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.33s     Find the "game-klondike" Any
+    t =     6.45s     Check for interrupting elements affecting "game-klondike" Button
+    t =     6.60s     Synthesize event
+    t =     6.94s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.01s Checking existence of `"stock" Any`
+    t =     7.22s Tap "hint" Any
+    t =     7.22s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.22s     Find the "hint" Any
+    t =     7.99s     Check for interrupting elements affecting "hint" Button
+    t =     8.12s     Synthesize event
+    t =     8.48s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.48s Waiting 4.0s for Any (First Match) to exist
+    t =     9.54s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.54s         Checking existence of `Any (First Match)`
+    t =     9.80s Checking existence of `"card-6D" Any`
+    t =    10.23s Find the "card-6D" Any
+    t =    10.63s Find the "card-7S" Any
+    t =    10.91s Checking existence of `"moves" Any`
+    t =    10.98s Find the "moves" Any
+    t =    11.02s Tap "card-6D" Button[0.50, 0.50]
+    t =    11.02s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.03s     Find the "card-6D" Button
+    t =    11.51s     Check for interrupting elements affecting "card-6D" Button
+    t =    11.58s     Synthesize event
+    t =    11.58s         Find the "card-6D" Button
+    t =    11.91s         Find the "card-6D" Button
+    t =    12.29s         Find the "card-6D" Button
+    t =    13.06s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.07s Checking existence of `"moves" Any`
+    t =    13.16s Find the "moves" Any
+    t =    13.22s Find the "card-6D" Any
+    t =    13.79s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testHintShowsAMove]' passed (14.029 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testHomeListsSolitaireAndOpensIt]' started.
+    t =     0.00s Start Test at 2026-11-11 17:25:05.456
+    t =     0.04s Set Up
+    t =     0.05s Open com.martinthommesen.betweenstops
+    t =     0.05s     Launch com.martinthommesen.betweenstops
+    t =     0.05s         Terminate com.martinthommesen.betweenstops:28011
+2026-11-11 17:25:06.612 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:25:06.613 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.70s         Setting up automation session
+    t =     3.97s         Wait for com.martinthommesen.betweenstops to idle
+    t =     5.74s Checking existence of `"homeTitle" Any`
+    t =     5.94s Checking existence of `"game-testgame" Any`
+    t =     6.26s Checking existence of `"game-klondike" Any`
+    t =     6.38s Tap "game-klondike" Any
+    t =     6.38s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.38s     Find the "game-klondike" Any
+    t =     6.50s     Check for interrupting elements affecting "game-klondike" Button
+    t =     6.56s     Synthesize event
+    t =     6.88s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.89s Checking existence of `"stock" Any`
+    t =     6.95s Checking existence of `"undo" Any`
+    t =     7.18s Checking existence of `"hint" Any`
+    t =     7.39s Checking existence of `"newGame" Any`
+    t =     7.60s Checking existence of `"moves" Any`
+    t =     7.63s Checking existence of `"timer" Any`
+    t =     7.66s Checking existence of `"back" Any`
+    t =     7.68s Checking existence of `"settings" Any`
+    t =     7.71s Checking existence of `"stock" Any`
+    t =     7.73s Tap "back" Any
+    t =     7.73s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.74s     Find the "back" Any
+    t =     7.76s     Check for interrupting elements affecting "back" Button
+    t =     7.82s     Synthesize event
+    t =     8.13s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.13s Checking existence of `"homeTitle" Any`
+    t =     8.19s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testHomeListsSolitaireAndOpensIt]' passed (8.431 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testIllegalDragSnapsBack]' started.
+    t =     0.00s Start Test at 2026-11-11 17:25:13.887
+    t =     0.06s Set Up
+    t =     0.06s Open com.martinthommesen.betweenstops
+    t =     0.06s     Launch com.martinthommesen.betweenstops
+    t =     0.06s         Terminate com.martinthommesen.betweenstops:28521
+2026-11-11 17:25:15.020 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:25:15.021 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.48s         Setting up automation session
+    t =     4.22s         Wait for com.martinthommesen.betweenstops to idle
+    t =     5.69s Checking existence of `"game-klondike" Any`
+    t =     5.84s Tap "game-klondike" Any
+    t =     5.84s     Wait for com.martinthommesen.betweenstops to idle
+    t =     5.86s     Find the "game-klondike" Any
+    t =     5.94s     Check for interrupting elements affecting "game-klondike" Button
+    t =     6.05s     Synthesize event
+    t =     6.36s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.43s Checking existence of `"stock" Any`
+    t =     6.73s Checking existence of `"boardSignature" Any`
+    t =     6.85s Find the "boardSignature" Any
+    t =     6.97s Checking existence of `"card-9D" Any`
+    t =     7.92s Checking existence of `"card-AD" Any`
+    t =     8.18s Press "card-9D" Any for 0.2 seconds, drag to "card-AD" Any with velocity of 500.00 pixels per second, and then hold for 0.0 seconds
+    t =     8.18s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.20s     Find the "card-9D" Any
+    t =     8.62s     Check for interrupting elements affecting "card-9D" Button
+    t =     8.70s     Synthesize event
+    t =     8.70s         Find the "card-AD" Any
+    t =     9.00s         Compute first hitpoint
+    t =     9.00s         Compute second hitpoint
+    t =     9.98s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.99s Checking existence of `"moves" Any`
+    t =    10.23s Find the "moves" Any
+    t =    10.34s Checking existence of `"boardSignature" Any`
+    t =    10.51s Find the "boardSignature" Any
+    t =    10.63s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testIllegalDragSnapsBack]' passed (10.878 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testLeftHandedLayoutPutsTheStockOnTheLeft]' started.
+    t =     0.00s Start Test at 2026-11-11 17:25:24.766
+    t =     0.03s Set Up
+    t =     0.03s Open com.martinthommesen.betweenstops
+    t =     0.03s     Launch com.martinthommesen.betweenstops
+    t =     0.03s         Terminate com.martinthommesen.betweenstops:28594
+2026-11-11 17:25:25.800 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:25:25.802 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     5.06s         Setting up automation session
+    t =     7.02s         Wait for com.martinthommesen.betweenstops to idle
+    t =     8.76s Checking existence of `"game-klondike" Any`
+    t =     9.28s Tap "game-klondike" Any
+    t =     9.28s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.28s     Find the "game-klondike" Any
+    t =     9.54s     Check for interrupting elements affecting "game-klondike" Button
+    t =     9.73s     Synthesize event
+    t =    10.13s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.21s Checking existence of `"stock" Any`
+    t =    10.66s Find the "stock" Any
+    t =    10.95s Find the Target Application 'com.martinthommesen.betweenstops'
+    t =    11.01s Tap "back" Any
+    t =    11.01s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.01s     Find the "back" Any
+    t =    11.14s     Check for interrupting elements affecting "back" Button
+    t =    11.32s     Synthesize event
+    t =    11.70s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.71s Checking existence of `"settingsButton" Any`
+    t =    11.86s Tap "settingsButton" Any
+    t =    11.86s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.87s     Find the "settingsButton" Any
+    t =    11.97s     Check for interrupting elements affecting "settingsButton" Button
+    t =    12.15s     Synthesize event
+    t =    12.55s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.17s Checking existence of `"leftHanded" Any`
+    t =    17.23s Tap "leftHanded" Any[0.92, 0.50]
+    t =    17.23s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.56s     Find the "leftHanded" Any
+    t =    18.29s     Check for interrupting elements affecting "leftHanded" Switch
+    t =    18.81s     Synthesize event
+    t =    18.82s         Find the "leftHanded" Switch
+    t =    19.64s         Find the "leftHanded" Switch
+    t =    20.37s         Find the "leftHanded" Switch
+    t =    21.57s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.86s Tap "done" Any
+    t =    22.86s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.88s     Find the "done" Any
+    t =    23.62s     Check for interrupting elements affecting "done" Other
+    t =    23.87s     Synthesize event
+    t =    24.22s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.00s Checking existence of `"game-klondike" Any`
+    t =    25.27s Tap "game-klondike" Any
+    t =    25.27s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.28s     Find the "game-klondike" Any
+    t =    25.59s     Check for interrupting elements affecting "game-klondike" Button
+    t =    25.78s     Synthesize event
+    t =    26.11s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.12s Checking existence of `"stock" Any`
+    t =    26.42s Find the "stock" Any
+    t =    26.66s Find the Target Application 'com.martinthommesen.betweenstops'
+    t =    26.73s Find the "undo" Any
+    t =    28.23s Find the "newGame" Any
+    t =    29.55s Tap "stock" Any[0.50, 0.50]
+    t =    29.55s     Wait for com.martinthommesen.betweenstops to idle
+    t =    29.56s     Find the "stock" Any
+    t =    29.81s     Check for interrupting elements affecting "stock" Button
+    t =    29.95s     Synthesize event
+    t =    29.99s         Find the "stock" Button
+    t =    30.17s         Find the "stock" Button
+    t =    30.30s         Find the "stock" Button
+    t =    30.91s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.92s Checking existence of `"moves" Any`
+    t =    31.32s Find the "moves" Any
+    t =    31.69s Added attachment named '10-left-handed-light'
+    t =    31.69s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testLeftHandedLayoutPutsTheStockOnTheLeft]' passed (32.576 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testNearlyFinishedGamePlaysThroughToTheWinScreen]' started.
+    t =     0.00s Start Test at 2026-11-11 17:25:57.345
+    t =     0.07s Set Up
+    t =     0.07s Open com.martinthommesen.betweenstops
+    t =     0.07s     Launch com.martinthommesen.betweenstops
+    t =     0.07s         Terminate com.martinthommesen.betweenstops:28922
+2026-11-11 17:25:58.467 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:25:58.469 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.23s         Setting up automation session
+    t =     5.26s         Wait for com.martinthommesen.betweenstops to idle
+    t =     7.33s Checking existence of `"game-klondike" Any`
+    t =     7.86s Tap "game-klondike" Any
+    t =     7.86s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.87s     Find the "game-klondike" Any
+    t =     8.15s     Check for interrupting elements affecting "game-klondike" Button
+    t =     8.33s     Synthesize event
+    t =     8.67s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.85s Checking existence of `"stock" Any`
+    t =     9.18s Checking existence of `"autoFinish" Any`
+    t =    11.20s Tap "stock" Any[0.50, 0.50]
+    t =    11.20s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.20s     Find the "stock" Any
+    t =    11.34s     Check for interrupting elements affecting "stock" Button
+    t =    11.52s     Synthesize event
+    t =    11.52s         Find the "stock" Button
+    t =    11.69s         Find the "stock" Button
+    t =    11.95s         Find the "stock" Button
+    t =    12.38s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.40s Checking existence of `"card-QD" Any`
+    t =    13.03s Tap "card-QD" Any[0.50, 0.50]
+    t =    13.03s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.03s     Find the "card-QD" Any
+    t =    13.38s     Check for interrupting elements affecting "card-QD" Button
+    t =    13.51s     Synthesize event
+    t =    13.51s         Find the "card-QD" Button
+    t =    13.87s         Find the "card-QD" Button
+    t =    14.25s         Find the "card-QD" Button
+    t =    14.85s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.86s Checking existence of `"moves" Any`
+    t =    14.91s Find the "moves" Any
+    t =    14.95s Checking existence of `"autoFinish" Any`
+    t =    15.23s Tap "autoFinish" Any
+    t =    15.23s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.24s     Find the "autoFinish" Any
+    t =    15.48s     Check for interrupting elements affecting "autoFinish" Button
+    t =    15.56s     Synthesize event
+    t =    15.86s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.98s Checking existence of `"winScreen" Any`
+    t =    16.49s Checking existence of `"You won!" StaticText`
+    t =    16.60s Tap "winHome" Any
+    t =    16.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =    16.60s     Find the "winHome" Any
+    t =    17.20s     Check for interrupting elements affecting "winHome" Button
+    t =    17.37s     Synthesize event
+    t =    17.69s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.70s Checking existence of `"statsButton" Any`
+    t =    17.76s Tap "statsButton" Any
+    t =    17.76s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.77s     Find the "statsButton" Any
+    t =    17.82s     Check for interrupting elements affecting "statsButton" Button
+    t =    17.90s     Synthesize event
+    t =    18.22s     Wait for com.martinthommesen.betweenstops to idle
+    t =    18.80s Waiting 5.0s for Any (First Match) to exist
+    t =    19.84s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    19.85s         Checking existence of `Any (First Match)`
+    t =    20.14s Checking existence of `Any (First Match)`
+    t =    20.27s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testNearlyFinishedGamePlaysThroughToTheWinScreen]' passed (20.528 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsDark]' started.
+    t =     0.00s Start Test at 2026-11-11 17:26:17.875
+    t =     0.07s Set Up
+    t =     0.07s Open com.martinthommesen.betweenstops
+    t =     0.08s     Launch com.martinthommesen.betweenstops
+    t =     0.08s         Terminate com.martinthommesen.betweenstops:29939
+2026-11-11 17:26:18.968 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:26:18.968 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.03s         Setting up automation session
+    t =     4.46s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.23s Checking existence of `"homeTitle" Any`
+    t =     6.54s Checking existence of `"game-klondike" Any`
+    t =     6.77s Tap "game-klondike" Any
+    t =     6.77s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.78s     Find the "game-klondike" Any
+    t =     6.88s     Check for interrupting elements affecting "game-klondike" Button
+    t =     6.97s     Synthesize event
+    t =     7.27s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.38s Checking existence of `"stock" Any`
+    t =     7.66s Added attachment named '02-game-dark'
+    t =     7.66s Tap "hint" Any
+    t =     7.66s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.67s     Find the "hint" Any
+    t =     8.06s     Check for interrupting elements affecting "hint" Button
+    t =     8.16s     Synthesize event
+    t =     8.46s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.47s Checking existence of `"toast" Any`
+    t =     8.91s Added attachment named '03-hint-dark'
+    t =     8.91s Tap "back" Any
+    t =     8.91s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.91s     Find the "back" Any
+    t =     8.94s     Check for interrupting elements affecting "back" Button
+    t =     9.01s     Synthesize event
+    t =     9.31s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.31s Checking existence of `"homeTitle" Any`
+    t =     9.60s Added attachment named '01-home-dark'
+    t =     9.60s Tap "settingsButton" Any
+    t =     9.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.61s     Find the "settingsButton" Any
+    t =     9.64s     Check for interrupting elements affecting "settingsButton" Button
+    t =     9.71s     Synthesize event
+    t =    10.01s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.42s Checking existence of `"done" Any`
+    t =    11.26s Added attachment named '06-settings-dark'
+    t =    11.27s Tap "done" Any
+    t =    11.27s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.66s     Find the "done" Any
+    t =    11.86s     Check for interrupting elements affecting "done" Other
+    t =    12.04s     Synthesize event
+    t =    12.36s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.04s Open com.martinthommesen.betweenstops
+    t =    13.04s     Launch com.martinthommesen.betweenstops
+    t =    13.04s         Terminate com.martinthommesen.betweenstops:30425
+2026-11-11 17:26:32.017 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:26:32.018 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    14.74s         Setting up automation session
+    t =    16.82s         Wait for com.martinthommesen.betweenstops to idle
+    t =    18.61s Checking existence of `"game-klondike" Any`
+    t =    18.78s Tap "game-klondike" Any
+    t =    18.78s     Wait for com.martinthommesen.betweenstops to idle
+    t =    18.79s     Find the "game-klondike" Any
+    t =    18.86s     Check for interrupting elements affecting "game-klondike" Button
+    t =    18.99s     Synthesize event
+    t =    19.31s     Wait for com.martinthommesen.betweenstops to idle
+    t =    19.40s Checking existence of `"stock" Any`
+    t =    19.49s Tap "stock" Any[0.50, 0.50]
+    t =    19.49s     Wait for com.martinthommesen.betweenstops to idle
+    t =    19.50s     Find the "stock" Any
+    t =    19.57s     Check for interrupting elements affecting "stock" Button
+    t =    19.65s     Synthesize event
+    t =    19.65s         Find the "stock" Button
+    t =    19.71s         Find the "stock" Button
+    t =    19.76s         Find the "stock" Button
+    t =    20.13s     Wait for com.martinthommesen.betweenstops to idle
+    t =    20.14s Checking existence of `"card-QD" Any`
+    t =    20.46s Tap "card-QD" Any[0.50, 0.50]
+    t =    20.46s     Wait for com.martinthommesen.betweenstops to idle
+    t =    20.47s     Find the "card-QD" Any
+    t =    20.74s     Check for interrupting elements affecting "card-QD" Button
+    t =    20.83s     Synthesize event
+    t =    20.83s         Find the "card-QD" Button
+    t =    21.08s         Find the "card-QD" Button
+    t =    21.46s         Find the "card-QD" Button
+    t =    22.02s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.03s Checking existence of `"autoFinish" Any`
+    t =    22.30s Tap "autoFinish" Any
+    t =    22.30s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.30s     Find the "autoFinish" Any
+    t =    22.50s     Check for interrupting elements affecting "autoFinish" Button
+    t =    22.57s     Synthesize event
+    t =    22.87s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.95s Checking existence of `"winScreen" Any`
+    t =    23.51s Added attachment named '04-win-dark'
+    t =    23.51s Tap "winNewGame" Any
+    t =    23.51s     Wait for com.martinthommesen.betweenstops to idle
+    t =    23.52s     Find the "winNewGame" Any
+    t =    24.10s     Check for interrupting elements affecting "winNewGame" Button
+    t =    24.29s     Synthesize event
+    t =    24.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =    24.60s Checking existence of `"stock" Any`
+    t =    24.86s Added attachment named '05-new-deal-dark'
+    t =    24.86s Tap "stock" Any[0.50, 0.50]
+    t =    24.86s     Wait for com.martinthommesen.betweenstops to idle
+    t =    24.87s     Find the "stock" Any
+    t =    24.94s     Check for interrupting elements affecting "stock" Button
+    t =    25.04s     Synthesize event
+    t =    25.04s         Find the "stock" Button
+    t =    25.15s         Find the "stock" Button
+    t =    25.22s         Find the "stock" Button
+    t =    25.63s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.63s Tap "newGame" Any
+    t =    25.64s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.64s     Find the "newGame" Any
+    t =    26.26s     Check for interrupting elements affecting "newGame" Button
+    t =    26.37s     Synthesize event
+    t =    26.70s     Wait for com.martinthommesen.betweenstops to idle
+    t =    27.04s Waiting 5.0s for "New Deal" Button to exist
+    t =    28.06s     Checking `Expect predicate `existsNoRetry == 1` for object "New Deal" Button`
+    t =    28.06s         Checking existence of `"New Deal" Button`
+    t =    28.33s Added attachment named '08-confirm-new-deal-dark'
+    t =    28.34s Tap "Keep Playing" Button
+    t =    28.34s     Wait for com.martinthommesen.betweenstops to idle
+    t =    28.34s     Find the "Keep Playing" Button
+    t =    28.41s     Check for interrupting elements affecting "Keep Playing" Button
+    t =    28.48s     Synthesize event
+    t =    28.79s     Wait for com.martinthommesen.betweenstops to idle
+    t =    28.97s Waiting 5.0s for "New Deal" Button to not exist
+    t =    30.02s     Checking `Expect predicate `existsNoRetry == 0` for object "New Deal" Button`
+    t =    30.02s         Checking existence of `"New Deal" Button`
+    t =    30.07s Checking existence of `"moves" Any`
+    t =    30.12s Find the "moves" Any
+    t =    30.17s Tap "back" Any
+    t =    30.17s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.17s     Find the "back" Any
+    t =    30.25s     Check for interrupting elements affecting "back" Button
+    t =    30.31s     Synthesize event
+    t =    30.63s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.64s Checking existence of `"statsButton" Any`
+    t =    30.70s Tap "statsButton" Any
+    t =    30.70s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.71s     Find the "statsButton" Any
+    t =    30.79s     Check for interrupting elements affecting "statsButton" Button
+    t =    30.85s     Synthesize event
+    t =    31.16s     Wait for com.martinthommesen.betweenstops to idle
+    t =    31.40s Checking existence of `"done" Any`
+    t =    32.56s Added attachment named '07-stats-dark'
+    t =    32.56s Tap "done" Any
+    t =    32.56s     Wait for com.martinthommesen.betweenstops to idle
+    t =    32.99s     Find the "done" Any
+    t =    33.36s     Check for interrupting elements affecting "done" Other
+    t =    33.55s     Synthesize event
+    t =    33.88s     Wait for com.martinthommesen.betweenstops to idle
+    t =    34.67s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsDark]' passed (35.176 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsLargeText]' started.
+    t =     0.00s Start Test at 2026-11-11 17:26:53.052
+    t =     0.03s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:31036
+2026-11-11 17:26:54.182 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:26:54.183 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.11s         Setting up automation session
+    t =     3.94s         Wait for com.martinthommesen.betweenstops to idle
+    t =     5.60s Checking existence of `"homeTitle" Any`
+    t =     6.16s Added attachment named '20-large-text-home-light'
+    t =     6.16s Checking existence of `"game-klondike" Any`
+    t =     6.27s Tap "game-klondike" Any
+    t =     6.27s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.27s     Find the "game-klondike" Any
+    t =     6.34s     Check for interrupting elements affecting "game-klondike" Button
+    t =     6.43s     Synthesize event
+    t =     6.74s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.78s Checking existence of `"stock" Any`
+    t =     7.34s Added attachment named '21-large-text-game-light'
+    t =     7.34s Tap "back" Any
+    t =     7.34s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.35s     Find the "back" Any
+    t =     7.49s     Check for interrupting elements affecting "back" Button
+    t =     7.74s     Synthesize event
+    t =     8.08s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.09s Checking existence of `"statsButton" Any`
+    t =     8.56s Tap "statsButton" Any
+    t =     8.56s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.56s     Find the "statsButton" Any
+    t =     8.67s     Check for interrupting elements affecting "statsButton" Button
+    t =     8.83s     Synthesize event
+    t =     9.16s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.49s Checking existence of `"done" Any`
+    t =    11.67s Added attachment named '22-large-text-stats-light'
+    t =    11.68s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsLargeText]' passed (12.049 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsLight]' started.
+    t =     0.00s Start Test at 2026-11-11 17:27:05.101
+    t =     0.08s Set Up
+    t =     0.08s Open com.martinthommesen.betweenstops
+    t =     0.08s     Launch com.martinthommesen.betweenstops
+    t =     0.08s         Terminate com.martinthommesen.betweenstops:31576
+2026-11-11 17:27:06.238 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:27:06.238 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.83s         Setting up automation session
+    t =     4.07s         Wait for com.martinthommesen.betweenstops to idle
+    t =     5.84s Checking existence of `"homeTitle" Any`
+    t =     6.08s Checking existence of `"game-klondike" Any`
+    t =     6.27s Tap "game-klondike" Any
+    t =     6.27s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.27s     Find the "game-klondike" Any
+    t =     6.36s     Check for interrupting elements affecting "game-klondike" Button
+    t =     6.43s     Synthesize event
+    t =     6.76s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.84s Checking existence of `"stock" Any`
+    t =     7.19s Added attachment named '02-game-light'
+    t =     7.20s Tap "hint" Any
+    t =     7.20s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.21s     Find the "hint" Any
+    t =     8.10s     Check for interrupting elements affecting "hint" Button
+    t =     8.26s     Synthesize event
+    t =     8.58s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.59s Checking existence of `"toast" Any`
+    t =     9.34s Added attachment named '03-hint-light'
+    t =     9.34s Tap "back" Any
+    t =     9.34s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.35s     Find the "back" Any
+    t =     9.42s     Check for interrupting elements affecting "back" Button
+    t =     9.51s     Synthesize event
+    t =     9.83s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.83s Checking existence of `"homeTitle" Any`
+    t =    10.13s Added attachment named '01-home-light'
+    t =    10.13s Tap "settingsButton" Any
+    t =    10.13s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.14s     Find the "settingsButton" Any
+    t =    10.33s     Check for interrupting elements affecting "settingsButton" Button
+    t =    10.47s     Synthesize event
+    t =    10.81s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.18s Checking existence of `"done" Any`
+    t =    12.66s Added attachment named '06-settings-light'
+    t =    12.67s Tap "done" Any
+    t =    12.68s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.92s     Find the "done" Any
+    t =    14.38s     Check for interrupting elements affecting "done" Other
+    t =    14.69s     Synthesize event
+    t =    15.02s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.79s Open com.martinthommesen.betweenstops
+    t =    15.79s     Launch com.martinthommesen.betweenstops
+    t =    15.79s         Terminate com.martinthommesen.betweenstops:31908
+2026-11-11 17:27:21.905 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:27:21.905 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    17.64s         Setting up automation session
+    t =    19.09s         Wait for com.martinthommesen.betweenstops to idle
+    t =    20.62s Checking existence of `"game-klondike" Any`
+    t =    20.81s Tap "game-klondike" Any
+    t =    20.81s     Wait for com.martinthommesen.betweenstops to idle
+    t =    20.81s     Find the "game-klondike" Any
+    t =    20.89s     Check for interrupting elements affecting "game-klondike" Button
+    t =    20.98s     Synthesize event
+    t =    21.28s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.32s Checking existence of `"stock" Any`
+    t =    21.74s Tap "stock" Any[0.50, 0.50]
+    t =    21.74s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.78s     Find the "stock" Any
+    t =    22.31s     Check for interrupting elements affecting "stock" Button
+    t =    22.52s     Synthesize event
+    t =    22.52s         Find the "stock" Button
+    t =    22.84s         Find the "stock" Button
+    t =    22.97s         Find the "stock" Button
+    t =    23.38s     Wait for com.martinthommesen.betweenstops to idle
+    t =    23.38s Checking existence of `"card-QD" Any`
+    t =    24.60s Tap "card-QD" Any[0.50, 0.50]
+    t =    24.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =    24.60s     Find the "card-QD" Any
+    t =    25.20s     Check for interrupting elements affecting "card-QD" Button
+    t =    25.34s     Synthesize event
+    t =    25.34s         Find the "card-QD" Button
+    t =    25.85s         Find the "card-QD" Button
+    t =    26.18s         Find the "card-QD" Button
+    t =    26.90s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.90s Checking existence of `"autoFinish" Any`
+    t =    27.38s Tap "autoFinish" Any
+    t =    27.38s     Wait for com.martinthommesen.betweenstops to idle
+    t =    27.39s     Find the "autoFinish" Any
+    t =    27.73s     Check for interrupting elements affecting "autoFinish" Button
+    t =    27.86s     Synthesize event
+    t =    28.17s     Wait for com.martinthommesen.betweenstops to idle
+    t =    28.23s Checking existence of `"winScreen" Any`
+    t =    28.58s Added attachment named '04-win-light'
+    t =    28.58s Tap "winNewGame" Any
+    t =    28.58s     Wait for com.martinthommesen.betweenstops to idle
+    t =    28.58s     Find the "winNewGame" Any
+    t =    29.10s     Check for interrupting elements affecting "winNewGame" Button
+    t =    29.21s     Synthesize event
+    t =    29.50s     Wait for com.martinthommesen.betweenstops to idle
+    t =    29.50s Checking existence of `"stock" Any`
+    t =    29.68s Added attachment named '05-new-deal-light'
+    t =    29.68s Tap "stock" Any[0.50, 0.50]
+    t =    29.68s     Wait for com.martinthommesen.betweenstops to idle
+    t =    29.68s     Find the "stock" Any
+    t =    29.74s     Check for interrupting elements affecting "stock" Button
+    t =    29.79s     Synthesize event
+    t =    29.79s         Find the "stock" Button
+    t =    29.84s         Find the "stock" Button
+    t =    29.90s         Find the "stock" Button
+    t =    30.25s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.26s Tap "newGame" Any
+    t =    30.26s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.26s     Find the "newGame" Any
+    t =    30.47s     Check for interrupting elements affecting "newGame" Button
+    t =    30.54s     Synthesize event
+    t =    30.85s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.92s Waiting 5.0s for "New Deal" Button to exist
+    t =    31.96s     Checking `Expect predicate `existsNoRetry == 1` for object "New Deal" Button`
+    t =    31.96s         Checking existence of `"New Deal" Button`
+    t =    32.19s Added attachment named '08-confirm-new-deal-light'
+    t =    32.20s Tap "Keep Playing" Button
+    t =    32.20s     Wait for com.martinthommesen.betweenstops to idle
+    t =    32.20s     Find the "Keep Playing" Button
+    t =    32.28s     Check for interrupting elements affecting "Keep Playing" Button
+    t =    32.32s     Synthesize event
+    t =    32.62s     Wait for com.martinthommesen.betweenstops to idle
+    t =    32.80s Waiting 5.0s for "New Deal" Button to not exist
+    t =    33.85s     Checking `Expect predicate `existsNoRetry == 0` for object "New Deal" Button`
+    t =    33.85s         Checking existence of `"New Deal" Button`
+    t =    33.91s Checking existence of `"moves" Any`
+    t =    33.96s Find the "moves" Any
+    t =    34.04s Tap "back" Any
+    t =    34.04s     Wait for com.martinthommesen.betweenstops to idle
+    t =    34.05s     Find the "back" Any
+    t =    34.12s     Check for interrupting elements affecting "back" Button
+    t =    34.17s     Synthesize event
+    t =    34.48s     Wait for com.martinthommesen.betweenstops to idle
+    t =    34.49s Checking existence of `"statsButton" Any`
+    t =    34.52s Tap "statsButton" Any
+    t =    34.52s     Wait for com.martinthommesen.betweenstops to idle
+    t =    34.52s     Find the "statsButton" Any
+    t =    34.57s     Check for interrupting elements affecting "statsButton" Button
+    t =    34.62s     Synthesize event
+    t =    34.94s     Wait for com.martinthommesen.betweenstops to idle
+    t =    35.15s Checking existence of `"done" Any`
+    t =    35.81s Added attachment named '07-stats-light'
+    t =    35.82s Tap "done" Any
+    t =    35.82s     Wait for com.martinthommesen.betweenstops to idle
+    t =    36.24s     Find the "done" Any
+    t =    36.57s     Check for interrupting elements affecting "done" Other
+    t =    36.76s     Synthesize event
+    t =    37.10s     Wait for com.martinthommesen.betweenstops to idle
+    t =    37.89s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testScreenshotsLight]' passed (38.169 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testTappingACardPlaysItsBestMove]' started.
+    t =     0.00s Start Test at 2026-11-11 17:27:43.273
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:32299
+2026-11-11 17:27:44.349 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:27:44.349 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.51s         Setting up automation session
+    t =     3.66s         Wait for com.martinthommesen.betweenstops to idle
+    t =     5.38s Checking existence of `"game-klondike" Any`
+    t =     5.60s Tap "game-klondike" Any
+    t =     5.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =     5.62s     Find the "game-klondike" Any
+    t =     5.72s     Check for interrupting elements affecting "game-klondike" Button
+    t =     5.85s     Synthesize event
+    t =     6.18s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.23s Checking existence of `"stock" Any`
+    t =     6.44s Checking existence of `"card-6D" Any`
+    t =     7.34s Checking existence of `"card-7S" Any`
+    t =     7.75s Tap "card-6D" Any[0.50, 0.50]
+    t =     7.75s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.75s     Find the "card-6D" Any
+    t =     8.21s     Check for interrupting elements affecting "card-6D" Button
+    t =     8.35s     Synthesize event
+    t =     8.35s         Find the "card-6D" Button
+    t =     8.83s         Find the "card-6D" Button
+    t =     9.35s         Find the "card-6D" Button
+    t =    10.14s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.14s Checking existence of `"moves" Any`
+    t =    10.28s Find the "moves" Any
+    t =    10.45s Checking existence of `"boardSignature" Any`
+    t =    10.72s Find the "boardSignature" Any
+    t =    10.85s Find the "card-6D" Button
+    t =    11.53s Find the "card-7S" Any
+    t =    11.93s Find the "card-6D" Button
+    t =    12.54s Find the "card-7S" Button
+    t =    12.86s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testTappingACardPlaysItsBestMove]' passed (13.137 seconds).
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testTestOnlyGameAppearsOnHomeAndOpens]' started.
+    t =     0.00s Start Test at 2026-11-11 17:27:56.410
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.05s     Launch com.martinthommesen.betweenstops
+    t =     0.05s         Terminate com.martinthommesen.betweenstops:32993
+2026-11-11 17:27:57.532 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:27:57.532 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.07s         Setting up automation session
+    t =     4.54s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.58s Checking existence of `"game-testgame" Any`
+    t =     7.04s Checking existence of `"game-klondike" Any`
+    t =     7.23s Swipe up Target Application 'com.martinthommesen.betweenstops'
+    t =     7.23s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.24s     Find the Target Application 'com.martinthommesen.betweenstops'
+    t =     7.34s     Check for interrupting elements affecting "Between Stops" Application
+    t =     7.38s     Synthesize event
+    t =     7.81s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.51s Added attachment named '30-test-game-on-home-light'
+    t =     8.51s Tap "game-testgame" Any
+    t =     8.51s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.52s     Find the "game-testgame" Any
+    t =     8.74s     Check for interrupting elements affecting "game-testgame" Button
+    t =     8.88s     Synthesize event
+    t =     9.21s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.22s Checking existence of `"testGameTitle" Any`
+    t =     9.56s Added attachment named '31-test-game-open-light'
+    t =     9.56s Tap "testGameTap" Any
+    t =     9.56s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.56s     Find the "testGameTap" Any
+    t =     9.65s     Check for interrupting elements affecting "testGameTap" Button
+    t =     9.75s     Synthesize event
+    t =    10.09s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.09s Find the "testGameCount" Any
+    t =    10.16s Tap "back" Any
+    t =    10.16s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.16s     Find the "back" Any
+    t =    10.22s     Check for interrupting elements affecting "back" Button
+    t =    10.32s     Synthesize event
+    t =    10.67s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.67s Checking existence of `"game-testgame" Any`
+    t =    10.91s Tear Down
+Test Case '-[BetweenStopsUITests.BetweenStopsUITests testTestOnlyGameAppearsOnHomeAndOpens]' passed (11.184 seconds).
+Test Suite 'BetweenStopsUITests' passed at 2026-11-11 17:28:07.594.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 287.811 (287.828) seconds
+Test Suite 'BubblesUITests' started at 2026-11-11 17:28:07.595.
+Test Case '-[BetweenStopsUITests.BubblesUITests testANearlyClearedLevelIsWonAndUnlocksTheNext]' started.
+    t =     0.00s Start Test at 2026-11-11 17:28:07.597
+    t =     0.06s Set Up
+    t =     0.06s Open com.martinthommesen.betweenstops
+    t =     0.06s     Launch com.martinthommesen.betweenstops
+    t =     0.06s         Terminate com.martinthommesen.betweenstops:33445
+2026-11-11 17:28:08.738 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:28:08.739 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.30s         Setting up automation session
+    t =     4.62s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.52s Checking existence of `"game-bubbles" Any`
+    t =     6.87s Tap "game-bubbles" Any
+    t =     6.87s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.89s     Find the "game-bubbles" Any
+    t =     7.09s     Check for interrupting elements affecting "game-bubbles" Button
+    t =     7.25s     Synthesize event
+    t =     7.59s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.79s Checking existence of `"launcher" Any`
+    t =     7.94s Find the "shotsLeft" Any
+    t =     7.99s Checking existence of `"launcher" Any`
+    t =     8.11s Checking existence of `"bubbleField" Any`
+    t =     8.16s Press "launcher" Any[0.50, 0.50] for 0.1 seconds, then drag to "bubbleField" Any[0.50, 0.15] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =     8.16s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.17s     Find the "launcher" Any
+    t =     8.29s     Check for interrupting elements affecting "launcher" Button
+    t =     8.37s     Synthesize event
+    t =     8.37s         Find the "launcher" Button
+    t =     8.74s         Find the "launcher" Button
+    t =     9.10s         Find the "bubbleField" Any
+    t =     9.27s         Find the "bubbleField" Other
+    t =     9.47s         Find the "launcher" Button
+    t =    11.30s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.35s Find the "shotsLeft" Any
+    t =    12.40s Checking existence of `"bubblesResult" Any`
+    t =    12.54s Checking existence of `Any (First Match)`
+    t =    12.64s Find the "resultStars" Any
+    t =    12.90s Tap "resultNext" Any
+    t =    12.90s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.91s     Find the "resultNext" Any
+    t =    13.17s     Check for interrupting elements affecting "resultNext" Button
+    t =    13.41s     Synthesize event
+    t =    13.77s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.78s Checking existence of `"bubbleLevel" Any`
+    t =    13.87s Find the "bubbleLevel" Any
+    t =    13.96s Tap "levels" Any
+    t =    13.96s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.97s     Find the "levels" Any
+    t =    14.06s     Check for interrupting elements affecting "levels" Button
+    t =    14.15s     Synthesize event
+    t =    14.48s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.26s Checking existence of `"level-1" Any`
+    t =    16.87s Find the "level-1" Any
+    t =    17.64s Find the "level-2" Any
+    t =    18.78s Find the "level-3" Any
+    t =    19.56s Tap "done" Any
+    t =    19.56s     Wait for com.martinthommesen.betweenstops to idle
+    t =    19.56s     Find the "done" Any
+    t =    20.15s     Check for interrupting elements affecting "done" Other
+    t =    20.57s     Synthesize event
+    t =    20.94s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.88s Tap "back" Any
+    t =    21.88s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.89s     Find the "back" Any
+    t =    22.25s     Check for interrupting elements affecting "back" Button
+    t =    22.40s     Synthesize event
+    t =    22.74s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.75s Checking existence of `"statsButton" Any`
+    t =    23.15s Tap "statsButton" Any
+    t =    23.15s     Wait for com.martinthommesen.betweenstops to idle
+    t =    23.23s     Find the "statsButton" Any
+    t =    23.44s     Check for interrupting elements affecting "statsButton" Button
+    t =    23.59s     Synthesize event
+    t =    23.93s     Wait for com.martinthommesen.betweenstops to idle
+    t =    24.07s Waiting 5.0s for Any (First Match) to exist
+    t =    25.13s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    25.13s         Checking existence of `Any (First Match)`
+    t =    25.72s Tear Down
+Test Case '-[BetweenStopsUITests.BubblesUITests testANearlyClearedLevelIsWonAndUnlocksTheNext]' passed (26.005 seconds).
+Test Case '-[BetweenStopsUITests.BubblesUITests testBubblesIsOnHomeAndStartsAtLevelOne]' started.
+    t =     0.00s Start Test at 2026-11-11 17:28:33.602
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:33687
+2026-11-11 17:28:34.762 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:28:34.763 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     5.86s         Setting up automation session
+    t =     8.10s         Wait for com.martinthommesen.betweenstops to idle
+    t =    10.06s Checking existence of `"game-klondike" Any`
+    t =    10.26s Checking existence of `"game-bubbles" Any`
+    t =    10.39s Tap "game-bubbles" Any
+    t =    10.39s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.39s     Find the "game-bubbles" Any
+    t =    10.45s     Check for interrupting elements affecting "game-bubbles" Button
+    t =    10.53s     Synthesize event
+    t =    10.85s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.03s Checking existence of `"launcher" Any`
+    t =    11.24s Find the "bubbleLevel" Any
+    t =    11.27s Checking existence of `"shotsLeft" Any`
+    t =    11.29s Find the "shotsLeft" Any
+    t =    11.32s Checking existence of `"bubble-0-0" Any`
+    t =    11.44s Checking existence of `"swapBubble" Any`
+    t =    11.63s Tap "back" Any
+    t =    11.63s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.64s     Find the "back" Any
+    t =    11.66s     Check for interrupting elements affecting "back" Button
+    t =    11.73s     Synthesize event
+    t =    12.05s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.05s Checking existence of `"homeTitle" Any`
+    t =    12.12s Checking existence of `Any (First Match)`
+    t =    12.14s Tear Down
+Test Case '-[BetweenStopsUITests.BubblesUITests testBubblesIsOnHomeAndStartsAtLevelOne]' passed (12.393 seconds).
+Test Case '-[BetweenStopsUITests.BubblesUITests testBubblesScreenshotsDark]' started.
+    t =     0.00s Start Test at 2026-11-11 17:28:45.996
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:34236
+2026-11-11 17:28:47.151 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:28:47.151 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.72s         Setting up automation session
+    t =     3.54s         Wait for com.martinthommesen.betweenstops to idle
+    t =     5.28s Checking existence of `"game-bubbles" Any`
+    t =     5.43s Tap "game-bubbles" Any
+    t =     5.43s     Wait for com.martinthommesen.betweenstops to idle
+    t =     5.44s     Find the "game-bubbles" Any
+    t =     5.50s     Check for interrupting elements affecting "game-bubbles" Button
+    t =     5.69s     Synthesize event
+    t =     6.06s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.14s Checking existence of `"launcher" Any`
+    t =     7.07s Added attachment named '41-bubbles-aim-dark'
+    t =     7.08s Find the "bubbleLevel" Any
+    t =     7.12s Tap "levels" Any
+    t =     7.12s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.13s     Find the "levels" Any
+    t =     7.20s     Check for interrupting elements affecting "levels" Button
+    t =     7.26s     Synthesize event
+    t =     7.57s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.79s Checking existence of `"levelSummary" Any`
+    t =    11.80s Find the "levelSummary" Any
+    t =    13.14s Checking existence of `"level-210" Any`
+    t =    15.64s Find the "level-210" Any
+    t =    17.03s Find the "level-211" Any
+    t =    18.31s Added attachment named '44-bubbles-levels-dark'
+    t =    18.32s Tap "level-209" Any
+    t =    18.32s     Wait for com.martinthommesen.betweenstops to idle
+    t =    18.32s     Find the "level-209" Any
+    t =    19.23s     Check for interrupting elements affecting "level-209" Button
+    t =    19.59s     Synthesize event
+    t =    19.92s     Wait for com.martinthommesen.betweenstops to idle
+    t =    20.20s Checking existence of `"bubbleLevel" Any`
+    t =    20.34s Find the "bubbleLevel" Any
+    t =    20.71s Open com.martinthommesen.betweenstops
+    t =    20.71s     Launch com.martinthommesen.betweenstops
+    t =    20.71s         Terminate com.martinthommesen.betweenstops:34584
+2026-11-11 17:29:07.740 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:29:07.740 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    22.66s         Setting up automation session
+    t =    24.77s         Wait for com.martinthommesen.betweenstops to idle
+    t =    26.64s Checking existence of `"game-bubbles" Any`
+    t =    26.90s Tap "game-bubbles" Any
+    t =    26.90s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.90s     Find the "game-bubbles" Any
+    t =    26.98s     Check for interrupting elements affecting "game-bubbles" Button
+    t =    27.04s     Synthesize event
+    t =    27.35s     Wait for com.martinthommesen.betweenstops to idle
+    t =    27.38s Checking existence of `"launcher" Any`
+    t =    27.64s Added attachment named '42-bubbles-start-dark'
+    t =    27.64s Find the "shotsLeft" Any
+    t =    27.67s Checking existence of `"launcher" Any`
+    t =    27.74s Checking existence of `"bubbleField" Any`
+    t =    27.78s Press "launcher" Any[0.50, 0.50] for 0.1 seconds, then drag to "bubbleField" Any[0.50, 0.15] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    27.78s     Wait for com.martinthommesen.betweenstops to idle
+    t =    27.79s     Find the "launcher" Any
+    t =    27.88s     Check for interrupting elements affecting "launcher" Button
+    t =    27.95s     Synthesize event
+    t =    27.95s         Find the "launcher" Button
+    t =    28.06s         Find the "launcher" Button
+    t =    28.21s         Find the "bubbleField" Any
+    t =    28.28s         Find the "bubbleField" Other
+    t =    28.36s         Find the "launcher" Button
+    t =    29.89s     Wait for com.martinthommesen.betweenstops to idle
+    t =    30.90s Find the "shotsLeft" Any
+    t =    30.98s Checking existence of `"bubblesResult" Any`
+    t =    31.29s Added attachment named '43-bubbles-cleared-dark'
+    t =    31.30s Open com.martinthommesen.betweenstops
+    t =    31.30s     Launch com.martinthommesen.betweenstops
+    t =    31.30s         Terminate com.martinthommesen.betweenstops:35536
+2026-11-11 17:29:18.306 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:29:18.306 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    33.00s         Setting up automation session
+    t =    35.41s         Wait for com.martinthommesen.betweenstops to idle
+    t =    37.51s Checking existence of `"game-bubbles" Any`
+    t =    37.94s Tap "game-bubbles" Any
+    t =    37.94s     Wait for com.martinthommesen.betweenstops to idle
+    t =    37.95s     Find the "game-bubbles" Any
+    t =    38.12s     Check for interrupting elements affecting "game-bubbles" Button
+    t =    38.26s     Synthesize event
+    t =    38.61s     Wait for com.martinthommesen.betweenstops to idle
+    t =    38.74s Checking existence of `"launcher" Any`
+    t =    39.43s Find the "shotsLeft" Any
+    t =    39.52s Checking existence of `"launcher" Any`
+    t =    40.08s Checking existence of `"bubbleField" Any`
+    t =    40.14s Press "launcher" Any[0.50, 0.50] for 0.1 seconds, then drag to "bubbleField" Any[0.50, 0.15] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    40.14s     Wait for com.martinthommesen.betweenstops to idle
+    t =    40.14s     Find the "launcher" Any
+    t =    40.39s     Check for interrupting elements affecting "launcher" Button
+    t =    40.48s     Synthesize event
+    t =    40.48s         Find the "launcher" Button
+    t =    40.77s         Find the "launcher" Button
+    t =    40.96s         Find the "bubbleField" Any
+    t =    41.01s         Find the "bubbleField" Other
+    t =    41.07s         Find the "launcher" Button
+    t =    42.70s     Wait for com.martinthommesen.betweenstops to idle
+    t =    43.72s Find the "shotsLeft" Any
+    t =    43.76s Checking existence of `"bubblesResult" Any`
+    t =    44.03s Added attachment named '45-bubbles-out-of-shots-dark'
+    t =    44.04s Tear Down
+Test Case '-[BetweenStopsUITests.BubblesUITests testBubblesScreenshotsDark]' passed (44.348 seconds).
+Test Case '-[BetweenStopsUITests.BubblesUITests testBubblesScreenshotsLight]' started.
+    t =     0.00s Start Test at 2026-11-11 17:29:30.345
+    t =     0.09s Set Up
+    t =     0.09s Open com.martinthommesen.betweenstops
+    t =     0.09s     Launch com.martinthommesen.betweenstops
+    t =     0.09s         Terminate com.martinthommesen.betweenstops:35759
+2026-11-11 17:29:31.509 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:29:31.517 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.94s         Setting up automation session
+    t =     4.16s         Wait for com.martinthommesen.betweenstops to idle
+    t =     5.97s Checking existence of `"game-bubbles" Any`
+    t =     6.32s Tap "game-bubbles" Any
+    t =     6.32s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.34s     Find the "game-bubbles" Any
+    t =     6.50s     Check for interrupting elements affecting "game-bubbles" Button
+    t =     6.59s     Synthesize event
+    t =     6.90s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.93s Checking existence of `"launcher" Any`
+    t =     7.67s Added attachment named '41-bubbles-aim-light'
+    t =     7.68s Find the "bubbleLevel" Any
+    t =     7.73s Tap "levels" Any
+    t =     7.73s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.75s     Find the "levels" Any
+    t =     7.84s     Check for interrupting elements affecting "levels" Button
+    t =     7.90s     Synthesize event
+    t =     8.21s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.60s Checking existence of `"levelSummary" Any`
+    t =    10.73s Find the "levelSummary" Any
+    t =    11.25s Checking existence of `"level-210" Any`
+    t =    13.00s Find the "level-210" Any
+    t =    14.19s Find the "level-211" Any
+    t =    16.17s Added attachment named '44-bubbles-levels-light'
+    t =    16.18s Tap "level-209" Any
+    t =    16.18s     Wait for com.martinthommesen.betweenstops to idle
+    t =    16.21s     Find the "level-209" Any
+    t =    18.00s     Check for interrupting elements affecting "level-209" Button
+    t =    18.37s     Synthesize event
+    t =    18.70s     Wait for com.martinthommesen.betweenstops to idle
+    t =    18.97s Checking existence of `"bubbleLevel" Any`
+    t =    19.26s Find the "bubbleLevel" Any
+    t =    19.73s Open com.martinthommesen.betweenstops
+    t =    19.73s     Launch com.martinthommesen.betweenstops
+    t =    19.73s         Terminate com.martinthommesen.betweenstops:36245
+2026-11-11 17:29:51.102 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:29:51.102 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    21.42s         Setting up automation session
+    t =    23.55s         Wait for com.martinthommesen.betweenstops to idle
+    t =    25.28s Checking existence of `"game-bubbles" Any`
+    t =    25.61s Tap "game-bubbles" Any
+    t =    25.61s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.61s     Find the "game-bubbles" Any
+    t =    25.77s     Check for interrupting elements affecting "game-bubbles" Button
+    t =    25.95s     Synthesize event
+    t =    26.29s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.32s Checking existence of `"launcher" Any`
+    t =    26.90s Added attachment named '42-bubbles-start-light'
+    t =    26.91s Find the "shotsLeft" Any
+    t =    27.04s Checking existence of `"launcher" Any`
+    t =    27.39s Checking existence of `"bubbleField" Any`
+    t =    27.59s Press "launcher" Any[0.50, 0.50] for 0.1 seconds, then drag to "bubbleField" Any[0.50, 0.15] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    27.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =    27.60s     Find the "launcher" Any
+    t =    27.85s     Check for interrupting elements affecting "launcher" Button
+    t =    27.96s     Synthesize event
+    t =    27.96s         Find the "launcher" Button
+    t =    28.10s         Find the "launcher" Button
+    t =    28.26s         Find the "bubbleField" Any
+    t =    28.38s         Find the "bubbleField" Other
+    t =    28.48s         Find the "launcher" Button
+    t =    30.05s     Wait for com.martinthommesen.betweenstops to idle
+    t =    31.10s Find the "shotsLeft" Any
+    t =    31.14s Checking existence of `"bubblesResult" Any`
+    t =    31.44s Added attachment named '43-bubbles-cleared-light'
+    t =    31.44s Open com.martinthommesen.betweenstops
+    t =    31.44s     Launch com.martinthommesen.betweenstops
+    t =    31.44s         Terminate com.martinthommesen.betweenstops:36597
+2026-11-11 17:30:02.888 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:30:02.888 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    33.81s         Setting up automation session
+    t =    36.06s         Wait for com.martinthommesen.betweenstops to idle
+    t =    38.09s Checking existence of `"game-bubbles" Any`
+    t =    38.36s Tap "game-bubbles" Any
+    t =    38.36s     Wait for com.martinthommesen.betweenstops to idle
+    t =    38.38s     Find the "game-bubbles" Any
+    t =    38.50s     Check for interrupting elements affecting "game-bubbles" Button
+    t =    38.61s     Synthesize event
+    t =    38.94s     Wait for com.martinthommesen.betweenstops to idle
+    t =    39.03s Checking existence of `"launcher" Any`
+    t =    39.43s Find the "shotsLeft" Any
+    t =    39.49s Checking existence of `"launcher" Any`
+    t =    39.81s Checking existence of `"bubbleField" Any`
+    t =    39.85s Press "launcher" Any[0.50, 0.50] for 0.1 seconds, then drag to "bubbleField" Any[0.50, 0.15] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    39.85s     Wait for com.martinthommesen.betweenstops to idle
+    t =    39.86s     Find the "launcher" Any
+    t =    40.09s     Check for interrupting elements affecting "launcher" Button
+    t =    40.20s     Synthesize event
+    t =    40.20s         Find the "launcher" Button
+    t =    40.46s         Find the "launcher" Button
+    t =    40.72s         Find the "bubbleField" Any
+    t =    40.80s         Find the "bubbleField" Other
+    t =    40.96s         Find the "launcher" Button
+    t =    42.94s     Wait for com.martinthommesen.betweenstops to idle
+    t =    43.98s Find the "shotsLeft" Any
+    t =    44.05s Checking existence of `"bubblesResult" Any`
+    t =    44.36s Added attachment named '45-bubbles-out-of-shots-light'
+    t =    44.36s Tear Down
+Test Case '-[BetweenStopsUITests.BubblesUITests testBubblesScreenshotsLight]' passed (44.635 seconds).
+Test Case '-[BetweenStopsUITests.BubblesUITests testForceQuitMidLevelRestoresTheExactBoard]' started.
+    t =     0.00s Start Test at 2026-11-11 17:30:14.980
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:36983
+2026-11-11 17:30:16.105 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:30:16.105 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.81s         Setting up automation session
+    t =     4.49s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.42s Checking existence of `"game-bubbles" Any`
+    t =     6.90s Tap "game-bubbles" Any
+    t =     6.90s     Wait for com.martinthommesen.betweenstops to idle
+    t =     6.90s     Find the "game-bubbles" Any
+    t =     7.21s     Check for interrupting elements affecting "game-bubbles" Button
+    t =     7.36s     Synthesize event
+    t =     7.69s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.76s Checking existence of `"launcher" Any`
+    t =     9.97s Find the "shotsLeft" Any
+    t =    10.10s Find the "shotsLeft" Any
+    t =    10.19s Checking existence of `"launcher" Any`
+    t =    11.33s Checking existence of `"bubbleField" Any`
+    t =    11.51s Press "launcher" Any[0.50, 0.50] for 0.1 seconds, then drag to "bubbleField" Any[0.25, 0.30] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    11.51s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.55s     Find the "launcher" Any
+    t =    12.38s     Check for interrupting elements affecting "launcher" Button
+    t =    12.54s     Synthesize event
+    t =    12.54s         Find the "launcher" Button
+    t =    13.40s         Find the "launcher" Button
+    t =    14.04s         Find the "bubbleField" Any
+    t =    14.19s         Find the "bubbleField" Other
+    t =    14.30s         Find the "launcher" Button
+    t =    16.02s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.08s Find the "shotsLeft" Any
+    t =    17.15s Find the "shotsLeft" Any
+    t =    17.20s Checking existence of `"launcher" Any`
+    t =    17.59s Checking existence of `"bubbleField" Any`
+    t =    17.66s Press "launcher" Any[0.50, 0.50] for 0.1 seconds, then drag to "bubbleField" Any[0.80, 0.25] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    17.66s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.67s     Find the "launcher" Any
+    t =    18.05s     Check for interrupting elements affecting "launcher" Button
+    t =    18.17s     Synthesize event
+    t =    18.17s         Find the "launcher" Button
+    t =    18.56s         Find the "launcher" Button
+    t =    18.83s         Find the "bubbleField" Any
+    t =    18.89s         Find the "bubbleField" Other
+    t =    18.97s         Find the "launcher" Button
+    t =    20.80s     Wait for com.martinthommesen.betweenstops to idle
+    t =    21.87s Find the "shotsLeft" Any
+    t =    21.94s Checking existence of `"boardSignature" Any`
+    t =    22.01s Find the "boardSignature" Any
+    t =    22.09s Find the "shotsLeft" Any
+    t =    22.16s Terminate com.martinthommesen.betweenstops:37429
+    t =    23.17s Open com.martinthommesen.betweenstops
+    t =    23.17s     Launch com.martinthommesen.betweenstops
+2026-11-11 17:30:38.154 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:30:38.155 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    23.92s         Setting up automation session
+    t =    26.46s         Wait for com.martinthommesen.betweenstops to idle
+    t =    28.30s Checking existence of `"launcher" Any`
+    t =    29.10s Checking existence of `"boardSignature" Any`
+    t =    29.18s Find the "boardSignature" Any
+    t =    29.24s Find the "shotsLeft" Any
+    t =    29.30s Tear Down
+Test Case '-[BetweenStopsUITests.BubblesUITests testForceQuitMidLevelRestoresTheExactBoard]' passed (29.565 seconds).
+Test Case '-[BetweenStopsUITests.BubblesUITests testRunningOutOfShotsOffersAnotherTry]' started.
+    t =     0.00s Start Test at 2026-11-11 17:30:44.546
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:38103
+2026-11-11 17:30:45.605 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:30:45.606 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.33s         Setting up automation session
+    t =     4.86s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.77s Checking existence of `"game-bubbles" Any`
+    t =     7.38s Tap "game-bubbles" Any
+    t =     7.38s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.38s     Find the "game-bubbles" Any
+    t =     7.78s     Check for interrupting elements affecting "game-bubbles" Button
+    t =     8.03s     Synthesize event
+    t =     8.39s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.43s Checking existence of `"launcher" Any`
+    t =     8.89s Checking existence of `"shotsLeft" Any`
+    t =     9.06s Find the "shotsLeft" Any
+    t =     9.29s Find the "shotsLeft" Any
+    t =     9.50s Checking existence of `"launcher" Any`
+    t =     9.92s Checking existence of `"bubbleField" Any`
+    t =    10.03s Press "launcher" Any[0.50, 0.50] for 0.1 seconds, then drag to "bubbleField" Any[0.50, 0.15] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    10.03s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.05s     Find the "launcher" Any
+    t =    10.78s     Check for interrupting elements affecting "launcher" Button
+    t =    10.87s     Synthesize event
+    t =    10.87s         Find the "launcher" Button
+    t =    11.33s         Find the "launcher" Button
+    t =    11.62s         Find the "bubbleField" Any
+    t =    11.74s         Find the "bubbleField" Other
+    t =    11.97s         Find the "launcher" Button
+    t =    13.70s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.75s Find the "shotsLeft" Any
+    t =    14.81s Checking existence of `"bubblesResult" Any`
+    t =    14.92s Checking existence of `Any (First Match)`
+    t =    15.06s Tap "resultRetry" Any
+    t =    15.06s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.06s     Find the "resultRetry" Any
+    t =    15.65s     Check for interrupting elements affecting "resultRetry" Button
+    t =    15.85s     Synthesize event
+    t =    16.17s     Wait for com.martinthommesen.betweenstops to idle
+    t =    16.19s Checking existence of `"bubblesResult" Any`
+    t =    16.80s Checking existence of `"shotsLeft" Any`
+    t =    16.89s Find the "shotsLeft" Any
+    t =    16.97s Tear Down
+Test Case '-[BetweenStopsUITests.BubblesUITests testRunningOutOfShotsOffersAnotherTry]' passed (17.247 seconds).
+Test Case '-[BetweenStopsUITests.BubblesUITests testSwappingExchangesTheLauncherAndNextBubble]' started.
+    t =     0.00s Start Test at 2026-11-11 17:31:01.795
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:38260
+2026-11-11 17:31:02.869 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:31:02.869 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.03s         Setting up automation session
+    t =     4.69s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.55s Checking existence of `"game-bubbles" Any`
+    t =     6.99s Tap "game-bubbles" Any
+    t =     6.99s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.00s     Find the "game-bubbles" Any
+    t =     7.17s     Check for interrupting elements affecting "game-bubbles" Button
+    t =     7.27s     Synthesize event
+    t =     7.63s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.69s Checking existence of `"launcher" Any`
+    t =     8.07s Find the "launcher" Any
+    t =     8.37s Find the "swapBubble" Any
+    t =     8.82s Tap "swapBubble" Any
+    t =     8.82s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.83s     Find the "swapBubble" Any
+    t =     9.15s     Check for interrupting elements affecting "swapBubble" Button
+    t =     9.21s     Synthesize event
+    t =     9.53s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.53s Find the "launcher" Any
+    t =     9.95s Tap "swap" Any
+    t =     9.95s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.96s     Find the "swap" Any
+    t =    10.07s     Check for interrupting elements affecting "swap" Button
+    t =    10.17s     Synthesize event
+    t =    10.52s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.53s Find the "launcher" Any
+    t =    10.91s Tear Down
+Test Case '-[BetweenStopsUITests.BubblesUITests testSwappingExchangesTheLauncherAndNextBubble]' passed (11.193 seconds).
+Test Suite 'BubblesUITests' passed at 2026-11-11 17:31:12.988.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 185.386 (185.393) seconds
+Test Suite 'MinesUITests' started at 2026-11-11 17:31:12.988.
+Test Case '-[BetweenStopsUITests.MinesUITests testMinesOpensFlagsForgivesOneSlipAndIsWon]' started.
+    t =     0.00s Start Test at 2026-11-11 17:31:12.990
+    t =     0.04s Set Up
+    t =     0.04s Open com.martinthommesen.betweenstops
+    t =     0.04s     Launch com.martinthommesen.betweenstops
+    t =     0.04s         Terminate com.martinthommesen.betweenstops:38807
+2026-11-11 17:31:14.118 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:31:14.119 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.17s         Setting up automation session
+    t =     4.62s         Wait for com.martinthommesen.betweenstops to idle
+    t =     6.45s Checking existence of `"homeTitle" Any`
+    t =     6.99s Swipe up Target Application 'com.martinthommesen.betweenstops'
+    t =     7.00s     Wait for com.martinthommesen.betweenstops to idle
+    t =     7.00s     Find the Target Application 'com.martinthommesen.betweenstops'
+    t =     7.09s     Check for interrupting elements affecting "Between Stops" Application
+    t =     7.15s     Synthesize event
+    t =     7.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.10s Checking existence of `"game-mines" Any`
+    t =     8.30s Tap "game-mines" Any
+    t =     8.30s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.30s     Find the "game-mines" Any
+    t =     8.43s     Check for interrupting elements affecting "game-mines" Button
+    t =     8.52s     Synthesize event
+    t =     8.84s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.01s Checking existence of `"minesBoard" Any`
+    t =     9.37s Find the "minesLeft" Any
+    t =     9.62s Tap "cell-1-2" Any
+    t =     9.62s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.62s     Find the "cell-1-2" Any
+    t =    10.09s     Check for interrupting elements affecting "cell-1-2" Button
+    t =    10.27s     Synthesize event
+    t =    10.60s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.60s Find the "cell-1-2" Any
+    t =    11.09s Press "cell-1-0" Any for 0.6 seconds
+    t =    11.09s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.10s     Find the "cell-1-0" Any
+    t =    11.32s     Check for interrupting elements affecting "cell-1-0" Button
+    t =    11.43s     Synthesize event
+    t =    12.29s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.29s Find the "cell-1-0" Any
+    t =    12.59s Find the "minesLeft" Any
+    t =    12.84s Tap "minesFlag" Any
+    t =    12.84s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.85s     Find the "minesFlag" Any
+    t =    12.91s     Check for interrupting elements affecting "minesFlag" Button
+    t =    13.05s     Synthesize event
+    t =    13.42s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.41s Find the "minesFlag" Any
+    t =    14.54s Tap "cell-1-1" Any
+    t =    14.54s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.56s     Find the "cell-1-1" Any
+    t =    14.84s     Check for interrupting elements affecting "cell-1-1" Button
+    t =    15.11s     Synthesize event
+    t =    15.45s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.46s Find the "cell-1-1" Any
+    t =    15.90s Tap "cell-1-1" Any
+    t =    15.90s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.91s     Find the "cell-1-1" Any
+    t =    16.31s     Check for interrupting elements affecting "cell-1-1" Button
+    t =    16.51s     Synthesize event
+    t =    16.83s     Wait for com.martinthommesen.betweenstops to idle
+    t =    16.83s Find the "cell-1-1" Any
+    t =    17.28s Tap "minesFlag" Any
+    t =    17.28s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.29s     Find the "minesFlag" Any
+    t =    17.48s     Check for interrupting elements affecting "minesFlag" Button
+    t =    17.77s     Synthesize event
+    t =    18.14s     Wait for com.martinthommesen.betweenstops to idle
+    t =    18.15s Find the "minesFlag" Any
+    t =    18.44s Checking existence of `"boardSignature" Any`
+    t =    18.65s Find the "boardSignature" Any
+    t =    18.80s Tap "cell-0-3" Any
+    t =    18.80s     Wait for com.martinthommesen.betweenstops to idle
+    t =    18.80s     Find the "cell-0-3" Any
+    t =    19.23s     Check for interrupting elements affecting "cell-0-3" Button
+    t =    19.40s     Synthesize event
+    t =    19.74s     Wait for com.martinthommesen.betweenstops to idle
+    t =    19.75s Checking existence of `"minesSlipPanel" Any`
+    t =    19.95s Tap "slipTakeBack" Any
+    t =    19.96s     Wait for com.martinthommesen.betweenstops to idle
+    t =    19.96s     Find the "slipTakeBack" Any
+    t =    21.41s     Check for interrupting elements affecting "slipTakeBack" Button
+    t =    21.71s     Synthesize event
+    t =    22.04s     Wait for com.martinthommesen.betweenstops to idle
+    t =    22.05s Checking existence of `"minesSlipPanel" Any`
+    t =    23.67s Checking existence of `"boardSignature" Any`
+    t =    23.76s Find the "boardSignature" Any
+    t =    23.80s Checking existence of `"boardSignature" Any`
+    t =    23.84s Find the "boardSignature" Any
+    t =    23.92s Tap "cell-1-5" Any
+    t =    23.92s     Wait for com.martinthommesen.betweenstops to idle
+    t =    23.93s     Find the "cell-1-5" Any
+    t =    24.10s     Check for interrupting elements affecting "cell-1-5" Button
+    t =    24.19s     Synthesize event
+    t =    24.52s     Wait for com.martinthommesen.betweenstops to idle
+    t =    24.53s Tap "cell-0-0" Any
+    t =    24.53s     Wait for com.martinthommesen.betweenstops to idle
+    t =    24.53s     Find the "cell-0-0" Any
+    t =    24.63s     Check for interrupting elements affecting "cell-0-0" Button
+    t =    24.76s     Synthesize event
+    t =    25.08s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.09s Tap "cell-0-7" Any
+    t =    25.09s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.09s     Find the "cell-0-7" Any
+    t =    25.17s     Check for interrupting elements affecting "cell-0-7" Button
+    t =    25.26s     Synthesize event
+    t =    25.57s     Wait for com.martinthommesen.betweenstops to idle
+    t =    25.58s Checking existence of `"minesResult" Any`
+    t =    25.63s Checking existence of `Any (First Match)`
+    t =    26.04s Added attachment named '75-mines-won-dark'
+    t =    26.05s Tap "resultNewBoard" Any
+    t =    26.05s     Wait for com.martinthommesen.betweenstops to idle
+    t =    26.05s     Find the "resultNewBoard" Any
+    t =    26.65s     Check for interrupting elements affecting "resultNewBoard" Button
+    t =    26.80s     Synthesize event
+    t =    27.14s     Wait for com.martinthommesen.betweenstops to idle
+    t =    27.15s Checking existence of `"minesResult" Any`
+    t =    27.73s Find the "minesLeft" Any
+    t =    27.79s Tear Down
+Test Case '-[BetweenStopsUITests.MinesUITests testMinesOpensFlagsForgivesOneSlipAndIsWon]' passed (28.080 seconds).
+Test Case '-[BetweenStopsUITests.MinesUITests testMinesScreenshotsLight]' started.
+    t =     0.00s Start Test at 2026-11-11 17:31:41.072
+    t =     0.05s Set Up
+    t =     0.05s Open com.martinthommesen.betweenstops
+    t =     0.05s     Launch com.martinthommesen.betweenstops
+    t =     0.06s         Terminate com.martinthommesen.betweenstops:38852
+2026-11-11 17:31:42.205 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:31:42.205 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     3.45s         Setting up automation session
+    t =     7.03s         Wait for com.martinthommesen.betweenstops to idle
+    t =     8.78s Checking existence of `"homeTitle" Any`
+    t =     9.07s Swipe up Target Application 'com.martinthommesen.betweenstops'
+    t =     9.07s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.08s     Find the Target Application 'com.martinthommesen.betweenstops'
+    t =     9.13s     Check for interrupting elements affecting "Between Stops" Application
+    t =     9.17s     Synthesize event
+    t =     9.61s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.08s Checking existence of `"game-mines" Any`
+    t =    10.27s Tap "game-mines" Any
+    t =    10.27s     Wait for com.martinthommesen.betweenstops to idle
+    t =    10.28s     Find the "game-mines" Any
+    t =    10.44s     Check for interrupting elements affecting "game-mines" Button
+    t =    10.52s     Synthesize event
+    t =    10.88s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.07s Checking existence of `"minesBoard" Any`
+    t =    11.39s Added attachment named '70-mines-board-light'
+    t =    11.40s Tap "cell-4-4" Any
+    t =    11.40s     Wait for com.martinthommesen.betweenstops to idle
+    t =    11.40s     Find the "cell-4-4" Any
+    t =    11.73s     Check for interrupting elements affecting "cell-4-4" Button
+    t =    11.88s     Synthesize event
+    t =    12.20s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.21s Checking existence of `"minesSlipPanel" Any`
+    t =    12.57s Added attachment named '71-mines-slip-light'
+    t =    12.57s Tap "slipTakeBack" Any
+    t =    12.57s     Wait for com.martinthommesen.betweenstops to idle
+    t =    12.58s     Find the "slipTakeBack" Any
+    t =    13.22s     Check for interrupting elements affecting "slipTakeBack" Button
+    t =    13.41s     Synthesize event
+    t =    13.72s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.73s Tap "minesFlag" Any
+    t =    13.73s     Wait for com.martinthommesen.betweenstops to idle
+    t =    13.73s     Find the "minesFlag" Any
+    t =    13.79s     Check for interrupting elements affecting "minesFlag" Button
+    t =    13.92s     Synthesize event
+    t =    14.26s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.28s Find the "minesFlag" Any
+    t =    14.64s Added attachment named '72-mines-flag-mode-light'
+    t =    14.64s Tap "minesFlag" Any
+    t =    14.64s     Wait for com.martinthommesen.betweenstops to idle
+    t =    14.65s     Find the "minesFlag" Any
+    t =    14.73s     Check for interrupting elements affecting "minesFlag" Button
+    t =    14.87s     Synthesize event
+    t =    15.24s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.25s Tap "cell-4-4" Any
+    t =    15.25s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.26s     Find the "cell-4-4" Any
+    t =    15.50s     Check for interrupting elements affecting "cell-4-4" Button
+    t =    15.62s     Synthesize event
+    t =    15.93s     Wait for com.martinthommesen.betweenstops to idle
+    t =    15.94s Checking existence of `"minesResult" Any`
+    t =    16.09s Checking existence of `Any (First Match)`
+    t =    16.45s Added attachment named '73-mines-lost-light'
+    t =    16.45s Tap "resultSeeBoard" Any
+    t =    16.45s     Wait for com.martinthommesen.betweenstops to idle
+    t =    16.46s     Find the "resultSeeBoard" Any
+    t =    17.23s     Check for interrupting elements affecting "resultSeeBoard" Button
+    t =    17.41s     Synthesize event
+    t =    17.73s     Wait for com.martinthommesen.betweenstops to idle
+    t =    17.73s Checking existence of `"minesResult" Any`
+    t =    18.58s Added attachment named '74-mines-revealed-light'
+    t =    18.59s Tear Down
+Test Case '-[BetweenStopsUITests.MinesUITests testMinesScreenshotsLight]' passed (18.925 seconds).
+Test Suite 'MinesUITests' passed at 2026-11-11 17:31:59.998.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 47.006 (47.009) seconds
+Test Suite 'RunnerUITests' started at 2026-11-11 17:31:59.998.
+Test Case '-[BetweenStopsUITests.RunnerUITests testRunnerIsOnHomeStartsWithATapAndTakesSwipes]' started.
+    t =     0.00s Start Test at 2026-11-11 17:31:59.999
+    t =     0.08s Set Up
+    t =     0.09s Open com.martinthommesen.betweenstops
+    t =     0.09s     Launch com.martinthommesen.betweenstops
+    t =     0.09s         Terminate com.martinthommesen.betweenstops:39788
+2026-11-11 17:32:01.194 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-11 17:32:01.194 xcodebuild[7075:28495] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.93s         Setting up automation session
+    t =     5.43s         Wait for com.martinthommesen.betweenstops to idle
+    t =     7.50s Checking existence of `"game-archery" Any`
+    t =     7.91s Checking existence of `"game-runner" Any`
+    t =     8.04s Tap "game-runner" Any
+    t =     8.05s     Wait for com.martinthommesen.betweenstops to idle
+    t =     8.05s     Find the "game-runner" Any
+    t =     8.17s     Check for interrupting elements affecting "game-runner" Button
+    t =     8.31s     Synthesize event
+    t =     8.62s     Wait for com.martinthommesen.betweenstops to idle
+    t =     9.93s Checking existence of `"pier" Any`
+TIMEOUT: killed after 1176s: xcodebuild test-without-building -project BetweenStops.xcodeproj -scheme BetweenStops -destination platform=iOS Simulator,id=AA89803E-56A5-43F8-A22E-E3E7E504DEF1 -derivedDataPath /Users/runner/work/play/play/build/DerivedData -resultBundlePath /Users/runner/work/play/play/build/Tests.xcresult -parallel-testing-enabled NO -test-timeouts-enabled YES -default-test-execution-time-allowance 300 -maximum-test-execution-time-allowance 600
+** BUILD INTERRUPTED **
+ci/lib.sh: line 19:  7075 Terminated: 15          "$@"
+ci/lib.sh: line 12: 40756 Terminated: 15          sleep 15

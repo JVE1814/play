@@ -1,0 +1,94 @@
+Building for production...
+[0/10] /Users/runner/work/play/play/Packages/BubbleEngine/.build/arm64-apple-macosx/release/BubbleEnginePackageTests.derived/runner.swift
+[1/10] Write swift-version-7974D3F7F03D5E95.txt
+[1/10] Write sources
+[7/11] Compiling BubbleEngine Basics.swift
+[8/12] Compiling bubble_par main.swift
+[9/13] Compiling BubbleEngineTests GameTests.swift
+[9/13] Write Objects.LinkFileList
+[11/14] Compiling BubbleEnginePackageTests runner.swift
+[11/14] Linking bubble-par
+[12/14] Write Objects.LinkFileList
+[13/14] Linking BubbleEnginePackageTests
+Build complete! (47.27s)
+Test Suite 'All tests' started at 2026-11-11 17:14:42.248.
+Test Suite 'BubbleEnginePackageTests.xctest' started at 2026-11-11 17:14:42.253.
+Test Suite 'GameTests' started at 2026-11-11 17:14:42.253.
+Test Case '-[BubbleEngineTests.GameTests testABubbleInTheDeathRowLoses]' started.
+Test Case '-[BubbleEngineTests.GameTests testABubbleInTheDeathRowLoses]' passed (0.001 seconds).
+Test Case '-[BubbleEngineTests.GameTests testAttemptsDealDifferentQueuesButTheSameBoard]' started.
+Test Case '-[BubbleEngineTests.GameTests testAttemptsDealDifferentQueuesButTheSameBoard]' passed (0.006 seconds).
+Test Case '-[BubbleEngineTests.GameTests testClearingTheBoardWinsWithStars]' started.
+Test Case '-[BubbleEngineTests.GameTests testClearingTheBoardWinsWithStars]' passed (0.001 seconds).
+Test Case '-[BubbleEngineTests.GameTests testOnlyStonesAndBombsLeftStillGetBubbles]' started.
+Test Case '-[BubbleEngineTests.GameTests testOnlyStonesAndBombsLeftStillGetBubbles]' passed (0.001 seconds).
+Test Case '-[BubbleEngineTests.GameTests testRunningOutOfShotsLoses]' started.
+Test Case '-[BubbleEngineTests.GameTests testRunningOutOfShotsLoses]' passed (0.001 seconds).
+Test Case '-[BubbleEngineTests.GameTests testSavedGamesRestoreExactly]' started.
+Test Case '-[BubbleEngineTests.GameTests testSavedGamesRestoreExactly]' passed (0.006 seconds).
+Test Case '-[BubbleEngineTests.GameTests testStarsDependOnShotsUsed]' started.
+Test Case '-[BubbleEngineTests.GameTests testStarsDependOnShotsUsed]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.GameTests testSwapExchangesTheTwoBubbles]' started.
+Test Case '-[BubbleEngineTests.GameTests testSwapExchangesTheTwoBubbles]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.GameTests testTheBotClearsAHandBuiltBoard]' started.
+Test Case '-[BubbleEngineTests.GameTests testTheBotClearsAHandBuiltBoard]' passed (0.006 seconds).
+Test Case '-[BubbleEngineTests.GameTests testTheQueueOnlyOffersColoursStillOnTheBoard]' started.
+Test Case '-[BubbleEngineTests.GameTests testTheQueueOnlyOffersColoursStillOnTheBoard]' passed (0.001 seconds).
+Test Suite 'GameTests' passed at 2026-11-11 17:14:42.278.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.023 (0.026) seconds
+Test Suite 'GridTests' started at 2026-11-11 17:14:42.278.
+Test Case '-[BubbleEngineTests.GridTests testAnchoredCellsHangFromTheCeiling]' started.
+Test Case '-[BubbleEngineTests.GridTests testAnchoredCellsHangFromTheCeiling]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.GridTests testCellCentresShiftOddRowsByHalfABubble]' started.
+Test Case '-[BubbleEngineTests.GridTests testCellCentresShiftOddRowsByHalfABubble]' passed (0.001 seconds).
+Test Case '-[BubbleEngineTests.GridTests testGroupsAreSameColourOnly]' started.
+Test Case '-[BubbleEngineTests.GridTests testGroupsAreSameColourOnly]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.GridTests testNeighboursInEvenAndOddRows]' started.
+Test Case '-[BubbleEngineTests.GridTests testNeighboursInEvenAndOddRows]' passed (0.001 seconds).
+Test Case '-[BubbleEngineTests.GridTests testRowsInitialiserAndSignatureRoundTrip]' started.
+Test Case '-[BubbleEngineTests.GridTests testRowsInitialiserAndSignatureRoundTrip]' passed (0.000 seconds).
+Test Suite 'GridTests' passed at 2026-11-11 17:14:42.283.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'LevelTests' started at 2026-11-11 17:14:42.283.
+Test Case '-[BubbleEngineTests.LevelTests testDifficultyRises]' started.
+Test Case '-[BubbleEngineTests.LevelTests testDifficultyRises]' passed (0.026 seconds).
+Test Case '-[BubbleEngineTests.LevelTests testEveryLevelIsWellFormed]' started.
+Test Case '-[BubbleEngineTests.LevelTests testEveryLevelIsWellFormed]' passed (0.279 seconds).
+Test Case '-[BubbleEngineTests.LevelTests testLevelsAreTheSameOnEveryLaunch]' started.
+Test Case '-[BubbleEngineTests.LevelTests testLevelsAreTheSameOnEveryLaunch]' passed (0.001 seconds).
+Test Case '-[BubbleEngineTests.LevelTests testTheBotClearsLevelsWithinTheirShotLimits]' started.
+Test Case '-[BubbleEngineTests.LevelTests testTheBotClearsLevelsWithinTheirShotLimits]' passed (0.593 seconds).
+Test Suite 'LevelTests' passed at 2026-11-11 17:14:43.186.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.899 (0.904) seconds
+Test Suite 'ShotTests' started at 2026-11-11 17:14:43.186.
+Test Case '-[BubbleEngineTests.ShotTests testBombsClearTheirNeighboursAndSetOffOtherBombs]' started.
+Test Case '-[BubbleEngineTests.ShotTests testBombsClearTheirNeighboursAndSetOffOtherBombs]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testBubblesCutLooseFallStonesIncluded]' started.
+Test Case '-[BubbleEngineTests.ShotTests testBubblesCutLooseFallStonesIncluded]' passed (0.001 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testEveryShotConservesBubbles]' started.
+Test Case '-[BubbleEngineTests.ShotTests testEveryShotConservesBubbles]' passed (0.014 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testShotsAlwaysSettleInAnEmptyAttachedCell]' started.
+Test Case '-[BubbleEngineTests.ShotTests testShotsAlwaysSettleInAnEmptyAttachedCell]' passed (0.008 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testShotsMustPointUpwards]' started.
+Test Case '-[BubbleEngineTests.ShotTests testShotsMustPointUpwards]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testShotStopsAtTheFirstBubbleItTouches]' started.
+Test Case '-[BubbleEngineTests.ShotTests testShotStopsAtTheFirstBubbleItTouches]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testStonesNeverMatch]' started.
+Test Case '-[BubbleEngineTests.ShotTests testStonesNeverMatch]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testStraightUpIntoAnEmptyFieldSticksToTheCeiling]' started.
+Test Case '-[BubbleEngineTests.ShotTests testStraightUpIntoAnEmptyFieldSticksToTheCeiling]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testThreeOfAColourPopAndTwoDoNot]' started.
+Test Case '-[BubbleEngineTests.ShotTests testThreeOfAColourPopAndTwoDoNot]' passed (0.000 seconds).
+Test Case '-[BubbleEngineTests.ShotTests testWallBouncesMirrorExactly]' started.
+Test Case '-[BubbleEngineTests.ShotTests testWallBouncesMirrorExactly]' passed (0.000 seconds).
+Test Suite 'ShotTests' passed at 2026-11-11 17:14:43.216.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.025 (0.030) seconds
+Test Suite 'BubbleEnginePackageTests.xctest' passed at 2026-11-11 17:14:43.216.
+	 Executed 29 tests, with 0 failures (0 unexpected) in 0.949 (0.964) seconds
+Test Suite 'All tests' passed at 2026-11-11 17:14:43.216.
+	 Executed 29 tests, with 0 failures (0 unexpected) in 0.949 (0.968) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+BubbleEngine finished in 51s

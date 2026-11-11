@@ -1,0 +1,4 @@
+engines (swift test): 209 tests, 0 failures (tests/failures: ArcheryEngine 41/0 BubbleEngine 29/0 KlondikeEngine 71/0 MinesEngine 34/0 RunnerEngine 34/0)
+app unit + UI (xcodebuild log): 198 tests, 198 passed, 0 failed, 0 skipped
+TOTAL: 407 tests, 0 failures
+RESULT: FAILED

@@ -1,0 +1,7 @@
+/Users/runner/work/play/play/Games/Runner/Sources/Runner/PierPainter.swift:208:13: warning: variable 'above' was never mutated; consider changing to 'let' constant
+/Users/runner/work/play/play/Games/Runner/Sources/Runner/RunnerSession.swift:2:1: warning: add '@preconcurrency' to suppress 'Sendable'-related warnings from module 'PlayKit'
+/Users/runner/work/play/play/Games/Runner/Sources/Runner/RunnerSession.swift:433:31: warning: capture of 'slot' with non-Sendable type 'SaveSlot' in a '@Sendable' closure
+/Users/runner/work/play/play/Games/Runner/Sources/Runner/RunnerSession.swift:433:41: warning: capture of 'snapshot' with non-Sendable type 'RunnerSave' in a '@Sendable' closure
+2026-11-11 17:11:59.860 appintentsmetadataprocessor[6139:26185] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+2026-11-11 17:12:09.388 appintentsmetadataprocessor[6454:26963] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+2026-11-11 17:12:14.050 appintentsmetadataprocessor[6643:27397] warning: Metadata extraction skipped. No AppIntents.framework dependency found.

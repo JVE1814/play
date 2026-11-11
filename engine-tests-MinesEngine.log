@@ -1,0 +1,108 @@
+Building for production...
+[0/10] /Users/runner/work/play/play/Packages/MinesEngine/.build/arm64-apple-macosx/release/MinesEnginePackageTests.derived/runner.swift
+[1/10] Write swift-version-7974D3F7F03D5E95.txt
+[2/10] Write sources
+[7/11] Compiling MinesEngine Difficulty.swift
+[8/12] Compiling mines_calibrate main.swift
+[9/13] Compiling MinesEngineTests GenerationTests.swift
+[9/13] Write Objects.LinkFileList
+[11/14] Compiling MinesEnginePackageTests runner.swift
+[11/14] Linking mines-calibrate
+[12/14] Write Objects.LinkFileList
+[13/14] Linking MinesEnginePackageTests
+Build complete! (65.83s)
+Test Suite 'All tests' started at 2026-11-11 17:17:46.712.
+Test Suite 'MinesEnginePackageTests.xctest' started at 2026-11-11 17:17:46.729.
+Test Suite 'GenerationTests' started at 2026-11-11 17:17:46.729.
+Test Case '-[MinesEngineTests.GenerationTests testBoardsAreQuickToMake]' started.
+Test Case '-[MinesEngineTests.GenerationTests testBoardsAreQuickToMake]' passed (0.037 seconds).
+Test Case '-[MinesEngineTests.GenerationTests testBoardsAreTheSameOnEveryLaunch]' started.
+Test Case '-[MinesEngineTests.GenerationTests testBoardsAreTheSameOnEveryLaunch]' passed (0.001 seconds).
+Test Case '-[MinesEngineTests.GenerationTests testEveryFirstTapOpensAnAreaOnAFairBoard]' started.
+Test Case '-[MinesEngineTests.GenerationTests testEveryFirstTapOpensAnAreaOnAFairBoard]' passed (0.103 seconds).
+Test Case '-[MinesEngineTests.GenerationTests testTheFallbackIsWonByTheFirstTapWherePlayerTaps]' started.
+Test Case '-[MinesEngineTests.GenerationTests testTheFallbackIsWonByTheFirstTapWherePlayerTaps]' passed (0.004 seconds).
+Test Case '-[MinesEngineTests.GenerationTests testTheSameSeedAndTapLayTheSameBoard]' started.
+Test Case '-[MinesEngineTests.GenerationTests testTheSameSeedAndTapLayTheSameBoard]' passed (0.001 seconds).
+Test Suite 'GenerationTests' passed at 2026-11-11 17:17:46.878.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.145 (0.148) seconds
+Test Suite 'GridTests' started at 2026-11-11 17:17:46.878.
+Test Case '-[MinesEngineTests.GridTests testCellSetsCombineAndIterateInOrder]' started.
+Test Case '-[MinesEngineTests.GridTests testCellSetsCombineAndIterateInOrder]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.GridTests testCellSetsSaveAsAListAndRejectBadOnes]' started.
+Test Case '-[MinesEngineTests.GridTests testCellSetsSaveAsAListAndRejectBadOnes]' passed (0.001 seconds).
+Test Case '-[MinesEngineTests.GridTests testCornersEdgesAndTheMiddleHaveTheirNeighbours]' started.
+Test Case '-[MinesEngineTests.GridTests testCornersEdgesAndTheMiddleHaveTheirNeighbours]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.GridTests testMinefieldCountsAndFloods]' started.
+Test Case '-[MinesEngineTests.GridTests testMinefieldCountsAndFloods]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.GridTests testSplitMixMatchesReferenceSequence]' started.
+Test Case '-[MinesEngineTests.GridTests testSplitMixMatchesReferenceSequence]' passed (0.000 seconds).
+Test Suite 'GridTests' passed at 2026-11-11 17:17:46.881.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'RulesTests' started at 2026-11-11 17:17:46.881.
+Test Case '-[MinesEngineTests.RulesTests testABoardIsWonWithoutAnyFlags]' started.
+Test Case '-[MinesEngineTests.RulesTests testABoardIsWonWithoutAnyFlags]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.RulesTests testAChordOnAWrongFlagOpensAMine]' started.
+Test Case '-[MinesEngineTests.RulesTests testAChordOnAWrongFlagOpensAMine]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.RulesTests testAFlaggedSquareCannotBeOpenedAndAnOpenOneCannotBeFlagged]' started.
+Test Case '-[MinesEngineTests.RulesTests testAFlaggedSquareCannotBeOpenedAndAnOpenOneCannotBeFlagged]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.RulesTests testAFreshBoardWaitsForItsFirstTap]' started.
+Test Case '-[MinesEngineTests.RulesTests testAFreshBoardWaitsForItsFirstTap]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.RulesTests testALostBoardShowsItsMinesAndWrongFlags]' started.
+Test Case '-[MinesEngineTests.RulesTests testALostBoardShowsItsMinesAndWrongFlags]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.RulesTests testANumberWhoseFlagsMatchOpensItsNeighbours]' started.
+Test Case '-[MinesEngineTests.RulesTests testANumberWhoseFlagsMatchOpensItsNeighbours]' passed (0.002 seconds).
+Test Case '-[MinesEngineTests.RulesTests testEndingTheBoardAfterASlipLoses]' started.
+Test Case '-[MinesEngineTests.RulesTests testEndingTheBoardAfterASlipLoses]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.RulesTests testMinesLeftGoesBelowZeroWithTooManyFlags]' started.
+Test Case '-[MinesEngineTests.RulesTests testMinesLeftGoesBelowZeroWithTooManyFlags]' passed (0.002 seconds).
+Test Case '-[MinesEngineTests.RulesTests testNothingCanBeDoneOnceTheBoardIsOver]' started.
+Test Case '-[MinesEngineTests.RulesTests testNothingCanBeDoneOnceTheBoardIsOver]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.RulesTests testOpeningAnAreaClearsWrongFlagsAndTheLastSafeSquareWins]' started.
+Test Case '-[MinesEngineTests.RulesTests testOpeningAnAreaClearsWrongFlagsAndTheLastSafeSquareWins]' passed (0.001 seconds).
+Test Case '-[MinesEngineTests.RulesTests testOpeningANumberOpensOnlyThatSquare]' started.
+Test Case '-[MinesEngineTests.RulesTests testOpeningANumberOpensOnlyThatSquare]' passed (0.001 seconds).
+Test Case '-[MinesEngineTests.RulesTests testTheFirstMineCanBeTakenBackAndTheSecondLoses]' started.
+Test Case '-[MinesEngineTests.RulesTests testTheFirstMineCanBeTakenBackAndTheSecondLoses]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.RulesTests testTheSolverWinsEveryDifficultyThroughTheGame]' started.
+Test Case '-[MinesEngineTests.RulesTests testTheSolverWinsEveryDifficultyThroughTheGame]' passed (0.022 seconds).
+Test Case '-[MinesEngineTests.RulesTests testWithoutForgivenessTheFirstMineLoses]' started.
+Test Case '-[MinesEngineTests.RulesTests testWithoutForgivenessTheFirstMineLoses]' passed (0.010 seconds).
+Test Suite 'RulesTests' passed at 2026-11-11 17:17:46.931.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.039 (0.050) seconds
+Test Suite 'SaveTests' started at 2026-11-11 17:17:46.931.
+Test Case '-[MinesEngineTests.SaveTests testAFreshBoardStillLaysItsMinesAfterARelaunch]' started.
+Test Case '-[MinesEngineTests.SaveTests testAFreshBoardStillLaysItsMinesAfterARelaunch]' passed (0.001 seconds).
+Test Case '-[MinesEngineTests.SaveTests testDamagedSavesAreCaught]' started.
+Test Case '-[MinesEngineTests.SaveTests testDamagedSavesAreCaught]' passed (0.001 seconds).
+Test Case '-[MinesEngineTests.SaveTests testSavedBoardsComeBackExactlyInEveryState]' started.
+Test Case '-[MinesEngineTests.SaveTests testSavedBoardsComeBackExactlyInEveryState]' passed (0.002 seconds).
+Test Case '-[MinesEngineTests.SaveTests testTheSignatureDrawsTheBoard]' started.
+Test Case '-[MinesEngineTests.SaveTests testTheSignatureDrawsTheBoard]' passed (0.000 seconds).
+Test Suite 'SaveTests' passed at 2026-11-11 17:17:46.936.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+Test Suite 'SolverTests' started at 2026-11-11 17:17:46.936.
+Test Case '-[MinesEngineTests.SolverTests testAFiftyFiftyIsReportedNotGuessed]' started.
+Test Case '-[MinesEngineTests.SolverTests testAFiftyFiftyIsReportedNotGuessed]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.SolverTests testOneNumberAtATime]' started.
+Test Case '-[MinesEngineTests.SolverTests testOneNumberAtATime]' passed (0.000 seconds).
+Test Case '-[MinesEngineTests.SolverTests testSomeBoardsNeedTwoNumbersTogether]' started.
+Test Case '-[MinesEngineTests.SolverTests testSomeBoardsNeedTwoNumbersTogether]' passed (0.002 seconds).
+Test Case '-[MinesEngineTests.SolverTests testTheMineCountSettlesASquareNoNumberTouches]' started.
+Test Case '-[MinesEngineTests.SolverTests testTheMineCountSettlesASquareNoNumberTouches]' passed (0.001 seconds).
+Test Case '-[MinesEngineTests.SolverTests testTheSolverNeverMakesAMistake]' started.
+Test Case '-[MinesEngineTests.SolverTests testTheSolverNeverMakesAMistake]' passed (0.093 seconds).
+Test Case '-[MinesEngineTests.SolverTests testTwoNumbersTogether]' started.
+Test Case '-[MinesEngineTests.SolverTests testTwoNumbersTogether]' passed (0.000 seconds).
+Test Suite 'SolverTests' passed at 2026-11-11 17:17:47.034.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.097 (0.098) seconds
+Test Suite 'MinesEnginePackageTests.xctest' passed at 2026-11-11 17:17:47.034.
+	 Executed 34 tests, with 0 failures (0 unexpected) in 0.287 (0.305) seconds
+Test Suite 'All tests' passed at 2026-11-11 17:17:47.034.
+	 Executed 34 tests, with 0 failures (0 unexpected) in 0.287 (0.322) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+ci/lib.sh: line 12: 13183 Terminated: 15          sleep "$limit"
+MinesEngine finished in 70s
