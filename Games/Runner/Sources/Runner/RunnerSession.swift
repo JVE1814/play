@@ -13,9 +13,16 @@ public final class RunnerHUD: ObservableObject {
     /// Whole seconds of magnet left (0 without one).
     @Published public private(set) var magnetSeconds = 0
 
-    func show(_ run: Run) {
-        if score != run.score { score = run.score }
-        if coins != run.coinCount { coins = run.coinCount }
+    private var shownAt = 0.0
+
+    /// - Parameter calm: the score and coins change at most 15 times a second (`at` is the
+    ///   time in seconds).
+    func show(_ run: Run, calm: Bool = false, at time: Double = 0) {
+        if !calm || time - shownAt >= 1.0 / 15 || time < shownAt || run.status != .running {
+            if score != run.score || coins != run.coinCount { shownAt = time }
+            if score != run.score { score = run.score }
+            if coins != run.coinCount { coins = run.coinCount }
+        }
         if hasShield != run.hasShield { hasShield = run.hasShield }
         let seconds = Int(run.magnetLeft.rounded(.up))
         if magnetSeconds != seconds { magnetSeconds = seconds }
@@ -321,7 +328,7 @@ public final class RunnerSession: ObservableObject, GameSession {
                 break
             }
         }
-        hud.show(run)
+        hud.show(run, calm: tuning.contains(.calmHUD), at: now.timeIntervalSinceReferenceDate)
         if prompt != run.prompt {
             prompt = run.prompt
             if let prompt { context.announce(prompt.instruction) }

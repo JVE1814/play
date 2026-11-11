@@ -17,7 +17,13 @@ struct PierTuning: OptionSet {
     /// saves made along the way are written off the main thread.
     static let frameClock = PierTuning(rawValue: 1 << 2)
 
-    static let all: PierTuning = [.gpu, .fullRate, .frameClock]
+    /// The pier's accessibility is set outside the timeline, so it is not rebuilt every frame.
+    static let quietAccessibility = PierTuning(rawValue: 1 << 3)
+    /// The score and coins in the heads-up display change at most 15 times a second.
+    static let calmHUD = PierTuning(rawValue: 1 << 4)
+
+    /// The calm heads-up display is tried by name only (`hud`): it lags the score a little.
+    static let all: PierTuning = [.gpu, .fullRate, .frameClock, .quietAccessibility]
 
     init(rawValue: Int) { self.rawValue = rawValue }
 
@@ -26,7 +32,7 @@ struct PierTuning: OptionSet {
             self = .all
             return
         }
-        let names: [String: PierTuning] = ["gpu": .gpu, "rate": .fullRate, "clock": .frameClock]
+        let names: [String: PierTuning] = ["gpu": .gpu, "rate": .fullRate, "clock": .frameClock, "ax": .quietAccessibility, "hud": .calmHUD]
         self = PierTuning(list.split(separator: ",").compactMap { names[String($0)] })
     }
 }

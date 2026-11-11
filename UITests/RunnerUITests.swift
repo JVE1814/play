@@ -58,9 +58,12 @@ final class RunnerUITests: UITestCase {
     /// Runs a busy course live for eight seconds with each way of drawing and clocking the pier,
     /// and prints how evenly the frames came (`RUNNER-PERF` lines in the test log).
     func testThePierIsDrawnSmoothly() {
-        for (tuning, appearance) in [("none", "dark"), ("gpu", "dark"), ("gpu,rate", "dark"), ("gpu,rate,clock", "dark"),
-                                     ("gpu,rate,clock", "light")] {
-            launch(["-scenario", "runnerProbe", "-frameProbe", "8", "-pierTuning", tuning], appearance: appearance, animated: true)
+        for (tuning, appearance, sound) in [("none", "dark", false), ("gpu,rate,clock", "dark", false),
+                                            ("gpu,rate,clock,ax", "dark", false), ("gpu,rate,clock,hud", "dark", false),
+                                            ("gpu,rate,clock,ax,hud", "dark", false), ("gpu,rate,clock,ax,hud", "light", false),
+                                            ("gpu,rate,clock,ax,hud", "dark", true)] {
+            launch(["-scenario", "runnerProbe", "-frameProbe", "8", "-pierTuning", tuning] + (sound ? ["-settings.sound", "YES"] : []),
+                   appearance: appearance, animated: true)
             waitFor("game-runner").tap()
             // The run starts by itself and pauses once measured. Nothing asks the app anything
             // meanwhile: a query of what is on screen holds up the frames it would measure.
@@ -68,9 +71,9 @@ final class RunnerUITests: UITestCase {
             let probe = element("frameProbe")
             XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(tuning))")
             let report = probe.value as? String ?? ""
-            print("RUNNER-PERF live tuning=\(tuning) appearance=\(appearance) \(report)")
+            print("RUNNER-PERF live tuning=\(tuning) appearance=\(appearance) sound=\(sound) \(report)")
             let attachment = XCTAttachment(string: report)
-            attachment.name = "frame-probe-\(tuning)-\(appearance)"
+            attachment.name = "frame-probe-\(tuning)-\(appearance)\(sound ? "-sound" : "")"
             attachment.lifetime = .keepAlways
             add(attachment)
             XCTAssertTrue(report.hasPrefix("frames="), report)

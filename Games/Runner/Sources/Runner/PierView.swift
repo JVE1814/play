@@ -21,6 +21,9 @@ struct PierView: View {
     /// never ends, so a plain flag would leave the next one ignored.)
     @State private var spentTouch: CGPoint?
 
+    /// A heads-up display that never changes, for accessibility that need not follow the run.
+    private static let still = RunnerHUD()
+
     /// How far a thumb has to travel to count as a swipe.
     private static let swipeDistance: CGFloat = 22
     /// What the drifting clouds and the turning coins are timed from.
@@ -41,19 +44,12 @@ struct PierView: View {
                             Task { @MainActor in owner.togglePause() }
                         }
                     })
-                    // Inside the timeline, so what VoiceOver says follows the run.
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Pier")
-                    .accessibilityValue(voiceOver ? session.spokenStatus : "")
-                    .accessibilityHint("Swipe left or right to change lane, up to jump, down to slide. Double-tap to start or carry on.")
-                    .accessibilityAddTraits(.allowsDirectInteraction)
-                    .accessibilityAction { session.tap() }
-                    .accessibilityAction(named: "Move left") { session.perform(.left) }
-                    .accessibilityAction(named: "Move right") { session.perform(.right) }
-                    .accessibilityAction(named: "Jump") { session.perform(.jump) }
-                    .accessibilityAction(named: "Slide") { session.perform(.slide) }
-                    .accessibilityIdentifier("pier")
+                    .modifier(PierAccessibility(session: session, hud: Self.still, speaks: voiceOver, applies: !session.tuning.contains(.quietAccessibility)))
                 }
+                // Outside the timeline, the pier's accessibility is not rebuilt every frame; what
+                // VoiceOver says follows the heads-up display instead.
+                .modifier(PierAccessibility(session: session, hud: voiceOver ? session.hud : Self.still, speaks: voiceOver,
+                                            applies: session.tuning.contains(.quietAccessibility)))
                 .contentShape(Rectangle())
                 .gesture(swipes)
 
@@ -377,6 +373,33 @@ struct RunnerIcon: View {
             figure.translateBy(x: middle.x, y: middle.y + side * 0.36)
             figure.scaleBy(x: scale, y: -scale)
             RunnerFigure.upright(in: &figure, swing: 0.9, tucked: false, armsUp: false, scarfWave: 0.03)
+        }
+    }
+}
+
+/// The pier as VoiceOver and the UI tests see it: one element that takes the four moves.
+private struct PierAccessibility: ViewModifier {
+    let session: RunnerSession
+    @ObservedObject var hud: RunnerHUD
+    let speaks: Bool
+    let applies: Bool
+
+    func body(content: Content) -> some View {
+        if applies {
+            content
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Pier")
+                .accessibilityValue(speaks ? session.spokenStatus : "")
+                .accessibilityHint("Swipe left or right to change lane, up to jump, down to slide. Double-tap to start or carry on.")
+                .accessibilityAddTraits(.allowsDirectInteraction)
+                .accessibilityAction { session.tap() }
+                .accessibilityAction(named: "Move left") { session.perform(.left) }
+                .accessibilityAction(named: "Move right") { session.perform(.right) }
+                .accessibilityAction(named: "Jump") { session.perform(.jump) }
+                .accessibilityAction(named: "Slide") { session.perform(.slide) }
+                .accessibilityIdentifier("pier")
+        } else {
+            content
         }
     }
 }
