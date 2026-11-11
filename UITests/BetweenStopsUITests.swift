@@ -119,6 +119,7 @@ final class BetweenStopsUITests: UITestCase {
         launch(["-includeTestGames"], appearance: "light")
         let tile = waitFor("game-testgame")
         XCTAssertTrue(element("game-klondike").exists)
+        app.swipeUp()                        // the test game is the sixth tile, below the fold
         snap("30-test-game-on-home-light")
         tile.tap()
         waitFor("testGameTitle")
