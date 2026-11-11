@@ -116,6 +116,10 @@ final class MainThreadSampler: @unchecked Sendable {
         var selfImages: [String: Int] = [:]
         var selfSymbols: [String: Int] = [:]
         var inclusive: [String: Int] = [:]
+        /// For the stretches it was blocked, what it was waiting in: the first two callers
+        /// above the system's waiting calls.
+        var blockedIn: [String: Int] = [:]
+        var blocked = 0
         for index in 0..<count {
             let row = frames + index * Self.depth
             let leaf = name(row[0])
@@ -125,6 +129,16 @@ final class MainThreadSampler: @unchecked Sendable {
                 continue
             }
             busy += 1
+            if leaf.symbol.contains("wait") {
+                blocked += 1
+                var callers: [String] = []
+                for depth in 1..<max(1, lengths[index]) where callers.count < 2 {
+                    let frame = name(row[depth])
+                    if frame.image.hasPrefix("libsystem_") || frame.image == "libdispatch.dylib" { continue }
+                    callers.append("\(frame.symbol)@\(frame.image)")
+                }
+                blockedIn[callers.joined(separator: "<"), default: 0] += 1
+            }
             selfImages[leaf.image, default: 0] += 1
             selfSymbols["\(leaf.symbol)@\(leaf.image)", default: 0] += 1
             var seen = Set<String>()
@@ -138,5 +152,6 @@ final class MainThreadSampler: @unchecked Sendable {
         }
         return " prof_samples=\(count) prof_waiting=\(String(format: "%.1f", 100 * Double(waiting) / Double(max(1, count))))"
             + " prof_self=\(top(selfImages, 8)) prof_incl=\(top(inclusive, 12)) prof_sym=\(top(selfSymbols, 14))"
+            + " prof_blocked=\(String(format: "%.1f", 100 * Double(blocked) / Double(max(1, busy)))) prof_blocked_in=\(top(blockedIn, 6))"
     }
 }

@@ -63,7 +63,11 @@ final class FrameProbe {
     private var watcher: CFRunLoopObserver?
     /// Where the main thread's time goes, sampled over the measurement.
     private var sampler: MainThreadSampler?
-    private(set) var report: String?
+    /// Painting may happen off the main thread (a canvas that renders asynchronously), so what
+    /// the probe keeps is guarded.
+    private let lock = NSLock()
+    private var finalReport: String?
+    var report: String? { lock.withLock { finalReport } }
 
     /// Frames in the first half second are not counted: the screen is still settling.
     private static let warmUp = 0.5
@@ -75,7 +79,7 @@ final class FrameProbe {
 
     /// The view update of a frame begins.
     func updateBegins(at time: CFTimeInterval) {
-        updateBegan = time
+        lock.withLock { updateBegan = time }
     }
 
     /// Starts timing the main thread's working stretches. Call on the main thread.
@@ -84,7 +88,10 @@ final class FrameProbe {
         sampler = Thread.isMainThread ? MainThreadSampler() : nil
         let activities = CFRunLoopActivity.afterWaiting.rawValue | CFRunLoopActivity.beforeWaiting.rawValue
         let watcher = CFRunLoopObserverCreateWithHandler(nil, activities, true, 0) { [weak self] _, activity in
-            guard let self, self.report == nil else { return }
+            guard let self else { return }
+            self.lock.lock()
+            defer { self.lock.unlock() }
+            guard self.finalReport == nil else { return }
             let now = CACurrentMediaTime()
             let cpu = Self.threadCPU()
             if activity == .afterWaiting {
@@ -104,7 +111,9 @@ final class FrameProbe {
 
     /// A beat of the probe's display link. False once the probe is done.
     func beat(at time: CFTimeInterval) -> Bool {
-        guard report == nil else { return false }
+        lock.lock()
+        defer { lock.unlock() }
+        guard finalReport == nil else { return false }
         if let lastBeat, let started, time - started > Self.warmUp { beats.append(time - lastBeat) }
         lastBeat = time
         return true
@@ -112,7 +121,9 @@ final class FrameProbe {
 
     /// Records one frame, painted from `begin` to `end`. True once the probe has seen enough.
     func record(begin: CFTimeInterval, end: CFTimeInterval) -> Bool {
-        guard report == nil else { return false }
+        lock.lock()
+        defer { lock.unlock() }
+        guard finalReport == nil else { return false }
         let start = started ?? begin
         started = start
         if begin - start > Self.warmUp, cpuAtStart == nil {
@@ -128,7 +139,7 @@ final class FrameProbe {
         last = begin
         guard begin - start > Self.warmUp + seconds else { return false }
         let usage = cpuAtStart.flatMap { cpu in wallAtStart.map { (Self.threadCPU() - cpu) / max(0.001, begin - $0) } } ?? 0
-        report = Self.describe(intervals: intervals, paints: paints, works: works, beats: beats, busy: busy, busyCPU: busyCPU)
+        finalReport = Self.describe(intervals: intervals, paints: paints, works: works, beats: beats, busy: busy, busyCPU: busyCPU)
             // The main thread's CPU per frame drawn, in milliseconds.
             + String(format: " main_cpu_use=%.3f main_cpu_per_frame=%.2f", usage,
                      usage * intervals.reduce(0, +) * 1_000 / max(1, Double(intervals.count)))

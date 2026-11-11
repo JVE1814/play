@@ -62,8 +62,9 @@ final class RunnerUITests: UITestCase {
     /// The simulator's frame rate says more about how busy the CI machine is than about the
     /// app; the main thread's CPU time (`main_cpu_*`, `cpu_*`) and the frame's work do not.
     func testThePierIsDrawnSmoothly() {
-        for appearance in ["dark", "light"] {
-            launch(["-scenario", "runnerProbe", "-frameProbe", "8"], appearance: appearance, animated: true)
+        let ways = [("gpu", "dark"), ("cpu", "dark"), ("gpu-async", "dark"), ("cpu-async", "dark"), ("gpu", "light")]
+        for (render, appearance) in ways {
+            launch(["-scenario", "runnerProbe", "-frameProbe", "8", "-pierRender", render], appearance: appearance, animated: true)
             waitFor("game-runner").tap()
             // The run starts by itself and pauses once measured. Nothing asks the app anything
             // meanwhile: a query of what is on screen holds up the frames it would measure.
@@ -71,9 +72,9 @@ final class RunnerUITests: UITestCase {
             let probe = element("frameProbe")
             XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(appearance))")
             let report = probe.value as? String ?? ""
-            print("RUNNER-PERF live appearance=\(appearance) \(report)")
+            print("RUNNER-PERF live render=\(render) appearance=\(appearance) \(report)")
             let attachment = XCTAttachment(string: report)
-            attachment.name = "frame-probe-\(appearance)"
+            attachment.name = "frame-probe-\(render)-\(appearance)"
             attachment.lifetime = .keepAlways
             add(attachment)
             XCTAssertGreaterThan(measure("frames", in: report), 60, report)
