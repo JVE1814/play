@@ -24,8 +24,6 @@ struct PierView: View {
     /// A heads-up display that never changes, for accessibility that need not follow the run.
     private static let still = RunnerHUD()
 
-    private var rendering: PierRendering { PierRendering(options: session.context.options) }
-
     /// How far a thumb has to travel to count as a swipe.
     private static let swipeDistance: CGFloat = 22
     /// What the drifting clouds and the turning coins are timed from.
@@ -38,14 +36,17 @@ struct PierView: View {
                     let frame = makeFrame(size: proxy.size, date: live ? timeline.date : Date())
                     let probe = session.probe
                     let owner = session
-                    rendering.apply(to: Canvas(opaque: true, rendersAsynchronously: rendering.async) { context, _ in
+                    Canvas(opaque: true) { context, _ in
                         var context = context
                         let begin = CACurrentMediaTime()
                         PierPainter(f: frame).paint(&context)
                         if let probe, probe.record(begin: begin, end: CACurrentMediaTime()) {
                             Task { @MainActor in owner.togglePause() }
                         }
-                    })
+                    }
+                    // Drawn on the GPU: on the CPU, a frame of the pier is too much for 120 Hz.
+                    // It covers its whole frame, so nothing beneath needs blending in.
+                    .drawingGroup(opaque: true)
                 }
                 // Outside the timeline, the pier's accessibility is not rebuilt every frame; what
                 // VoiceOver says follows the heads-up display instead.
@@ -387,31 +388,5 @@ private struct PierAccessibility: ViewModifier {
             .accessibilityAction(named: "Jump") { session.perform(.jump) }
             .accessibilityAction(named: "Slide") { session.perform(.slide) }
             .accessibilityIdentifier("pier")
-    }
-}
-
-/// How the pier's canvas is rendered. Drawn on the GPU: on the CPU, a frame of the pier is too
-/// much for 120 Hz. It covers its whole frame, so nothing beneath needs blending in.
-///
-/// Debug builds can choose another way with `-pierRender cpu|gpu-async|cpu-async`, to compare.
-/// Rendering asynchronously takes the canvas's rendering, and any wait for the GPU, off the
-/// main thread.
-struct PierRendering {
-    var gpu = true
-    var async = false
-
-    init(options: LaunchOptions) {
-        guard let choice = options.value(after: "-pierRender") else { return }
-        gpu = choice.hasPrefix("gpu")
-        async = choice.hasSuffix("async")
-    }
-
-    @ViewBuilder
-    func apply(to canvas: some View) -> some View {
-        if gpu {
-            canvas.drawingGroup(opaque: true)
-        } else {
-            canvas
-        }
     }
 }

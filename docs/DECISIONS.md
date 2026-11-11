@@ -327,8 +327,12 @@ worth a look before you submit are marked **review**.
 86. **Smoothness is measured, not guessed.** `-frameProbe SECONDS` with `-scenario runnerProbe`
     (a busy course that never ends a run left in the middle lane) starts the run by itself and
     reports frame gaps, paint time, each frame's work from view update to painted, missed beats
-    of a display link of its own, and the main thread's CPU time. A UI test runs it in both
-    appearances and holds a frame's work within a 120 Hz frame; a unit test times rasterizing
-    pier frames on the CPU. CI prints the `RUNNER-PERF` lines. In the simulator on CI the
-    frame rate follows how busy the machine is (the main thread used a quarter of its CPU
-    while frames were missed); the CPU times are what to compare from one change to the next.
+    of a display link of its own, the main thread's CPU time, and a sampling profile of the
+    main thread by library and symbol. A UI test runs it once and holds a frame's work within a
+    120 Hz frame; a unit test times rasterizing pier frames on the CPU. CI prints the
+    `RUNNER-PERF` lines. In the simulator on CI the frame rate is not the app's: about two
+    thirds of the main thread's time is spent blocked in Metal's `waitUntilScheduled` as
+    RenderBox finishes each frame (the simulator serializes every GPU command to the host),
+    while the frame's own work is about 3 ms. The CPU times are what to compare from one change
+    to the next. Rendering the canvas asynchronously, to take that wait off the main thread,
+    never finished a measured run in the simulator, so it is not used.
