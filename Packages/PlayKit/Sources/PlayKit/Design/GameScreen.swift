@@ -133,18 +133,21 @@ public struct Readout: View {
 }
 
 /// The panel shown over the table when a game or level ends. VoiceOver stays inside it until
-/// it is dismissed.
+/// it is dismissed. It sits in the middle unless `alignment` moves it, for instance clear of
+/// the square a game wants left in view.
 public struct ResultPanel<Content: View>: View {
     let identifier: String
+    let alignment: Alignment
     let content: Content
 
-    public init(identifier: String, @ViewBuilder content: () -> Content) {
+    public init(identifier: String, alignment: Alignment = .center, @ViewBuilder content: () -> Content) {
         self.identifier = identifier
+        self.alignment = alignment
         self.content = content()
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: alignment) {
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
                 .accessibilityHidden(true)

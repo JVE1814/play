@@ -8,15 +8,15 @@ Between Stops: Commute Games  [28]
 
 ## Subtitle (30)
 
-Four games for one thumb  [24]
+Five games for one thumb  [24]
 
 ## Promotional text (170)
 
-Solitaire, a bubble shooter with 2,000 levels, target archery and an endless run down a pier, all made for one thumb. Pick up where you left off, even offline.  [159]
+Solitaire, a bubble shooter with 2,000 levels, target archery, an endless run down a pier and a logic puzzle that never needs a guess, all for one thumb. Works offline.  [168]
 
 ## Description (4000)
 
-Between Stops is a small collection of calm, colorful games for the moments between here and there. It has four games, all built for one-handed play on a moving train: Solitaire (classic Klondike), Bubbles, a bubble shooter with 2,000 levels, Archery, with 30 levels of target archery, and Runner, an endless run down a pier.
+Between Stops is a small collection of calm, colorful games for the moments between here and there. It has five games, all built for one-handed play on a moving train: Solitaire (classic Klondike), Bubbles, a bubble shooter with 2,000 levels, Archery, with 30 levels of target archery, Runner, an endless run down a pier, and Mines, a logic puzzle whose boards never need a guess.
 
 MADE FOR ONE THUMB
 • Tap any card and it makes its best move. No precise dragging needed (but you can drag too).
@@ -46,6 +46,12 @@ RUNNER: HOW FAR CAN YOU GET?
 • Coins along the way, a magnet that pulls them in, and a shield that takes one hit.
 • It gets faster the further you run. Every run has a goal to beat, and your first runs show you the moves.
 • Sunset in light mode, a moonlit night in dark mode.
+
+MINES: LOGIC, NOT LUCK
+• Tap a square to open it; each number says how many mines touch it. Hold a square, or switch on Flag, to mark a mine.
+• Your first tap always opens an area, and every board can be cleared by reasoning alone. You never have to guess.
+• Bumped by the train? The first mine you open on a board can be taken back.
+• Easy, Medium and Hard, with your best time on each.
 
 CLASSIC KLONDIKE
 • Draw 1 or Draw 3, with unlimited redeals.
@@ -95,6 +101,7 @@ try it: open Solitaire from the home screen, then tap any face-up card to move i
 stock (bottom right) to draw. Settings (gear icon) switches between Draw 1 and Draw 3. In
 Archery, touch and hold anywhere on the range to draw the bow, slide to aim, and let go to shoot.
 In Runner, tap the pier to start, then swipe left, right, up or down.
+In Mines, tap a square to open it and touch and hold one to flag it.
 
 ## Screenshots
 
