@@ -6,7 +6,8 @@ final class MinesUITests: UITestCase {
     /// The near-win board: Easy, with four safe squares left among the mines of the top two
     /// rows. (0,3), (1,0) and (1,1) are mines.
     func testMinesOpensFlagsForgivesOneSlipAndIsWon() {
-        launch(["-scenario", "minesNearWin", "-showBoardSignature"], appearance: "light")
+        // In dark mode: the screenshot test below covers light, so this one shows the dark board.
+        launch(["-scenario", "minesNearWin", "-showBoardSignature"], appearance: "dark")
         openMines()
         XCTAssertEqual(element("minesLeft").value as? String, "12")
 
@@ -37,7 +38,7 @@ final class MinesUITests: UITestCase {
         for square in ["cell-1-5", "cell-0-0", "cell-0-7"] { element(square).tap() }
         waitFor("minesResult")
         XCTAssertTrue(labelled("Board cleared!").exists)
-        snap("75-mines-won-light")
+        snap("75-mines-won-dark")
         element("resultNewBoard").tap()
         XCTAssertFalse(element("minesResult").exists)
         XCTAssertEqual(element("minesLeft").value as? String, "16", "the next board is Medium")
@@ -47,10 +48,6 @@ final class MinesUITests: UITestCase {
 
     func testMinesScreenshotsLight() {
         captureScreens(appearance: "light")
-    }
-
-    func testMinesScreenshotsDark() {
-        captureScreens(appearance: "dark")
     }
 
     /// A Medium board part-way through; (4,4) is a mine next to the opening.

@@ -368,7 +368,14 @@ worth a look before you submit are marked **review**.
     mode), and open around a number. Openings, flags, the slip and the result are announced.
     Reduce Motion turns off the ripple as an area opens and the shake of a refused tap.
 94. **No new sounds**: opening plays `tap`, a flag `place`, a mine `crash`, a win `win`.
-95. **Three UI tests and three launches**, to keep the CI job inside its 30 minutes (the last
-    run before Mines took 1,267 s). One plays a prepared board through opening, both ways of
-    flagging, a slip taken back and a win; two capture the screenshots in light and dark. The
-    rest is covered by unit tests, which take seconds.
+95. **Two UI tests and two launches**, to keep the CI job inside its 30 minutes. One plays a
+    prepared board in dark mode through opening, both ways of flagging, a slip taken back and a
+    win; the other captures the light screenshots. The rest is covered by unit tests, which
+    take seconds.
+96. **Two level-list UI tests were folded into their games' screenshot tests.** With five
+    games a run on a slow runner (a build of 8.5 minutes instead of 5.5) used up the UI tests'
+    share of the 30 minutes with every test passing and Runner's last ones still to go. The
+    Bubbles and Archery screenshot tests already opened the level list; they now also check
+    the level count, the current level and the next one locked, and Bubbles picks a level from
+    it. That saves two launches, and dropping Mines' dark screenshot test a third (its game
+    test runs in dark mode instead), about a minute in all. Decision 73's precedent.

@@ -73,18 +73,6 @@ final class ArcheryUITests: UITestCase {
         XCTAssertEqual(element("archeryLevel").value as? String, "7 of 30")
     }
 
-    func testTheLevelListShowsAllThirtyLevels() {
-        launch(["-level", "12"])
-        openArchery()
-        element("levels").tap()
-        XCTAssertTrue(waitFor("levelSummary").label.contains("30 levels"))
-        XCTAssertEqual(waitFor("level-12").value as? String, "0 of 3 stars, current")
-        XCTAssertEqual(element("level-13").value as? String, "Locked")
-        element("level-4").tap()
-        XCTAssertEqual(waitFor("archeryLevel").value as? String, "4 of 30")
-        XCTAssertEqual(element("distance").value as? String, "20 metres")
-    }
-
     // MARK: Screenshots
 
     func testArcheryScreenshotsLight() {
@@ -107,7 +95,10 @@ final class ArcheryUITests: UITestCase {
         openArchery()
         snap("52-archery-aim-\(appearance)")
         element("levels").tap()
-        waitFor("level-22")
+        // The level list: all thirty, the current one, and the next locked.
+        XCTAssertTrue(waitFor("levelSummary").label.contains("30 levels"))
+        XCTAssertEqual(waitFor("level-22").value as? String, "0 of 3 stars, current")
+        XCTAssertEqual(element("level-23").value as? String, "Locked")
         snap("56-archery-levels-\(appearance)")
         element("done").tap()
 

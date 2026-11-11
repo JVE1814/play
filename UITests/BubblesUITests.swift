@@ -79,18 +79,6 @@ final class BubblesUITests: UITestCase {
         XCTAssertEqual(element("shotsLeft").value as? String, shots)
     }
 
-    func testTheLevelListShowsAllTwoThousandLevels() {
-        launch(["-level", "37"])
-        openBubbles()
-        XCTAssertEqual(element("bubbleLevel").value as? String, "37 of \(levelCount)")
-        element("levels").tap()
-        XCTAssertTrue(waitFor("levelSummary").label.contains("\(levelCount) levels"))
-        XCTAssertEqual(waitFor("level-37").value as? String, "0 of 3 stars, current")
-        XCTAssertEqual(element("level-38").value as? String, "Locked")
-        element("level-12").tap()
-        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "12 of \(levelCount)")
-    }
-
     // MARK: Screenshots
 
     func testBubblesScreenshotsLight() {
@@ -105,10 +93,15 @@ final class BubblesUITests: UITestCase {
         launch(["-level", "210", "-demoAim", "-0.42"], appearance: appearance)
         openBubbles()
         snap("41-bubbles-aim-\(appearance)")
+        XCTAssertEqual(element("bubbleLevel").value as? String, "210 of \(levelCount)")
         element("levels").tap()
-        waitFor("level-210")
+        // The level list: every level, the current one, the next locked, and any open one playable.
+        XCTAssertTrue(waitFor("levelSummary").label.contains("\(levelCount) levels"))
+        XCTAssertEqual(waitFor("level-210").value as? String, "0 of 3 stars, current")
+        XCTAssertEqual(element("level-211").value as? String, "Locked")
         snap("44-bubbles-levels-\(appearance)")
-        element("done").tap()
+        element("level-12").tap()
+        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "12 of \(levelCount)")
 
         launch(["-scenario", "bubblesNearWin"], appearance: appearance)
         openBubbles()
