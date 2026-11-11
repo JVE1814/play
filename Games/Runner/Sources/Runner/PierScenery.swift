@@ -186,6 +186,16 @@ extension Path {
         return path
     }
 
+    static func quad(_ a: Spot, _ b: Spot, _ c: Spot, _ d: Spot) -> Path {
+        var path = Path()
+        path.move(to: a.point)
+        path.addLine(to: b.point)
+        path.addLine(to: c.point)
+        path.addLine(to: d.point)
+        path.closeSubpath()
+        return path
+    }
+
     static func line(_ from: Spot, _ to: Spot) -> Path {
         var path = Path()
         path.move(to: from.point)

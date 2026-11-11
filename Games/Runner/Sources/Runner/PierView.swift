@@ -15,6 +15,8 @@ struct PierView: View {
     /// every frame, so the app goes idle between steps.
     let live: Bool
     @Environment(\.colorScheme) private var colorScheme
+    /// What VoiceOver says about the pier is worked out every frame only while it is listening.
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
     /// Where the touch that has already made its move began. (A touch the system takes away
     /// never ends, so a plain flag would leave the next one ignored.)
     @State private var spentTouch: CGPoint?
@@ -42,7 +44,7 @@ struct PierView: View {
                     // Inside the timeline, so what VoiceOver says follows the run.
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Pier")
-                    .accessibilityValue(session.spokenStatus)
+                    .accessibilityValue(voiceOver ? session.spokenStatus : "")
                     .accessibilityHint("Swipe left or right to change lane, up to jump, down to slide. Double-tap to start or carry on.")
                     .accessibilityAddTraits(.allowsDirectInteraction)
                     .accessibilityAction { session.tap() }

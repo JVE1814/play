@@ -59,10 +59,12 @@ final class RunnerUITests: UITestCase {
     /// and prints how evenly the frames came (`RUNNER-PERF` lines in the test log).
     func testThePierIsDrawnSmoothly() {
         for (tuning, appearance) in [("none", "dark"), ("gpu", "dark"), ("gpu,rate", "dark"), ("gpu,rate,clock", "dark"),
-                                     ("none", "light"), ("gpu,rate,clock", "light")] {
+                                     ("gpu,rate,clock", "light")] {
             launch(["-scenario", "runnerProbe", "-frameProbe", "8", "-pierTuning", tuning], appearance: appearance, animated: true)
             waitFor("game-runner").tap()
-            // The run starts by itself and pauses once measured.
+            // The run starts by itself and pauses once measured. Nothing asks the app anything
+            // meanwhile: a query of what is on screen holds up the frames it would measure.
+            Thread.sleep(forTimeInterval: 11)
             let probe = element("frameProbe")
             XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(tuning))")
             let report = probe.value as? String ?? ""

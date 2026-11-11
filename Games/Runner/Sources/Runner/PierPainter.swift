@@ -112,6 +112,11 @@ struct PierPainter {
 
     /// How far down the pier things are drawn.
     private static let sight = 120.0
+    /// Points below which a face is too thin to see (half a point: a pixel and a half), and
+    /// is not drawn.
+    private static let detail = 0.5
+    /// Points per metre below which only the outline of a thing is drawn (about 40 m off).
+    private static let farDetail = 7.5
     private static let bollardSpacing = 6.0
 
     /// 1 for something near, falling to 0 over the last stretch before `sight`.
@@ -227,7 +232,7 @@ struct PierPainter {
 
     /// A strip of planks between two distances from the middle, from `z0` out to `z1`.
     private func strip(_ x0: Double, _ x1: Double, from z0: Double, to z1: Double) -> Path {
-        Path.polygon([cam.point(x0, 0, z0), cam.point(x1, 0, z0), cam.point(x1, 0, z1), cam.point(x0, 0, z1)])
+        Path.quad(cam.point(x0, 0, z0), cam.point(x1, 0, z0), cam.point(x1, 0, z1), cam.point(x0, 0, z1))
     }
 
     private func deck(_ context: inout GraphicsContext) {
@@ -242,31 +247,43 @@ struct PierPainter {
         context.fill(strip(-half, -half + kerb, from: near, to: far), with: .color(scenery.kerb))
         context.fill(strip(half - kerb, half, from: near, to: far), with: .color(scenery.kerb))
 
-        // The gaps between the planks, coming towards the runner.
+        // The gaps between the planks, coming towards the runner. Each is level across the
+        // view, so it is drawn as a thin bar; the near ones, at full strength, all at once.
         let plank = 1.25
+        var gaps = Path()
         var z = plank - distance.truncatingRemainder(dividingBy: plank) + near - plank
         while z < 70 {
             if z >= near {
-                context.stroke(Path.line(cam.point(-half + kerb, 0, z), cam.point(half - kerb, 0, z)),
-                               with: .color(scenery.plankLine.opacity(min(1, (70 - z) / 30))),
-                               lineWidth: max(0.5, cam.scale(z) * 0.035))
+                let left = cam.point(-half + kerb, 0, z)
+                let right = cam.point(half - kerb, 0, z)
+                let thickness = max(0.5, cam.scale(z) * 0.035)
+                let bar = CGRect(x: left.x, y: left.y - thickness / 2, width: right.x - left.x, height: thickness)
+                let strength = min(1, (70 - z) / 30)
+                if strength >= 1 {
+                    gaps.addRect(bar)
+                } else {
+                    context.fill(Path(bar), with: .color(scenery.plankLine.opacity(strength)))
+                }
             }
             z += plank
         }
+        context.fill(gaps, with: .color(scenery.plankLine))
 
         // The lanes: two pale lines painted in dashes.
         let dash = 5.0
+        var dashes = Path()
         for line in 1..<Body.lanes {
             let x = PierCamera.x(ofLane: Double(line) - 0.5)
             var start = dash - distance.truncatingRemainder(dividingBy: dash) + near - dash
             while start < 90 {
                 let end = start + dash * 0.55
                 if end > near {
-                    context.fill(strip(x - 0.035, x + 0.035, from: max(near, start), to: end), with: .color(scenery.laneLine))
+                    dashes.addPath(strip(x - 0.035, x + 0.035, from: max(near, start), to: end))
                 }
                 start += dash
             }
         }
+        context.fill(dashes, with: .color(scenery.laneLine))
     }
 
     /// A box standing on the planks: its top and the side the camera can see, then its front.
@@ -274,16 +291,18 @@ struct PierPainter {
                      z near: Double, _ far: Double, front: Color, side: Color, top: Color) {
         let z0 = max(near, PierCamera.near)
         let z1 = max(far, z0 + 0.01)
-        if cam.x < x0 {
-            context.fill(Path.polygon([cam.point(x0, y0, z0), cam.point(x0, y1, z0), cam.point(x0, y1, z1), cam.point(x0, y0, z1)]), with: .color(side))
+        // A side or a top seen as a sliver thinner than `detail` is left out.
+        let shrink = cam.focal * (1 / z0 - 1 / z1)
+        if cam.x < x0, (x0 - cam.x) * shrink > Self.detail {
+            context.fill(Path.quad(cam.point(x0, y0, z0), cam.point(x0, y1, z0), cam.point(x0, y1, z1), cam.point(x0, y0, z1)), with: .color(side))
         }
-        if cam.x > x1 {
-            context.fill(Path.polygon([cam.point(x1, y0, z0), cam.point(x1, y1, z0), cam.point(x1, y1, z1), cam.point(x1, y0, z1)]), with: .color(side))
+        if cam.x > x1, (cam.x - x1) * shrink > Self.detail {
+            context.fill(Path.quad(cam.point(x1, y0, z0), cam.point(x1, y1, z0), cam.point(x1, y1, z1), cam.point(x1, y0, z1)), with: .color(side))
         }
-        if y1 < PierCamera.height {
-            context.fill(Path.polygon([cam.point(x0, y1, z0), cam.point(x1, y1, z0), cam.point(x1, y1, z1), cam.point(x0, y1, z1)]), with: .color(top))
+        if y1 < PierCamera.height, (PierCamera.height - y1) * shrink > Self.detail {
+            context.fill(Path.quad(cam.point(x0, y1, z0), cam.point(x1, y1, z0), cam.point(x1, y1, z1), cam.point(x0, y1, z1)), with: .color(top))
         }
-        context.fill(Path.polygon([cam.point(x0, y0, z0), cam.point(x1, y0, z0), cam.point(x1, y1, z0), cam.point(x0, y1, z0)]), with: .color(front))
+        context.fill(Path.quad(cam.point(x0, y0, z0), cam.point(x1, y0, z0), cam.point(x1, y1, z0), cam.point(x0, y1, z0)), with: .color(front))
     }
 
     /// A bollard on each edge with a rope sagging to the next, and a lamp at every fourth.
@@ -302,8 +321,8 @@ struct PierPainter {
             layer.stroke(rope, with: .color(scenery.rope), style: StrokeStyle(lineWidth: max(0.6, scale * 0.035), lineCap: .round))
             box(&layer, x: x - 0.1, x + 0.1, y: 0, 0.9, z: z, z + 0.2, front: scenery.post, side: scenery.postSide, top: scenery.postTop)
             let cap = cam.point(x, 0.9, z)
-            layer.fill(Path.box(x: cap.x - scale * 0.13, y: cap.y - scale * 0.07, width: scale * 0.26, height: scale * 0.09, radius: scale * 0.03),
-                       with: .color(scenery.postCap))
+            if scale > Self.farDetail { layer.fill(Path.box(x: cap.x - scale * 0.13, y: cap.y - scale * 0.07, width: scale * 0.26, height: scale * 0.09, radius: scale * 0.03),
+                       with: .color(scenery.postCap)) }
             guard index % 4 == 0 else { continue }
             let foot = cam.point(x + side * 0.05, 0, z)
             let head = cam.point(x + side * 0.05, 3.4, z)
@@ -354,6 +373,7 @@ struct PierPainter {
         let scale = cam.scale(z)
         let topLeft = cam.point(x0, y1, z)
         let bottomRight = cam.point(x1, y0, z)
+        guard scale > Self.farDetail else { return }
         let inset = scale * 0.035
         let frame = CGRect(x: topLeft.x + inset, y: topLeft.y + inset,
                            width: bottomRight.x - topLeft.x - 2 * inset, height: bottomRight.y - topLeft.y - 2 * inset)
@@ -467,6 +487,11 @@ struct PierPainter {
         let across = radius * (0.22 + 0.78 * turn)
         var layer = context
         layer.opacity = haze(z) * passed(z)
+        guard radius > 2.5 else {
+            // A couple of pixels across: the face alone.
+            layer.fill(Path.oval(x: centre.x, y: centre.y, rx: across, ry: radius), with: .color(PierStyle.coin))
+            return
+        }
         layer.fill(Path.oval(x: centre.x, y: centre.y, rx: across, ry: radius), with: .color(PierStyle.coinEdge))
         layer.fill(Path.oval(x: centre.x, y: centre.y - radius * 0.06, rx: across * 0.82, ry: radius * 0.84), with: .color(PierStyle.coin))
         if radius > 3 {
