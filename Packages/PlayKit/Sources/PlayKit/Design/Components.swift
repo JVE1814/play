@@ -3,23 +3,27 @@ import SwiftUI
 /// Flat button on a game table. Uses the game's accent from the environment.
 struct TableButtonStyle: ButtonStyle {
     var prominent = false
+    /// A switched-on toggle: drawn inverted, in the table's ink, so it reads as on whatever
+    /// the accent (the prominent yellow would vanish on a yellow table).
+    var selected = false
 
     func makeBody(configuration: Configuration) -> some View {
-        StyledTableButton(configuration: configuration, prominent: prominent)
+        StyledTableButton(configuration: configuration, prominent: prominent, selected: selected)
     }
 
     private struct StyledTableButton: View {
         let configuration: ButtonStyleConfiguration
         let prominent: Bool
+        let selected: Bool
         @Environment(\.accent) private var accent
         @Environment(\.isEnabled) private var isEnabled
 
         var body: some View {
             configuration.label
-                .foregroundStyle(prominent ? Theme.onHighlight : accent.onTable)
+                .foregroundStyle(selected ? accent.table : prominent ? Theme.onHighlight : accent.onTable)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.Radius.m, style: .continuous)
-                        .fill(prominent ? Theme.highlight : accent.tableControl)
+                        .fill(selected ? accent.onTable : prominent ? Theme.highlight : accent.tableControl)
                 )
                 .opacity(isEnabled ? (configuration.isPressed ? 0.7 : 1) : 0.4)
         }
@@ -27,19 +31,22 @@ struct TableButtonStyle: ButtonStyle {
 }
 
 /// A large toolbar button: icon above a short label, at least `Theme.minTouchTarget` tall.
+/// Given `isOn`, it is a toggle: drawn inverted while on, and read by VoiceOver as on or off.
 public struct ToolbarButton: View {
     let title: String
     let systemImage: String
     let identifier: String
     let prominent: Bool
+    let isOn: Bool?
     let action: () -> Void
 
     public init(_ title: String, systemImage: String, identifier: String, prominent: Bool = false,
-                action: @escaping () -> Void) {
+                isOn: Bool? = nil, action: @escaping () -> Void) {
         self.title = title
         self.systemImage = systemImage
         self.identifier = identifier
         self.prominent = prominent
+        self.isOn = isOn
         self.action = action
     }
 
@@ -59,9 +66,24 @@ public struct ToolbarButton: View {
             .frame(maxWidth: .infinity, minHeight: Theme.minTouchTarget + 8)
             .contentShape(Rectangle())
         }
-        .buttonStyle(TableButtonStyle(prominent: prominent))
+        .buttonStyle(TableButtonStyle(prominent: prominent, selected: isOn == true))
         .accessibilityLabel(title)
+        .modifier(ToggleAccessibility(isOn: isOn))
         .accessibilityIdentifier(identifier)
+    }
+}
+
+private struct ToggleAccessibility: ViewModifier {
+    let isOn: Bool?
+
+    func body(content: Content) -> some View {
+        if let isOn {
+            content
+                .accessibilityValue(isOn ? "On" : "Off")
+                .accessibilityAddTraits(isOn ? .isSelected : [])
+        } else {
+            content
+        }
     }
 }
 
