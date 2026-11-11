@@ -1,35 +1,29 @@
 import Foundation
 
-/// A playable level: its starting grid, colours and shot limit.
+/// A playable level: the layout that passed calibration, and its shot limit.
 public struct Level: Hashable, Sendable {
-    public let number: Int
-    public let grid: BubbleGrid
-    public let palette: [BubbleColor]
-    public let seed: UInt64
+    public let layout: LevelLayout
     /// Shots the bot needed to clear it.
     public let par: Int
     public let shotLimit: Int
-    /// Names of the shape and colouring used (for variety checks and debugging).
-    public let pattern: String
-    public let coloring: String
-    /// Which generated variant passed calibration (0 unless the first one was not clearable).
-    public let variant: Int
 }
 
-/// The generated layout of a level, before calibration.
+/// The generated layout of a level: its starting grid and colours.
 public struct LevelLayout: Hashable, Sendable {
     public let number: Int
+    /// Which generated variant this is (0 unless the first one failed calibration).
     public let variant: Int
     public let grid: BubbleGrid
     public let palette: [BubbleColor]
     public let seed: UInt64
+    /// Names of the shape and colouring used (for variety checks and debugging).
     public let pattern: String
     public let coloring: String
 
     /// A game on this layout with an unlimited supply of shots (used to calibrate par).
     public var calibrationGame: BubbleGame {
         BubbleGame(grid: grid, palette: palette, shotLimit: 10_000, par: 0,
-                   seed: seed ^ 0x5851_F42D_4C95_7F2D, levelNumber: number)
+                   seed: BubbleGame.queueSeed(for: self), levelNumber: number)
     }
 }
 
@@ -44,22 +38,14 @@ public enum LevelCatalog {
 
     public static func level(_ number: Int) -> Level {
         precondition((1...count).contains(number), "no such level")
-        let calibration = tabledPar(for: number) ?? calibrate(number)
-        let layout = layout(number, variant: calibration.variant)
-        return Level(number: number, grid: layout.grid, palette: layout.palette, seed: layout.seed,
-                     par: calibration.par, shotLimit: shotLimit(par: calibration.par),
-                     pattern: layout.pattern, coloring: layout.coloring, variant: calibration.variant)
+        let par = Int(LevelPar.par[number - 1])
+        return Level(layout: layout(number, variant: Int(LevelPar.variant[number - 1])),
+                     par: par, shotLimit: shotLimit(par: par))
     }
 
     /// Par plus about 30% (at least three) spare shots.
     public static func shotLimit(par: Int) -> Int {
         par + max(3, Int((Double(par) * 0.3).rounded(.up)))
-    }
-
-    static func tabledPar(for number: Int) -> (par: Int, variant: Int)? {
-        let index = number - 1
-        guard index < LevelPar.par.count, index < LevelPar.variant.count, LevelPar.par[index] > 0 else { return nil }
-        return (Int(LevelPar.par[index]), Int(LevelPar.variant[index]))
     }
 
     /// The fewest shots a level may need: no one-shot giveaways, and later levels take longer.
@@ -253,7 +239,6 @@ public enum LevelCatalog {
         }
     }
 
-    /// Fills the masked cells with colours.
     static func paint(_ mask: [[Bool]], coloring: Coloring, palette: [BubbleColor], difficulty: Difficulty,
                       rng: inout SeededGenerator) -> BubbleGrid {
         var grid = BubbleGrid()
@@ -314,8 +299,10 @@ public enum LevelCatalog {
             attempts += 1
             let used = Set(top.compactMap { grid[$0]?.color })
             guard let missing = palette.first(where: { !used.contains($0) }) else { break }
-            let counts = Dictionary(grouping: top, by: { grid[$0]?.color })
-            guard let crowded = counts.max(by: { $0.value.count < $1.value.count })?.value, crowded.count > 1 else { break }
+            // The most crowded colour gives one up. On a tie it is the colour that comes first in
+            // the row: a dictionary's own order changes from one launch to the next.
+            let groups = Dictionary(grouping: top, by: { grid[$0]?.color }).values
+            guard let crowded = groups.max(by: { ($0.count, $1[0]) < ($1.count, $0[0]) }), crowded.count > 1 else { break }
             grid[rng.pick(crowded)] = .color(missing)
         }
     }

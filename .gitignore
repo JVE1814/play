@@ -1,7 +1,6 @@
 # Xcode / XcodeGen output (project is generated from project.yml)
 *.xcodeproj/
 *.xcworkspace/
-!Packages/**/*.xcworkspace/
 DerivedData/
 build/
 .build/

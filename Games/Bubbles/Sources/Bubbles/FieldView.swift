@@ -2,8 +2,6 @@ import BubbleEngine
 import PlayKit
 import SwiftUI
 
-/// The playing field: bubbles, aim guide, launcher and shot in flight.
-///
 /// Aiming works with one thumb: touch above the launcher to point at a spot, or drag below it to
 /// pull back like a slingshot. Lift to shoot; slide back onto the launcher to cancel. The guide
 /// shows exactly where the bubble will settle.
@@ -11,7 +9,6 @@ struct FieldView: View {
     @ObservedObject var session: BubblesSession
     @ObservedObject var preferences: BubblesPreferences
     let layout: FieldLayout
-    let animate: Bool
 
     var body: some View {
         let grid = session.game.grid
@@ -60,7 +57,8 @@ struct FieldView: View {
 
     @ViewBuilder private var aimGuide: some View {
         if let trace = session.aimTrace {
-            let points = guidePoints(trace)
+            // The whole path, or just its first few bubble lengths.
+            let points = (preferences.fullAimGuide ? trace.path : trace.path.truncated(to: 4)).map(layout.point)
             Path { path in
                 guard let first = points.first else { return }
                 path.move(to: first)
@@ -79,45 +77,16 @@ struct FieldView: View {
         }
     }
 
-    /// The guide's polyline in points: the whole path, or just its first few bubble lengths.
-    private func guidePoints(_ trace: ShotTrace) -> [CGPoint] {
-        let path = trace.path.map(layout.point)
-        guard !preferences.fullAimGuide else { return path }
-        var budget = layout.diameter * 4
-        var result = [path[0]]
-        for (a, b) in zip(path, path.dropFirst()) {
-            let length = hypot(b.x - a.x, b.y - a.y)
-            if length >= budget {
-                result.append(CGPoint(x: a.x + (b.x - a.x) * budget / length, y: a.y + (b.y - a.y) * budget / length))
-                break
-            }
-            result.append(b)
-            budget -= length
-        }
-        return result
-    }
-
     @ViewBuilder private var flightLayer: some View {
         if let flight = session.flight {
             TimelineView(.animation) { timeline in
                 let progress = min(1, timeline.date.timeIntervalSince(flight.start) / flight.duration)
+                let position = flight.path.point(atDistance: flight.path.pathLength * progress) ?? BubbleGrid.launcher
                 BubbleView(bubble: .color(flight.color), diameter: layout.diameter)
-                    .position(layout.point(position(along: flight.path, at: progress)))
+                    .position(layout.point(position))
             }
             .accessibilityHidden(true)
         }
-    }
-
-    private func position(along path: [Point], at progress: Double) -> Point {
-        let segments = zip(path, path.dropFirst()).map { ($0, $1, $0.distance(to: $1)) }
-        var remaining = segments.reduce(0) { $0 + $1.2 } * progress
-        for (a, b, length) in segments {
-            if remaining <= length, length > 0 {
-                return a + (b - a) * (remaining / length)
-            }
-            remaining -= length
-        }
-        return path.last ?? BubbleGrid.launcher
     }
 
     private var launcher: some View {
@@ -166,7 +135,7 @@ struct FieldView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .disabled(!session.isPlaying)
+        .disabled(!session.canSwap)
         .accessibilityLabel("Next bubble, \(next.spokenName)")
         .accessibilityHint("Swaps it into the launcher.")
         .accessibilityIdentifier("swapBubble")

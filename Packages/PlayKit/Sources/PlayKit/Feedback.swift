@@ -9,7 +9,6 @@ public enum FeedbackEvent: String, CaseIterable, Sendable {
     case draw
     /// The tap had no legal move.
     case invalid
-    /// The game was won.
     case win
     /// A button with no other feedback (hint, undo).
     case tap
@@ -17,6 +16,14 @@ public enum FeedbackEvent: String, CaseIterable, Sendable {
     case release
     /// A shot struck home: an arrow into the target.
     case hit
+    /// Something small was picked up.
+    case coin
+    /// A leap off the ground.
+    case jump
+    /// Running into something: the end of a run.
+    case crash
+    /// A power-up was picked up.
+    case powerUp
 }
 
 /// Plays sounds (off by default) and light haptics (on by default) according to `AppSettings`.
@@ -49,11 +56,13 @@ public final class Feedback {
         case .invalid: notification.notificationOccurred(.warning)
         case .win: notification.notificationOccurred(.success)
         case .release: rigid.impactOccurred(intensity: 0.8)
-        case .hit: medium.impactOccurred(intensity: 0.9)
+        case .hit, .powerUp: medium.impactOccurred(intensity: 0.9)
+        case .coin: soft.impactOccurred(intensity: 0.35)
+        case .jump: light.impactOccurred(intensity: 0.6)
+        case .crash: notification.notificationOccurred(.error)
         }
     }
 
-    /// The bundled sound for `event`.
     public static func soundURL(for event: FeedbackEvent) -> URL? {
         Bundle.module.url(forResource: event.rawValue, withExtension: "wav")
             ?? Bundle.module.url(forResource: event.rawValue, withExtension: "wav", subdirectory: "Sounds")

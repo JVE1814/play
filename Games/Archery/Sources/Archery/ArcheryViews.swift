@@ -43,39 +43,6 @@ struct EmptyChip: View {
     }
 }
 
-/// A five-pointed star.
-struct StarShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let c = CGPoint(x: rect.midX, y: rect.midY + rect.height * 0.04)
-        let outer = min(rect.width, rect.height) / 2
-        for i in 0..<10 {
-            let angle = -CGFloat.pi / 2 + CGFloat(i) * .pi / 5
-            let r = i % 2 == 0 ? outer : outer * 0.45
-            let p = CGPoint(x: c.x + r * cos(angle), y: c.y + r * sin(angle))
-            if i == 0 { path.move(to: p) } else { path.addLine(to: p) }
-        }
-        path.closeSubpath()
-        return path
-    }
-}
-
-/// Three stars, filled for those earned.
-struct StarRow: View {
-    let stars: Int
-    let size: CGFloat
-
-    var body: some View {
-        HStack(spacing: size * 0.15) {
-            ForEach(0..<3, id: \.self) { index in
-                StarShape()
-                    .fill(index < stars ? Theme.highlight : Theme.hairline)
-                    .frame(width: size, height: size)
-            }
-        }
-    }
-}
-
 /// The home screen illustration: a target face with an arrow in the gold.
 struct ArcheryIcon: View {
     var body: some View {
@@ -119,7 +86,7 @@ struct ArcherySettingsRows: View {
         VStack(alignment: .leading, spacing: 0) {
             SettingsChoiceRow("Aim speed",
                               detail: "How far the sight moves when you slide your thumb.",
-                              choices: [(0, "Slow"), (1, "Normal"), (2, "Fast")],
+                              choices: AimSpeed.allCases.map { (value: $0, label: $0.title) },
                               selection: $preferences.aimSpeed,
                               identifier: "aimSpeed")
             SettingsDivider()

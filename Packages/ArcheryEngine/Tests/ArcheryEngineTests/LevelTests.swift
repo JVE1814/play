@@ -12,8 +12,6 @@ final class LevelTests: XCTestCase {
             let inChapter = levels.filter { $0.chapter == chapter }
             XCTAssertEqual(inChapter.map(\.number), Array(chapter.levels))
         }
-        XCTAssertEqual(LevelCatalog.level(0).number, 1)
-        XCTAssertEqual(LevelCatalog.level(31).number, 30)
     }
 
     func testEveryLevelIsWellFormed() {
@@ -51,7 +49,7 @@ final class LevelTests: XCTestCase {
         XCTAssertEqual(firstWind.feature, "Wind")
         XCTAssertEqual(levels.first { $0.wind.gust > 0.9 }?.feature, "Gusts")
         XCTAssertEqual(levels.first { $0.summary.contains("gusty") }?.feature, "Gusts", "no gusts before they are new")
-        XCTAssertEqual(levels.first { !$0.wind.isCalm && abs($0.wind.gust) > abs($0.wind.base) }?.feature,
+        XCTAssertEqual(levels.first { $0.summary.contains("swirling wind") }?.feature,
                        "Swirling wind", "the wind only changes sides once that is the new idea")
         XCTAssertEqual(levels.first { $0.timeLimit != nil }?.feature, "Time limit")
         let firstMoving = levels.first { $0.motion.isMoving }!
@@ -73,19 +71,10 @@ final class LevelTests: XCTestCase {
     // MARK: Played by the bots
 
     private func results(_ level: Level, _ skill: ArcherSkill, attempts: Int) -> (scores: [Int], pass: Double, three: Double) {
-        var scores: [Int] = []
-        var passes = 0
-        var threes = 0
-        for attempt in 0..<attempts {
-            var round = ArcheryRound(level: level, attempt: attempt)
-            var archer = Archer(skill: skill, seed: UInt64(attempt * 104_729 + level.number))
-            archer.play(&round)
-            XCTAssertEqual(round.status, .finished)
-            scores.append(round.score)
-            if round.passed { passes += 1 }
-            if round.stars == 3 { threes += 1 }
-        }
-        return (scores, Double(passes) / Double(attempts), Double(threes) / Double(attempts))
+        let rounds = Archer.play(level, skill: skill, attempts: attempts)
+        XCTAssertTrue(rounds.allSatisfy { $0.status == .finished })
+        return (rounds.map(\.score), Double(rounds.filter(\.passed).count) / Double(attempts),
+                Double(rounds.filter { $0.stars == 3 }.count) / Double(attempts))
     }
 
     func testAnExpertPassesEveryLevel() {
@@ -113,8 +102,8 @@ final class LevelTests: XCTestCase {
                     XCTAssertLessThanOrEqual(novice.three, 0.4, "three stars mean something on level \(level.number)")
                 }
             }
-            passByChapter.append(novicePass / 6)
-            expertThreeByChapter.append(expertThree / 6)
+            passByChapter.append(novicePass / Double(LevelCatalog.levelsPerChapter))
+            expertThreeByChapter.append(expertThree / Double(LevelCatalog.levelsPerChapter))
         }
         XCTAssertGreaterThanOrEqual(passByChapter[0], 0.95, "the practice field is for everyone")
         XCTAssertEqual(passByChapter, passByChapter.sorted(by: >), "each venue is harder to pass than the last")
@@ -122,7 +111,7 @@ final class LevelTests: XCTestCase {
     }
 
     func testABotThatIgnoresTheWindStrugglesLater() {
-        let stubborn = ArcherSkill(name: "stubborn", aimError: 2, windAllowance: 0, windLearning: 0, windError: 0,
+        let stubborn = ArcherSkill(aimError: 2, windAllowance: 0, windLearning: 0, windError: 0,
                                    leading: 0, leadError: 0, swayControl: 0.3, patient: true, pace: 1...2)
         let early = results(LevelCatalog.level(3), stubborn, attempts: 60)
         let late = results(LevelCatalog.level(27), stubborn, attempts: 60)

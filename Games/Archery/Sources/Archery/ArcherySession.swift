@@ -1,7 +1,6 @@
 import ArcheryEngine
 import Foundation
 import PlayKit
-import UIKit
 
 /// The level in progress: wraps the engine with drawing, aiming, the arrow's flight, progress,
 /// statistics and saving. The view layer only calls these methods.
@@ -9,7 +8,7 @@ import UIKit
 /// Every arrow is committed to the round (and saved) the moment it is released; `landedArrows`
 /// trails behind while the arrow is still in the air, so a force quit mid-flight loses nothing.
 @MainActor
-public final class ArcherySession: ObservableObject {
+public final class ArcherySession: ObservableObject, LevelSession {
     /// The bow held at full draw (or being drawn).
     public struct Draw: Equatable {
         public let start: Date
@@ -24,7 +23,12 @@ public final class ArcherySession: ObservableObject {
         public let arrow: Int
         public let path: FlightPath
         public let start: Date
-        public let duration: TimeInterval
+        /// Seconds until the arrow reaches the target.
+        public let arrival: TimeInterval
+
+        /// An arrow that misses the boss carries on past it for this share of its flight,
+        /// fading as it goes.
+        static let missOvershoot = 0.25
     }
 
     /// The arrow that landed last, for the score that pops up beside it.
@@ -35,7 +39,7 @@ public final class ArcherySession: ObservableObject {
     }
 
     @Published public private(set) var round: ArcheryRound
-    @Published public private(set) var progress: ArcheryProgress
+    @Published public private(set) var progress: LevelProgress
     /// Where the thumb has put the sight, before sway (target coordinates, boss at rest).
     @Published public private(set) var aim: Vec2
     @Published public private(set) var draw: Draw? = nil
@@ -45,25 +49,19 @@ public final class ArcherySession: ObservableObject {
     @Published public private(set) var landedArrows: Int
     @Published public private(set) var showsResult: Bool
     @Published public var showingTip: Bool
-    @Published public var showingLevels = false {
-        didSet { updateClock() }
-    }
+    @Published public var showingLevels = false
     @Published public var confirmingRestart = false
     /// A short message, such as why an arrow was not shot.
     @Published public private(set) var notice: String? = nil
 
     public let context: GameContext
     public let preferences: ArcheryPreferences
-    /// Set by the view: false when Reduce Motion is on or tests disable animation.
-    public var animationsEnabled = true
 
-    private var attempt: Int
     private var resultRecorded: Bool
-    private var elapsedBeforeRun: TimeInterval
-    private var runStartedAt: Date?
-    private var isOnScreen = false
-    /// Something the app shows (Settings) is covering the game.
-    private var isCovered = false
+    /// Time spent on this attempt, for statistics: from the first draw to the end.
+    private var playClock: PlayClock
+    /// The range is on screen with nothing over it: the clocks run and the range is redrawn.
+    @Published public private(set) var inView = false
     /// The display clock when it was paused after the last arrow, so a moving target carries
     /// on from where it was rather than jumping back to the moment the end finished.
     private var heldClock: Double?
@@ -73,21 +71,21 @@ public final class ArcherySession: ObservableObject {
     private var clockAnchor: (clock: Double, date: Date)?
     /// Recent sight positions, so lifting the thumb (which tends to nudge it) does not move the shot.
     private var aimHistory: [(date: Date, aim: Vec2)] = []
-    private var flightTask: Task<Void, Never>?
-    private var resultTask: Task<Void, Never>?
+    private let flightEnd = Pending()
+    private let resultReveal = Pending()
+    private let noticeEnd = Pending()
+    private let fullDraw = Pending()
     private var tickTask: Task<Void, Never>?
-    private var noticeTask: Task<Void, Never>?
-    private var fullDrawTask: Task<Void, Never>?
     private var lastSaved = Date.distantPast
 
     /// The moments before lifting the thumb that are ignored.
     static let releaseFilter: TimeInterval = 0.07
-    /// Held time used for an arrow shot with VoiceOver: inside the steady window.
-    static let spokenHold = 1.2
+    /// A hold inside the steady window: for an arrow shot with VoiceOver, and the screenshot pose.
+    static let steadyHold = 1.2
 
     public init(context: GameContext) {
         self.context = context
-        self.preferences = ArcheryPreferences.shared(in: context)
+        self.preferences = context.preferences(ArcheryPreferences.self)
         let options = context.options
         let initial: ArcheryRound
         var startAim: Vec2
@@ -95,30 +93,23 @@ public final class ArcherySession: ObservableObject {
             initial = save.round
             progress = save.progress
             startAim = save.aim
-            elapsedBeforeRun = save.elapsed
+            playClock = PlayClock(elapsed: save.elapsed)
             resultRecorded = save.resultRecorded
-        } else if let scenario = Self.scenario(options.scenario) {
-            initial = scenario
-            progress = ArcheryProgress(unlocked: scenario.level.number)
-            startAim = scenario.shots.last?.aim ?? scenario.level.layout.spots[0].center
-            elapsedBeforeRun = 0
-            resultRecorded = false
         } else {
-            let start = min(LevelCatalog.count, max(1, options.level ?? 1))
-            let level = LevelCatalog.level(start)
-            initial = ArcheryRound(level: level)
-            progress = ArcheryProgress(unlocked: start)
-            startAim = level.layout.spots[0].center
-            elapsedBeforeRun = 0
+            let start = options.startLevel(of: LevelCatalog.count)
+            initial = Scenarios.round(options.scenario) ?? ArcheryRound(level: LevelCatalog.level(start))
+            progress = LevelProgress(unlocked: initial.level.number)
+            startAim = initial.shots.last?.aim ?? initial.level.layout.spots[0].center
+            playClock = PlayClock()
             resultRecorded = false
         }
+        // `-demoAim X`: for screenshots, the bow held at full draw with the sight X metres aside.
         var demoDraw: Draw?
-        if let demo = options.demoAim, initial.status == .playing {
+        if let demo = options.value(after: "-demoAim").flatMap({ Double($0) }), initial.status == .playing {
             startAim = startAim + Vec2(demo, 0)
-            demoDraw = Draw(start: Date(), frozenHeld: 1.2)
+            demoDraw = Draw(start: Date(), frozenHeld: Self.steadyHold)
         }
         round = initial
-        attempt = initial.attempt
         aim = startAim
         landedArrows = initial.shots.count
         showsResult = initial.isOver
@@ -131,51 +122,19 @@ public final class ArcherySession: ObservableObject {
         save()
     }
 
-    /// Prepared attempts for UI tests and screenshots.
-    static func scenario(_ name: String?) -> ArcheryRound? {
-        switch name {
-        case "archeryNearWin":
-            // Two arrows in the X ring; one more in the gold earns three stars.
-            var round = ArcheryRound(level: LevelCatalog.level(1))
-            round.shoot(aim: Vec2(0.012, 0.01))
-            round.shoot(aim: Vec2(-0.015, -0.008))
-            return round
-        case "archeryLastArrow":
-            // Two arrows in the straw outside the face: even a ten can't reach a star now.
-            var round = ArcheryRound(level: LevelCatalog.level(1))
-            round.shoot(aim: Vec2(0.63, 0.2))
-            round.shoot(aim: Vec2(-0.62, -0.3))
-            return round
-        case "archeryShowcase":
-            return demonstration(level: 22, hits: [(1.8, Vec2(0.02, 0.03)), (6.2, Vec2(-0.08, -0.05)),
-                                                   (10.5, Vec2(0.12, 0.07))], clock: 13.4)
-        case "archeryNight":
-            return demonstration(level: 29, hits: [(2.4, Vec2(-0.05, 0.04)), (7.9, Vec2(0.16, -0.1))], clock: 11.2)
-        default:
-            return nil
-        }
-    }
-
-    private static func demonstration(level number: Int, hits: [(Double, Vec2)], clock: Double) -> ArcheryRound {
-        var round = ArcheryRound(level: LevelCatalog.level(number))
-        for (time, point) in hits {
-            round.advance(to: time)
-            round.shoot(aim: round.aim(toHit: point))
-        }
-        round.advance(to: clock)
-        return round
-    }
-
     // MARK: State for the view
 
     public var level: Level { round.level }
-    public var isPlaying: Bool { round.status == .playing && !showsResult }
+    public var levelNumber: Int { round.level.number }
+    public var levelCount: Int { LevelCatalog.count }
+    public var isPlaying: Bool { round.status == .playing }
     /// A new arrow can be drawn: the level is on, and the last arrow has landed.
     public var canDraw: Bool { isPlaying && flight == nil && draw == nil }
     public var isDrawing: Bool { draw != nil }
-    public var hasNextLevel: Bool { round.level.number < LevelCatalog.count }
+    public var hasAttemptInProgress: Bool { isPlaying && !round.shots.isEmpty }
+    /// A restart waits for the arrow in the air to land.
+    public var canRestart: Bool { flight == nil }
 
-    /// Arrows that have landed, and what they scored.
     public var landedShots: ArraySlice<Shot> { round.shots.prefix(landedArrows) }
     public var displayedScore: Int { landedShots.reduce(0) { $0 + $1.score } }
     public var displayedArrowsLeft: Int { round.level.arrows - landedArrows }
@@ -188,16 +147,21 @@ public final class ArcherySession: ObservableObject {
 
     /// Seconds left at `date` on a timed level.
     public func timeLeft(at date: Date = Date()) -> Double? {
-        guard let limit = round.level.timeLimit else { return nil }
-        guard let start = round.timerStart else { return limit }
-        guard round.status == .playing else { return round.timeLeft }
-        return max(0, limit - (clock(at: date) - start))
+        round.timeLeft(at: isPlaying ? clock(at: date) : round.clock)
     }
 
     /// Seconds since full draw at `date` (negative while still drawing).
     public func held(at date: Date = Date()) -> Double? {
-        guard let draw else { return nil }
-        return draw.frozenHeld ?? date.timeIntervalSince(draw.start) - Sway.drawTime
+        draw.map { held($0, at: date) }
+    }
+
+    private func held(_ draw: Draw, at date: Date) -> Double {
+        draw.frozenHeld ?? date.timeIntervalSince(draw.start) - Sway.drawTime
+    }
+
+    /// Where the sight points after `held` seconds at full draw: the aim plus the sway.
+    private func sight(held: Double) -> Vec2 {
+        aim + round.sway(held: held, strength: preferences.swayStrength)
     }
 
     /// 0 when the bow is down, 1 at full draw.
@@ -209,12 +173,7 @@ public final class ArcherySession: ObservableObject {
 
     /// Where the sight points at `date`, sway included.
     public func sight(at date: Date = Date()) -> Vec2 {
-        guard let held = held(at: date) else { return aim }
-        return aim + round.sway(held: held, strength: preferences.swayStrength)
-    }
-
-    public func elapsed(at date: Date = Date()) -> TimeInterval {
-        elapsedBeforeRun + (runStartedAt.map { max(0, date.timeIntervalSince($0)) } ?? 0)
+        held(at: date).map { sight(held: $0) } ?? aim
     }
 
     /// Whole state, for UI tests.
@@ -222,21 +181,14 @@ public final class ArcherySession: ObservableObject {
 
     // MARK: Lifecycle
 
-    public func setOnScreen(_ visible: Bool) {
-        isOnScreen = visible
-        if !visible {
-            if draw != nil, draw?.frozenHeld == nil { draw = nil }
+    /// Out of view (the home screen, the background, Settings or the level list over the game),
+    /// the bow comes down, an arrow in the air lands at once and the clocks stop.
+    public func setInView(_ inView: Bool) {
+        if self.inView != inView { self.inView = inView }
+        if !inView {
+            cancelDraw()
             settleFlight(at: Date())
         }
-        updateClock()
-        save()
-    }
-
-    /// Settings (or anything else the app shows) covers the game: the clock pauses.
-    public func setCovered(_ covered: Bool) {
-        guard isCovered != covered else { return }
-        isCovered = covered
-        if covered, draw?.frozenHeld == nil { cancelDraw() }
         updateClock()
         save()
     }
@@ -245,13 +197,8 @@ public final class ArcherySession: ObservableObject {
     /// loses it (or the end it finishes).
     private func settleFlight(at now: Date) {
         guard let flight else { return }
-        flightTask?.cancel()
+        flightEnd.cancel()
         land(flight.shot, arrow: flight.arrow, at: now, quietly: true)
-    }
-
-    public func leave() {
-        setOnScreen(false)
-        context.exit()
     }
 
     // MARK: Drawing, aiming and shooting
@@ -269,13 +216,7 @@ public final class ArcherySession: ObservableObject {
         aimHistory = [(now, aim)]
         updateRunClock(now)
         context.feedback.play(.tap)
-        fullDrawTask?.cancel()
-        let started = now
-        fullDrawTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: UInt64(Sway.drawTime * 1_000_000_000))
-            guard !Task.isCancelled, let self, self.draw?.start == started else { return }
-            self.context.feedback.play(.draw)
-        }
+        fullDraw.schedule(after: Sway.drawTime) { [weak self] in self?.context.feedback.play(.draw) }
     }
 
     /// Thumb moved: move the sight by `delta` metres, keeping it within `limit` of the centre.
@@ -294,8 +235,8 @@ public final class ArcherySession: ObservableObject {
     public func release(at now: Date = Date()) {
         guard let current = draw, current.frozenHeld == nil else { return }
         draw = nil
-        fullDrawTask?.cancel()
-        let held = now.timeIntervalSince(current.start) - Sway.drawTime
+        fullDraw.cancel()
+        let held = self.held(current, at: now)
         guard held >= 0 else {
             show(notice: "Hold until the bow is fully drawn, then let go.")
             return
@@ -304,15 +245,14 @@ public final class ArcherySession: ObservableObject {
         if let settled = aimHistory.last(where: { now.timeIntervalSince($0.date) >= Self.releaseFilter }) {
             aim = settled.aim
         }
-        let sight = aim + round.sway(held: held, strength: preferences.swayStrength)
-        shoot(sight: sight, at: now)
+        shoot(sight: sight(held: held), at: now)
     }
 
     /// Stops drawing without shooting (the view disappeared, or the clock ran out).
     public func cancelDraw() {
         guard draw?.frozenHeld == nil else { return }
         draw = nil
-        fullDrawTask?.cancel()
+        fullDraw.cancel()
     }
 
     private func shoot(sight: Vec2, at now: Date) {
@@ -324,21 +264,14 @@ public final class ArcherySession: ObservableObject {
         context.feedback.play(.release)
         let path = FlightPath(distance: round.level.distance, impact: shot.hit.point, targetOffset: shot.targetOffset,
                               drift: shot.drift, mirrored: preferences.leftHanded)
-        guard animationsEnabled else {
+        guard context.animationsEnabled else {
             land(shot, arrow: index, at: now)
             return
         }
         // A moving target is shown exactly where the engine says it is when the arrow arrives.
-        // An arrow that misses the boss carries on past it for a moment.
         let arrival = round.level.motion.isMoving ? path.duration : max(0.24, path.duration)
-        let duration = shot.hit.inBoss ? arrival : arrival * 1.25
-        flight = Flight(shot: shot, arrow: index, path: path, start: now, duration: duration)
-        flightTask?.cancel()
-        flightTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
-            guard !Task.isCancelled, let self else { return }
-            self.land(shot, arrow: index, at: Date())
-        }
+        flight = Flight(shot: shot, arrow: index, path: path, start: now, arrival: arrival)
+        flightEnd.schedule(after: shot.hit.inBoss ? arrival : arrival * (1 + Flight.missOvershoot)) { [weak self] in self?.land(shot, arrow: index, at: Date()) }
     }
 
     private func land(_ shot: Shot, arrow: Int, at now: Date, quietly: Bool = false) {
@@ -349,7 +282,7 @@ public final class ArcherySession: ObservableObject {
             // A thunk whenever the arrow goes into the boss; a miss that flies past just goes quiet.
             context.feedback.play(shot.hit.inBoss ? .hit : .invalid)
             let advice = coaching(for: shot)
-            announce(describe(shot) + (advice.map { " " + $0 } ?? ""))
+            context.announce(describe(shot) + (advice.map { " " + $0 } ?? ""))
             if let advice { show(notice: advice) }
         }
         checkFinished(at: now, quietly: quietly)
@@ -359,11 +292,10 @@ public final class ArcherySession: ObservableObject {
     /// and which way to adjust if it landed off centre.
     func coaching(for shot: Shot) -> String? {
         let level = round.level
-        guard level.number <= 18, shot.hit.inBoss, !round.isOver else { return nil }
+        guard level.chapter.rawValue <= Chapter.lakeside.rawValue, shot.hit.inBoss, !round.isOver else { return nil }
         let ring = level.layout.largestFace.ringWidth
         let aimedAt = level.layout.spots[shot.hit.spot ?? 0].center
         let miss = shot.hit.point.x - aimedAt.x
-        func centimetres(_ metres: Double) -> Int { Int((abs(metres) * 100).rounded()) }
         let travel = shot.targetOffset.x - round.targetOffset(at: shot.release).x
         if level.motion.isMoving, abs(travel) > ring {
             let behind = miss * travel < 0 && abs(miss) > ring
@@ -398,7 +330,7 @@ public final class ArcherySession: ObservableObject {
         round.startTimer()
         startTicking()
         showingTip = false
-        shoot(sight: aim + round.sway(held: Self.spokenHold, strength: preferences.swayStrength), at: now)
+        shoot(sight: sight(held: Self.steadyHold), at: now)
     }
 
     /// Names for the faces of a three-spot target, top to bottom.
@@ -406,7 +338,6 @@ public final class ArcherySession: ObservableObject {
         count == 3 ? ["top", "middle", "bottom"][index] : "spot \(index + 1)"
     }
 
-    /// The face nearest the sight.
     private var nearestSpot: Int {
         let spots = round.level.layout.spots
         return spots.indices.min { spots[$0].center.distance(to: aim) < spots[$1].center.distance(to: aim) } ?? 0
@@ -438,71 +369,50 @@ public final class ArcherySession: ObservableObject {
         }
         parts.append("Wind " + Self.spokenWind(round.windSpeed(at: clock(at: date))) + ".")
         if round.level.motion.isMoving { parts.append("The target is moving.") }
-        parts.append("\(displayedArrowsLeft) \(displayedArrowsLeft == 1 ? "arrow" : "arrows") left.")
+        parts.append("\(Format.count(displayedArrowsLeft, "arrow")) left.")
         return parts.joined(separator: " ")
     }
 
     private func describeSight(_ offset: Vec2) -> String {
-        func centimetres(_ value: Double) -> Int { Int((abs(value) * 100).rounded()) }
         var pieces: [String] = []
         if centimetres(offset.x) > 0 { pieces.append("\(centimetres(offset.x)) centimetres \(offset.x > 0 ? "right" : "left")") }
         if centimetres(offset.y) > 0 { pieces.append("\(centimetres(offset.y)) centimetres \(offset.y > 0 ? "high" : "low")") }
         return pieces.isEmpty ? "Sight on the centre." : "Sight " + pieces.joined(separator: " and ") + "."
     }
 
+    /// The wind as VoiceOver says it: "2.4 metres per second from the left", or "calm".
     static func spokenWind(_ speed: Double) -> String {
-        let text = Wind.describe(speed)
-        return text == "Calm" ? "calm" : text.replacingOccurrences(of: "m/s", with: "metres per second")
+        let reading = Wind.reading(speed)
+        guard reading != 0 else { return "calm" }
+        return String(format: "%.1f metres per second from the %@", abs(reading), reading > 0 ? "left" : "right")
     }
 
     // MARK: Levels
 
-    /// Starts a fresh attempt at `level` (if unlocked). Leaving a level unfinished is not a loss.
-    public func start(level number: Int) {
-        guard progress.isUnlocked(number) else { return }
+    /// Leaving a level unfinished is not a loss.
+    public func beginAttempt(at number: Int) {
         // An end that is already decided (its last arrow still in the air) is recorded first.
         settleFlight(at: Date())
-        flightTask?.cancel()
-        resultTask?.cancel()
-        fullDrawTask?.cancel()
+        resultReveal.cancel()
+        noticeEnd.cancel()
+        cancelDraw()
         stopClock()
-        attempt += 1
         let level = LevelCatalog.level(number)
-        round = ArcheryRound(level: level, attempt: attempt)
+        round = ArcheryRound(level: level, attempt: round.attempt + 1)
         aim = level.layout.spots[0].center
         draw = nil
-        flight = nil
         landing = nil
         landedArrows = 0
-        elapsedBeforeRun = 0
-        runStartedAt = nil
+        playClock = PlayClock()
         resultRecorded = false
         showsResult = false
-        confirmingRestart = false
-        showingLevels = false
         showingTip = true
         notice = nil
         heldClock = nil
         updateClock()
         save()
         context.feedback.play(.draw)
-        announce("Level \(number), \(level.name). \(level.summary).")
-    }
-
-    public func retry() { start(level: round.level.number) }
-
-    /// Restart from the toolbar: asks first if arrows have been shot.
-    public func requestRestart() {
-        guard flight == nil else { return }  // let the arrow land first
-        if round.status == .playing && !round.shots.isEmpty {
-            confirmingRestart = true
-        } else {
-            retry()
-        }
-    }
-
-    public func nextLevel() {
-        start(level: min(LevelCatalog.count, round.level.number + 1))
+        context.announce("Level \(number), \(level.name). \(level.summary).")
     }
 
     // MARK: Internals
@@ -515,37 +425,30 @@ public final class ArcherySession: ObservableObject {
         resultRecorded = true
         updateRunClock(now)
         let score = round.score
-        progress.record(level: round.level.number, score: score, stars: round.stars)
+        progress.record(level: round.level.number, stars: round.stars, score: score, of: LevelCatalog.count)
         if round.passed {
-            context.stats.recordWin(gameID: context.gameID, time: elapsedBeforeRun, moves: round.arrowsShot)
+            context.recordWin(time: playClock.elapsed(at: now))
             if !quietly {
                 context.feedback.play(.win)
-                announce("Level complete with \(score) points and \(round.stars) star\(round.stars == 1 ? "" : "s").")
+                context.announce("Level complete with \(score) points and \(Format.count(round.stars, "star")).")
             }
         } else {
-            context.stats.recordLoss(gameID: context.gameID)
+            context.recordLoss()
             if !quietly {
                 context.feedback.play(.invalid)
-                announce(round.timedOut ? "Out of time with \(score) points." : "\(score) points. Not quite enough for a star.")
+                context.announce(round.timedOut ? "Out of time with \(score) points."
+                                 : "\(score) points. Not quite enough for a star.")
             }
         }
         save()
-        guard animationsEnabled && !quietly else {
-            showsResult = true
-            return
-        }
-        resultTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 900_000_000)
-            guard !Task.isCancelled, let self, self.round.isOver else { return }
-            self.showsResult = true
+        // The last arrow's score is seen before the panel covers it.
+        resultReveal.schedule(after: context.animationsEnabled && !quietly ? 0.9 : 0) { [weak self] in
+            self?.showsResult = true
         }
     }
 
-    /// The level is in view and nothing covers it.
-    private var isVisible: Bool { isOnScreen && !showingLevels && !isCovered }
-
     private func updateClock(_ now: Date = Date()) {
-        if isVisible {
+        if inView {
             if clockAnchor == nil { clockAnchor = (heldClock ?? round.clock, now) }
             startTicking()
         } else {
@@ -554,16 +457,13 @@ public final class ArcherySession: ObservableObject {
         updateRunClock(now)
     }
 
-    /// Brings the round's clock up to date. On a timed level this is where time runs out.
+    /// On a timed level this is where time runs out.
     private func syncClock(_ now: Date = Date()) {
-        guard let anchor = clockAnchor else { return }
-        let time = anchor.clock + max(0, now.timeIntervalSince(anchor.date))
+        guard clockAnchor != nil else { return }
+        let time = clock(at: now)
         if round.status == .playing {
             round.advance(to: time)
-            if round.isOver {
-                cancelDraw()
-                checkFinished(at: now)
-            }
+            if round.isOver { checkFinished(at: now) }
         }
         clockAnchor = (round.status == .playing ? round.clock : time, now)
     }
@@ -594,32 +494,20 @@ public final class ArcherySession: ObservableObject {
         }
     }
 
-    /// The statistics clock: runs while the level is on screen, from the first draw to the end.
     private func updateRunClock(_ now: Date = Date()) {
-        let started = !round.shots.isEmpty || draw != nil || elapsedBeforeRun > 0
-        let shouldRun = isVisible && started && !resultRecorded
-        if shouldRun, runStartedAt == nil {
-            runStartedAt = now
-        } else if !shouldRun, let start = runStartedAt {
-            elapsedBeforeRun += max(0, now.timeIntervalSince(start))
-            runStartedAt = nil
-        }
+        let started = !round.shots.isEmpty || draw != nil || playClock.hasStarted
+        playClock.setRunning(inView && started && !resultRecorded, at: now)
     }
 
     private func save() {
         lastSaved = Date()
-        context.saveSlot.save(ArcherySave(progress: progress, round: round, aim: aim, elapsed: elapsed(),
+        context.saveSlot.save(ArcherySave(progress: progress, round: round, aim: aim, elapsed: playClock.elapsed(),
                                           resultRecorded: resultRecorded))
     }
 
     private func show(notice text: String) {
         notice = text
-        noticeTask?.cancel()
-        noticeTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 3_400_000_000)
-            guard !Task.isCancelled else { return }
-            self?.notice = nil
-        }
+        noticeEnd.schedule(after: 3.4) { [weak self] in self?.notice = nil }
     }
 
     private func describe(_ shot: Shot) -> String {
@@ -638,9 +526,6 @@ public final class ArcherySession: ObservableObject {
         }
         return what + " Score \(displayedScore)."
     }
-
-    private func announce(_ text: String) {
-        guard UIAccessibility.isVoiceOverRunning else { return }
-        UIAccessibility.post(notification: .announcement, argument: text)
-    }
 }
+
+private func centimetres(_ metres: Double) -> Int { Int((abs(metres) * 100).rounded()) }

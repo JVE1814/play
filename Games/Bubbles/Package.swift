@@ -18,8 +18,7 @@ let package = Package(
             dependencies: [
                 .product(name: "PlayKit", package: "PlayKit"),
                 .product(name: "BubbleEngine", package: "BubbleEngine"),
-            ],
-            swiftSettings: [.define("DEBUG", .when(configuration: .debug))]
+            ]
         ),
     ]
 )

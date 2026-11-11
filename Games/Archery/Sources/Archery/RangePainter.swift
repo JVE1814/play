@@ -93,7 +93,7 @@ struct RangePainter {
                 context.fill(Path(ellipseIn: rect), with: .color(.white.opacity(0.35 + 0.5 * twinkle * stars.nextUnit())))
             }
         }
-        guard let sun = venue.sun else { return }
+        let sun = venue.sun
         let center = CGPoint(x: w * sun.x, y: horizon - horizon * sun.y)
         let r = sun.radius
         context.fill(Path(ellipseIn: CGRect(x: center.x - r * 5, y: center.y - r * 5, width: r * 10, height: r * 10)),
@@ -247,7 +247,6 @@ struct RangePainter {
         context.fill(Path(ellipseIn: CGRect(x: spot.x - r, y: spot.y - r * 0.55, width: r * 2, height: r * 1.1)),
                      with: .radialGradient(Gradient(colors: [Color(hex: 0xFFF3D2, opacity: 0.32), Color(hex: 0xFFF3D2, opacity: 0)]),
                                            center: spot, startRadius: 0, endRadius: r))
-        // Light beams from the towers to the target.
         let target = cam.onTarget(.zero)
         for side in [-1.0, 1.0] {
             let lamp = CGPoint(x: w / 2 + CGFloat(side) * w * 0.46, y: h * 0.05)
@@ -310,7 +309,6 @@ struct RangePainter {
         let jolt = shake
         let woodWidth = max(1.2, ppm * 0.07)
 
-        // Shadow on the ground.
         let shadowCenter = cam.project(Vec3(offset.x + Double(venue.shadowLean) * 0.7, 0, distance))
         let shadowWidth = ppm * 1.7 * (1 + abs(venue.shadowLean) * 0.5)
         let shadowHeight = max(3, cam.groundY(atDepth: distance - 0.5) - cam.groundY(atDepth: distance + 0.5))
@@ -354,9 +352,7 @@ struct RangePainter {
         }
 
         // The boss: a square of straw, bound with darker bands.
-        let topLeft = onBoss(Vec2(-half, half), shake: jolt)
-        let bottomRight = onBoss(Vec2(half, -half), shake: jolt)
-        let bossRect = CGRect(x: topLeft.x, y: topLeft.y, width: bottomRight.x - topLeft.x, height: bottomRight.y - topLeft.y)
+        let bossRect = self.bossRect(shake: jolt)
         let bossPath = Path(roundedRect: bossRect, cornerRadius: ppm * 0.07)
         context.fill(bossPath, with: .color(venue.boss))
         context.fill(bossPath, with: .linearGradient(Gradient(colors: [.white.opacity(0.18), .black.opacity(0.1)]),
@@ -566,9 +562,8 @@ struct RangePainter {
 
     private func flightArrow(_ context: inout GraphicsContext) {
         guard let flight = f.flight else { return }
-        // Flight fraction: 1 at the target. A miss flies on to 1.25 (see the session).
-        let arrival = flight.shot.hit.inBoss ? flight.duration : flight.duration / 1.25
-        let s = f.now.timeIntervalSince(flight.start) / arrival
+        // Flight fraction: 1 at the target. A miss flies on past it.
+        let s = f.now.timeIntervalSince(flight.start) / flight.arrival
         guard s >= 0 else { return }
         let path = flight.path
         func position(_ s: Double) -> Vec3 {
@@ -581,7 +576,7 @@ struct RangePainter {
         let length = (heading.x * heading.x + heading.y * heading.y + heading.z * heading.z).squareRoot()
         let tailWorld = tip - heading * (Arrow.length / max(length, 1e-9))
         guard tailWorld.z > 0.9 else { return }
-        let fade = s > 1 ? max(0, 1 - (s - 1) * 4) : 1
+        let fade = s > 1 ? max(0, 1 - (s - 1) / ArcherySession.Flight.missOvershoot) : 1
         let tipPoint = cam.project(tip)
         let tailPoint = cam.project(tailWorld)
         let trailStart = cam.project(position(max(0, s - 0.07)))
@@ -616,7 +611,6 @@ struct RangePainter {
                              with: .color(venue.bossEdge.opacity(1 - progress)))
             }
         }
-        // The score, rising from the arrow and fading.
         let chip = ArcheryStyle.chip(for: hit)
         let rise = f.reduceMotion ? 0 : CGFloat(min(1, age / 1.2)) * 14
         let opacity = age < 1.1 ? 1 : max(0, (1.6 - age) / 0.5)
@@ -687,6 +681,13 @@ struct RangePainter {
     // MARK: Bow and sight
 
     private var sightPoint: CGPoint { cam.onTarget(f.sight) }
+
+    /// Where the sight is drawn: it rises into place as the bow is drawn.
+    private var raisedSight: CGPoint {
+        let eased = 1 - pow(1 - f.drawProgress, 3)
+        let raise = f.reduceMotion ? 0 : (1 - eased) * h * 0.6
+        return CGPoint(x: sightPoint.x, y: sightPoint.y + raise)
+    }
     private var side: CGFloat { f.leftHanded ? -1 : 1 }
 
     /// The view darkens at the edges while you concentrate at full draw.
@@ -718,9 +719,7 @@ struct RangePainter {
     /// you draw.
     private func bow(_ context: inout GraphicsContext) {
         let progress = f.drawProgress
-        let eased = 1 - pow(1 - progress, 3)
-        let raise = f.reduceMotion ? 0 : (1 - eased) * h * 0.6
-        let s = CGPoint(x: sightPoint.x, y: sightPoint.y + raise)
+        let s = raisedSight
         // Far enough out that the riser never hides the wind flag on a near target.
         let riserX = s.x + side * w * 0.4
         let riserWidth = w * 0.1
@@ -765,9 +764,7 @@ struct RangePainter {
 
     private func reticle(_ context: inout GraphicsContext) {
         let progress = f.drawProgress
-        let eased = 1 - pow(1 - progress, 3)
-        let raise = f.reduceMotion ? 0 : (1 - eased) * h * 0.6
-        let s = CGPoint(x: sightPoint.x, y: sightPoint.y + raise)
+        let s = raisedSight
         let held = f.held ?? -1
         let tiring = held > Sway.steadyTime
         let ring: CGFloat = 15

@@ -34,10 +34,6 @@ func makeBoard(
     return Board(stock: cards(stock), waste: cards(waste), foundations: foundations.map { cards($0) }, tableau: columns)
 }
 
-func makeGame(_ board: Board, drawMode: DrawMode = .one) -> KlondikeGame {
-    KlondikeGame(board: board, drawMode: drawMode)
-}
-
 /// A random-legal-move player, deterministic per seed.
 struct RandomPlayer {
     var generator: SeededGenerator

@@ -6,9 +6,8 @@ import XCTest
 @MainActor
 final class SolitaireTests: XCTestCase {
     private func session(_ env: TestEnvironment, _ arguments: [String] = ["-seed", "42"]) -> SolitaireSession {
-        let session = SolitaireSession(context: env.context(options: TestEnvironment.options(arguments)))
-        session.animationsEnabled = false
-        session.setOnScreen(true)
+        let session = SolitaireSession(context: env.context(for: SolitaireModule(), arguments: arguments))
+        session.setInView(true)
         return session
     }
 
@@ -27,7 +26,6 @@ final class SolitaireTests: XCTestCase {
         // A brand-new session on the same storage is what the app sees after a force quit.
         let relaunched = session(env, [])
         XCTAssertEqual(relaunched.game, first.game)
-        XCTAssertEqual(relaunched.signature, first.signature)
     }
 
     func testTapPlaysTheBestMove() {
@@ -72,12 +70,12 @@ final class SolitaireTests: XCTestCase {
         let s = session(env)
         s.requestNewGame()
         XCTAssertFalse(s.confirmingNewGame, "nothing played yet, no confirmation needed")
-        XCTAssertEqual(env.stats.stats(for: "klondike").played, 0)
+        XCTAssertEqual(s.context.gameStats.played, 0)
         s.tapPile(.stock)
         s.requestNewGame()
         XCTAssertTrue(s.confirmingNewGame)
         s.startNewGame()
-        let stats = env.stats.stats(for: "klondike")
+        let stats = s.context.gameStats
         XCTAssertEqual(stats.played, 1)
         XCTAssertEqual(stats.won, 0)
         XCTAssertEqual(s.game.moveCount, 0)
@@ -93,16 +91,16 @@ final class SolitaireTests: XCTestCase {
             if case let .transfer(from, to, count) = move { s.drop(from: from, count: count, onto: to) } else { s.tapPile(.stock) }
         }
         XCTAssertTrue(s.game.isWon)
-        XCTAssertTrue(s.showsWin)
+        XCTAssertTrue(s.showsResult)
         XCTAssertFalse(s.canUndo, "a won game is final")
-        var stats = env.stats.stats(for: "klondike")
+        var stats = s.context.gameStats
         XCTAssertEqual(stats.won, 1)
         XCTAssertEqual(stats.currentStreak, 1)
         XCTAssertNotNil(stats.bestTime)
         s.startNewGame()
-        stats = env.stats.stats(for: "klondike")
+        stats = s.context.gameStats
         XCTAssertEqual(stats.played, 1, "starting a new deal after a win is not a loss")
-        XCTAssertFalse(s.showsWin)
+        XCTAssertFalse(s.showsResult)
     }
 
     func testDrawThreeAppliesFromTheNextDeal() {
@@ -116,19 +114,31 @@ final class SolitaireTests: XCTestCase {
         XCTAssertEqual(s.game.waste.count, 3)
     }
 
-    func testHintSuggestsALegalMove() {
+    func testHintSuggestsALegalMove() throws {
         let env = TestEnvironment()
         let s = session(env, ["-seed", "4"])
         s.showHint()
-        let hint = try! XCTUnwrap(s.hint)
+        let hint = try XCTUnwrap(s.hint)
         XCTAssertTrue(s.game.isLegal(hint))
         XCTAssertFalse(s.hintedCards.isEmpty)
         XCTAssertNotNil(s.toast)
     }
 
-    func testCorruptSaveIsReplacedByAFreshDeal() {
+    func testAnUnreadableSaveIsReplacedByAFreshDeal() {
         let env = TestEnvironment()
-        env.storage.write(Data("{\"nonsense\":true}".utf8), to: "saves/klondike.json")
+        SaveSlot(storage: env.storage, gameID: SolitaireModule().id).save(["nonsense": true])
+        XCTAssertEqual(session(env).game.board, KlondikeGame(seed: 42).board)
+    }
+
+    func testASavedGameThatBreaksTheRulesIsReplacedByAFreshDeal() throws {
+        let env = TestEnvironment()
+        session(env).tapPile(.stock)
+        let slot = SaveSlot(storage: env.storage, gameID: SolitaireModule().id)
+        var save = try XCTUnwrap(slot.load(SolitaireSave.self))
+        let noCards = Board(stock: [], waste: [], foundations: Array(repeating: [], count: Board.foundationCount),
+                            tableau: Array(repeating: TableauColumn(), count: Board.columnCount))
+        save.game = KlondikeGame(board: noCards)
+        slot.save(save)
         XCTAssertEqual(session(env).game.board, KlondikeGame(seed: 42).board)
     }
 
@@ -136,15 +146,15 @@ final class SolitaireTests: XCTestCase {
         let env = TestEnvironment()
         let s = session(env)
         s.tapPile(.stock)
-        s.setOnScreen(false)
+        s.setInView(false)
         let paused = s.elapsed()
         XCTAssertEqual(s.elapsed(at: Date().addingTimeInterval(600)), paused, accuracy: 0.001)
     }
 
     func testStatusLineShowsGameInProgress() {
         let env = TestEnvironment()
-        let context = env.context(options: TestEnvironment.options(["-seed", "42"]))
         let module = SolitaireModule()
+        let context = env.context(for: module, arguments: ["-seed", "42"])
         XCTAssertNil(module.statusLine(context: context))
         let s = SolitaireSession(context: context)
         s.tapPile(.stock)
@@ -159,8 +169,7 @@ final class SolitaireTests: XCTestCase {
         let offsets = layout.offsets(hidden: 6, visible: 13)
         let bottom = layout.tableauTop + layout.card.height + 6 * offsets.down + 12 * offsets.up
         XCTAssertLessThanOrEqual(bottom, layout.tableauBottom + 0.5)
-        let typical = layout.offsets(hidden: 3, visible: 5)
-        XCTAssertGreaterThanOrEqual(typical.up, layout.card.height * 0.3, "rank and suit always visible")
+        XCTAssertGreaterThanOrEqual(offsets.up, layout.card.height * 0.31, "rank and suit stay visible in the longest column")
         let game = KlondikeGame(seed: 1)
         for placement in layout.placements(for: game) {
             XCTAssertTrue(CGRect(origin: .zero, size: layout.size).insetBy(dx: -1, dy: -1)

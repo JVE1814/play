@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// A game in the collection.
 ///
@@ -12,12 +13,11 @@ public protocol GameModule {
     var title: String { get }
     /// One short line under the title.
     var tagline: String { get }
-    /// The game's own accent colour, from the shared palette.
     var accent: Accent { get }
 
     /// A flat illustration for the home screen tile.
     @MainActor func makeIcon() -> AnyView
-    /// The full-screen game. Call `context.exit()` to return home.
+    /// The full-screen game, built on `GameScreen`.
     @MainActor func makeGameView(context: GameContext) -> AnyView
     /// Optional rows for the shared Settings screen.
     @MainActor func makeSettingsSection(context: GameContext) -> AnyView?
@@ -30,24 +30,23 @@ extension GameModule {
     @MainActor public func statusLine(context: GameContext) -> String? { nil }
 }
 
-/// Everything a game may use from the app: its save slot, statistics, preferences,
-/// shared settings, feedback and navigation. One context exists per game per launch.
+/// Everything a game may use from the app: its save slot, statistics, preferences, feedback,
+/// launch options and navigation. One context exists per game per launch.
 @MainActor
 public final class GameContext: ObservableObject {
-    public let gameID: String
+    private let gameID: String
     public let accent: Accent
     public let saveSlot: SaveSlot
-    public let stats: StatsStore
-    public let settings: AppSettings
-    public let preferences: GamePreferences
     public let feedback: Feedback
     public let options: LaunchOptions
+    private let stats: StatsStore
+    private let preferenceStore: GamePreferences
+    private var preferenceSets: [ObjectIdentifier: AnyObject] = [:]
     private let exitAction: () -> Void
     private let settingsAction: () -> Void
-    private var sharedObjects: [ObjectIdentifier: AnyObject] = [:]
 
-    /// True while something the app shows (such as the Settings sheet) covers the game. Games
-    /// with a clock pause it, as they do when the app goes to the background.
+    /// True while something the app shows (such as the Settings sheet) covers the game.
+    /// `GameScreen` counts a covered game as out of view.
     @Published public private(set) var isCovered = false
 
     public init(
@@ -55,7 +54,6 @@ public final class GameContext: ObservableObject {
         accent: Accent,
         storage: Storage,
         stats: StatsStore,
-        settings: AppSettings,
         defaults: UserDefaults,
         feedback: Feedback,
         options: LaunchOptions,
@@ -66,18 +64,16 @@ public final class GameContext: ObservableObject {
         self.accent = accent
         self.saveSlot = SaveSlot(storage: storage, gameID: gameID)
         self.stats = stats
-        self.settings = settings
-        self.preferences = GamePreferences(gameID: gameID, defaults: defaults)
+        self.preferenceStore = GamePreferences(gameID: gameID, defaults: defaults)
         self.feedback = feedback
         self.options = options
         self.exitAction = exit
         self.settingsAction = openSettings
     }
 
-    /// Return to the home screen.
-    public func exit() { exitAction() }
+    /// Games leave through `GameSession.leave()`, which lets the session save first.
+    func exit() { exitAction() }
 
-    /// Show the shared Settings screen.
     public func openSettings() { settingsAction() }
 
     /// Called by the app when it covers or uncovers the game.
@@ -85,16 +81,40 @@ public final class GameContext: ObservableObject {
         if isCovered != covered { isCovered = covered }
     }
 
-    /// This game's statistics.
+    /// False when Reduce Motion is on or tests disable animation: sessions then skip the
+    /// pauses they leave for animations.
+    public var animationsEnabled: Bool {
+        animates(reduceMotion: UIAccessibility.isReduceMotionEnabled)
+    }
+
+    /// The same rule for views, which read Reduce Motion from their environment.
+    public func animates(reduceMotion: Bool) -> Bool {
+        !reduceMotion && !options.disableAnimations
+    }
+
+    public func announce(_ text: String) {
+        guard UIAccessibility.isVoiceOverRunning else { return }
+        UIAccessibility.post(notification: .announcement, argument: text)
+    }
+
     public var gameStats: GameStats { stats.stats(for: gameID) }
 
-    /// One shared instance of `T` per game, so the game screen and its settings rows observe
-    /// the same object.
-    public func shared<T: AnyObject>(_ type: T.Type = T.self, make: () -> T) -> T {
+    public func recordWin(time: TimeInterval) { stats.recordWin(gameID: gameID, time: time) }
+    public func recordLoss() { stats.recordLoss(gameID: gameID) }
+
+    /// The game's own preferences: one instance per game, so the game screen and its settings
+    /// rows observe the same object.
+    public func preferences<Preferences: GamePreferenceSet>(_ type: Preferences.Type = Preferences.self) -> Preferences {
         let key = ObjectIdentifier(type)
-        if let existing = sharedObjects[key] as? T { return existing }
-        let created = make()
-        sharedObjects[key] = created
+        if let existing = preferenceSets[key] as? Preferences { return existing }
+        let created = Preferences(preferences: preferenceStore)
+        preferenceSets[key] = created
         return created
     }
+}
+
+/// A game's preferences, built on its namespaced `GamePreferences` store.
+@MainActor
+public protocol GamePreferenceSet: AnyObject {
+    init(preferences: GamePreferences)
 }

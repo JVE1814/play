@@ -6,10 +6,9 @@ import XCTest
 @MainActor
 final class BubblesTests: XCTestCase {
     private func session(_ env: TestEnvironment, _ arguments: [String] = []) -> BubblesSession {
-        let context = env.context(gameID: "bubbles", accent: .sky, options: TestEnvironment.options(arguments))
+        let context = env.context(for: BubblesModule(), arguments: arguments)
         let session = BubblesSession(context: context)
-        session.animationsEnabled = false
-        session.setOnScreen(true)
+        session.setInView(true)
         return session
     }
 
@@ -18,26 +17,11 @@ final class BubblesTests: XCTestCase {
         session.fire()
     }
 
-    func testProgressUnlocksTheNextLevelAndKeepsTheBestStars() {
-        var progress = BubblesProgress()
-        XCTAssertTrue(progress.isUnlocked(1))
-        XCTAssertFalse(progress.isUnlocked(2))
-        progress.recordClear(level: 1, stars: 2)
-        progress.recordClear(level: 1, stars: 1)
-        XCTAssertEqual(progress.stars(for: 1), 2, "best result is kept")
-        XCTAssertTrue(progress.isUnlocked(2))
-        progress.recordClear(level: 1, stars: 3)
-        XCTAssertEqual(progress.totalStars, 3)
-        XCTAssertEqual(progress.unlocked, 2)
-        progress.recordClear(level: LevelCatalog.count, stars: 3)
-        XCTAssertEqual(progress.unlocked, LevelCatalog.count, "never beyond the last level")
-    }
-
     func testANewPlayerStartsAtLevelOne() {
         let env = TestEnvironment()
         let s = session(env)
-        XCTAssertEqual(s.level, 1)
-        XCTAssertEqual(s.game.grid, LevelCatalog.level(1).grid)
+        XCTAssertEqual(s.levelNumber, 1)
+        XCTAssertEqual(s.game.grid, LevelCatalog.level(1).layout.grid)
         XCTAssertEqual(s.game.shotsLeft, LevelCatalog.level(1).shotLimit)
         XCTAssertEqual(BubblesModule().statusLine(context: s.context), "Level 1 · 0 ★")
     }
@@ -62,9 +46,9 @@ final class BubblesTests: XCTestCase {
         XCTAssertTrue(s.showsResult)
         XCTAssertEqual(s.progress.stars(for: 1), 3)
         XCTAssertTrue(s.progress.isUnlocked(2))
-        XCTAssertEqual(env.stats.stats(for: "bubbles").won, 1)
+        XCTAssertEqual(s.context.gameStats.won, 1)
         s.nextLevel()
-        XCTAssertEqual(s.level, 2)
+        XCTAssertEqual(s.levelNumber, 2)
         XCTAssertFalse(s.showsResult)
     }
 
@@ -74,13 +58,13 @@ final class BubblesTests: XCTestCase {
         shoot(s)
         XCTAssertEqual(s.game.status, .outOfShots)
         XCTAssertTrue(s.showsResult)
-        let stats = env.stats.stats(for: "bubbles")
+        let stats = s.context.gameStats
         XCTAssertEqual(stats.played, 1)
         XCTAssertEqual(stats.won, 0)
         XCTAssertFalse(s.progress.isUnlocked(2))
         s.retry()
         XCTAssertEqual(s.game.status, .playing)
-        XCTAssertEqual(s.game.grid, LevelCatalog.level(1).grid)
+        XCTAssertEqual(s.game.grid, LevelCatalog.level(1).layout.grid)
     }
 
     func testRestartAsksOnlyOnceShotsHaveBeenFired() {
@@ -93,17 +77,17 @@ final class BubblesTests: XCTestCase {
         XCTAssertTrue(s.confirmingRestart)
         s.retry()
         XCTAssertEqual(s.game.shotsFired, 0)
-        XCTAssertEqual(env.stats.stats(for: "bubbles").played, 0, "restarting is not a loss")
+        XCTAssertEqual(s.context.gameStats.played, 0, "restarting is not a loss")
     }
 
     func testLockedLevelsCannotBeStarted() {
         let env = TestEnvironment()
         let s = session(env)
         s.start(level: 50)
-        XCTAssertEqual(s.level, 1)
+        XCTAssertEqual(s.levelNumber, 1)
         let unlocked = session(TestEnvironment(), ["-level", "50"])
         unlocked.start(level: 49)
-        XCTAssertEqual(unlocked.level, 49)
+        XCTAssertEqual(unlocked.levelNumber, 49)
     }
 
     func testSwapExchangesTheBubbles() {

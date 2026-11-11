@@ -4,7 +4,7 @@ import XCTest
 final class ArcheryUITests: UITestCase {
     func testArcheryIsOnHomeAndStartsAtLevelOne() {
         launch()
-        XCTAssertTrue(waitFor("game-bubbles").exists)
+        waitFor("game-bubbles")
         openArchery()
         XCTAssertEqual(element("archeryLevel").value as? String, "1 of 30")
         XCTAssertEqual(element("arrowsLeft").value as? String, "3")
@@ -14,10 +14,10 @@ final class ArcheryUITests: UITestCase {
         XCTAssertTrue(element("scoreCard").exists)
         // A quick tap is let go before full draw: the bow comes down without shooting.
         waitFor("range").tap()
-        XCTAssertTrue(waitFor("toast").exists, "explains how to shoot")
+        waitFor("toast")
         XCTAssertEqual(element("arrowsLeft").value as? String, "3")
         element("back").tap()
-        XCTAssertTrue(waitFor("homeTitle").exists)
+        waitFor("homeTitle")
         XCTAssertTrue(labelled("Archery").exists)
     }
 
@@ -26,10 +26,10 @@ final class ArcheryUITests: UITestCase {
         openArchery()
         XCTAssertEqual(element("arrowsLeft").value as? String, "1")
         shoot()
-        XCTAssertTrue(waitFor("archeryResult").exists)
+        waitFor("archeryResult")
         XCTAssertTrue(labelled("Level 1 complete").exists)
         XCTAssertEqual(element("resultStars").label, "3 of 3 stars")
-        element("archeryNext").tap()
+        element("resultNext").tap()
         XCTAssertEqual(waitFor("archeryLevel").value as? String, "2 of 30")
         XCTAssertEqual(element("arrowsLeft").value as? String, "3")
         element("levels").tap()
@@ -46,10 +46,10 @@ final class ArcheryUITests: UITestCase {
         launch(["-scenario", "archeryLastArrow"])
         openArchery()
         shoot()
-        XCTAssertTrue(waitFor("archeryResult").exists)
+        waitFor("archeryResult")
         XCTAssertTrue(labelled("Not quite").exists)
         XCTAssertEqual(element("resultStars").label, "0 of 3 stars")
-        element("archeryRetry").tap()
+        element("resultRetry").tap()
         XCTAssertFalse(element("archeryResult").exists)
         XCTAssertEqual(waitFor("arrowsLeft").value as? String, "3", "a fresh attempt")
         XCTAssertEqual(element("archeryScore").value as? String, "0")
@@ -67,7 +67,7 @@ final class ArcheryUITests: UITestCase {
         app.terminate()
         launch(["-showBoardSignature"], reset: false)
 
-        XCTAssertTrue(waitFor("range").exists, "reopens straight into Archery")
+        waitFor("range")
         XCTAssertEqual(signature(), end)
         XCTAssertEqual(element("arrowsLeft").value as? String, "2")
         XCTAssertEqual(element("archeryLevel").value as? String, "7 of 30")
@@ -97,7 +97,7 @@ final class ArcheryUITests: UITestCase {
 
     private func captureArchery(appearance: String) {
         launch(appearance: appearance)
-        _ = waitFor("homeTitle")
+        waitFor("homeTitle")
         // Solitaire's dark set already shows the home screen in dark mode.
         if appearance == "light" { snap("50-home-three-games-\(appearance)") }
         openArchery()
@@ -107,7 +107,7 @@ final class ArcheryUITests: UITestCase {
         openArchery()
         snap("52-archery-aim-\(appearance)")
         element("levels").tap()
-        _ = waitFor("level-22")
+        waitFor("level-22")
         snap("56-archery-levels-\(appearance)")
         element("done").tap()
 
@@ -118,23 +118,20 @@ final class ArcheryUITests: UITestCase {
         launch(["-scenario", "archeryNearWin"], appearance: appearance)
         openArchery()
         shoot()
-        _ = waitFor("archeryResult")
+        waitFor("archeryResult")
         snap("55-archery-result-\(appearance)")
     }
 
     // MARK: Helpers
 
     private func openArchery() {
-        waitFor("game-archery").tap()
-        _ = waitFor("range")
+        open(game: "archery", showing: "range")
     }
 
     /// Touches the range, holds past full draw without moving, and lets go.
     private func shoot() {
         let before = element("arrowsLeft").value as? String
         waitFor("range").press(forDuration: 1.0)
-        let changed = NSPredicate { _, _ in self.element("arrowsLeft").value as? String != before }
-        expectation(for: changed, evaluatedWith: nil)
-        waitForExpectations(timeout: 5)
+        waitForValue(of: "arrowsLeft", toChangeFrom: before)
     }
 }

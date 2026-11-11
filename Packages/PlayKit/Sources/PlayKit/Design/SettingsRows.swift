@@ -1,14 +1,11 @@
 import SwiftUI
 
-/// A titled, rounded group of settings rows.
 public struct SettingsPanel<Content: View>: View {
     let title: String
-    let footer: String?
     let content: Content
 
-    public init(_ title: String, footer: String? = nil, @ViewBuilder content: () -> Content) {
+    public init(_ title: String, @ViewBuilder content: () -> Content) {
         self.title = title
-        self.footer = footer
         self.content = content()
     }
 
@@ -25,17 +22,10 @@ public struct SettingsPanel<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, Theme.Space.xs)
             .background(RoundedRectangle(cornerRadius: Theme.Radius.l, style: .continuous).fill(Theme.surface))
-            if let footer {
-                Text(footer)
-                    .font(Typography.caption)
-                    .foregroundStyle(Theme.inkSecondary)
-                    .padding(.horizontal, Theme.Space.l)
-            }
         }
     }
 }
 
-/// A switch with a title and optional explanation.
 public struct SettingsToggleRow: View {
     let title: String
     let detail: String?
@@ -70,7 +60,6 @@ public struct SettingsToggleRow: View {
     }
 }
 
-/// A segmented choice with a title.
 public struct SettingsChoiceRow<Value: Hashable>: View {
     let title: String
     let detail: String?
@@ -111,7 +100,6 @@ public struct SettingsChoiceRow<Value: Hashable>: View {
     }
 }
 
-/// A hairline between settings rows.
 public struct SettingsDivider: View {
     public init() {}
 

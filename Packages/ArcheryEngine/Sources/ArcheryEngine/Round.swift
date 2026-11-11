@@ -1,6 +1,5 @@
 import Foundation
 
-/// One arrow shot.
 public struct Shot: Hashable, Codable, Sendable {
     /// Where the sight pointed when the arrow was released (target coordinates, boss at rest).
     public let aim: Vec2
@@ -58,7 +57,6 @@ public struct ArcheryRound: Hashable, Codable, Sendable {
 
     // MARK: Progress
 
-    public var arrowsShot: Int { shots.count }
     public var arrowsLeft: Int { status == .playing ? level.arrows - shots.count : 0 }
     public var score: Int { shots.reduce(0) { $0 + $1.score } }
     public var xCount: Int { shots.filter(\.hit.isX).count }
@@ -74,16 +72,19 @@ public struct ArcheryRound: Hashable, Codable, Sendable {
     }
 
     /// Seconds left on a timed level (the full limit until the first draw).
-    public var timeLeft: Double? {
+    public var timeLeft: Double? { timeLeft(at: clock) }
+
+    /// Seconds left when the level clock reads `time`.
+    public func timeLeft(at time: Double) -> Double? {
         guard let limit = level.timeLimit else { return nil }
         guard let start = timerStart else { return limit }
-        return max(0, limit - (clock - start))
+        return max(0, limit - (time - start))
     }
 
     // MARK: Playing
 
-    /// Moves the level clock on. On a timed level, running out of time ends the attempt and the
-    /// arrows left in the quiver score as misses.
+    /// On a timed level, running out of time ends the attempt and the arrows left in the quiver
+    /// score as misses.
     public mutating func advance(by seconds: Double) {
         guard status == .playing, seconds > 0 else { return }
         clock += seconds
@@ -113,7 +114,7 @@ public struct ArcheryRound: Hashable, Codable, Sendable {
         return (level.layout.hit(at: landing, used: usedSpots), drift, offset)
     }
 
-    /// Releases an arrow now with the sight at `aim`. Returns nil once the attempt is over.
+    /// Returns nil once the attempt is over.
     @discardableResult
     public mutating func shoot(aim: Vec2) -> Shot? {
         guard status == .playing, arrowsLeft > 0 else { return nil }

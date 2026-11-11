@@ -41,9 +41,7 @@ final class AppModel: ObservableObject {
         let storage = storage ?? Storage(root: Storage.defaultRoot())
         if options.resetState {
             storage.wipe()
-            for key in defaults.dictionaryRepresentation().keys where key.hasPrefix("settings.") || key.hasPrefix("game.") {
-                defaults.removeObject(forKey: key)
-            }
+            AppSettings.eraseAll(in: defaults)
         }
         self.options = options
         self.storage = storage
@@ -80,7 +78,6 @@ final class AppModel: ObservableObject {
             accent: game.module.accent,
             storage: storage,
             stats: stats,
-            settings: settings,
             defaults: defaults,
             feedback: feedback,
             options: options,

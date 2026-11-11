@@ -16,10 +16,8 @@ public struct Face: Hashable, Codable, Sendable {
 
     public static let full122 = Face(size: 1.22)
     public static let full80 = Face(size: 0.80)
-    public static let full60 = Face(size: 0.60)
     public static func spot(_ size: Double) -> Face { Face(size: size, lowestRing: 6) }
 
-    /// Width of one ring.
     public var ringWidth: Double { size / 20 }
     /// Outer radius of the printed face.
     public var radius: Double { outerRadius(ofRing: lowestRing) }
@@ -109,7 +107,6 @@ public struct TargetLayout: Hashable, Codable, Sendable {
         let half = bossSize / 2
         let inBoss = abs(point.x) <= half && abs(point.y) <= half
         guard inBoss else { return Hit(point: point, ring: 0, isX: false, spot: nil, inBoss: false, repeatSpot: false) }
-        // The best-scoring spot the arrow touches.
         var best: (index: Int, ring: Int, isX: Bool)?
         for (index, spot) in spots.enumerated() {
             let result = spot.face.score(distance: point.distance(to: spot.center))

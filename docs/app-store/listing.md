@@ -8,15 +8,15 @@ Between Stops: Commute Games  [28]
 
 ## Subtitle (30)
 
-Three games for one thumb  [25]
+Four games for one thumb  [24]
 
 ## Promotional text (170)
 
-Solitaire, a bubble shooter with 2,000 levels, and target archery from 10 to 90 metres, all made for one thumb. Pick up exactly where you left off, even offline.  [161]
+Solitaire, a bubble shooter with 2,000 levels, target archery and an endless run down a pier, all made for one thumb. Pick up where you left off, even offline.  [159]
 
 ## Description (4000)
 
-Between Stops is a small collection of calm, colorful games for the moments between here and there. It has three games, all built for one-handed play on a moving train: Solitaire (classic Klondike), Bubbles, a bubble shooter with 2,000 levels, and Archery, with 30 levels of target archery.
+Between Stops is a small collection of calm, colorful games for the moments between here and there. It has four games, all built for one-handed play on a moving train: Solitaire (classic Klondike), Bubbles, a bubble shooter with 2,000 levels, Archery, with 30 levels of target archery, and Runner, an endless run down a pier.
 
 MADE FOR ONE THUMB
 • Tap any card and it makes its best move. No precise dragging needed (but you can drag too).
@@ -40,6 +40,13 @@ ARCHERY: 30 LEVELS, 10 TO 90 METRES
 • Five venues from a calm morning practice field to a windy championship under floodlights, with moving and swinging targets, small three-spot faces and races against the clock.
 • A target camera shows your group, and every arrow scores just like real archery, X ring included.
 
+RUNNER: HOW FAR CAN YOU GET?
+• Swipe left or right to change lane, up to jump, down to slide.
+• Jump the barriers and the rolling barrels, slide under the beams, go round the crates and containers.
+• Coins along the way, a magnet that pulls them in, and a shield that takes one hit.
+• It gets faster the further you run. Every run has a goal to beat, and your first runs show you the moves.
+• Sunset in light mode, a moonlit night in dark mode.
+
 CLASSIC KLONDIKE
 • Draw 1 or Draw 3, with unlimited redeals.
 • Hints when you're stuck, and a one-tap finish once every card is face up.
@@ -58,7 +65,7 @@ PRIVATE BY DESIGN
 
 ## Keywords (100)
 
-solitaire,klondike,card game,bubble shooter,archery,bow,arrow,target,offline,one hand,commute,train  [99]
+solitaire,klondike,cards,bubble shooter,archery,bow,target,runner,endless,offline,one hand,commute  [98]
 
 ## Support URL
 
@@ -74,7 +81,7 @@ Leave blank.
 
 ## Categories
 
-Primary: Games. Subcategories: Card, Puzzle (Apple allows two; Sports would also fit Archery).
+Primary: Games. Subcategories: Card, Puzzle (Apple allows two; Sports would also fit Archery, and Action Runner).
 
 ## Age rating
 
@@ -87,6 +94,7 @@ Between Stops is fully offline and has no accounts, sign-in, purchases or networ
 try it: open Solitaire from the home screen, then tap any face-up card to move it, or tap the
 stock (bottom right) to draw. Settings (gear icon) switches between Draw 1 and Draw 3. In
 Archery, touch and hold anywhere on the range to draw the bow, slide to aim, and let go to shoot.
+In Runner, tap the pier to start, then swipe left, right, up or down.
 
 ## Screenshots
 
@@ -101,3 +109,5 @@ Use the 1320 × 2868 PNGs in `docs/app-store/screenshots/` (6.9" display), in th
 7. `7-win.png`: the Solitaire win screen with statistics
 8. `8-home.png`: the game collection
 9. `9-dark.png`: dark mode
+10. `10-runner.png`: Runner, mid-jump on the pier at sunset (arrives with the first CI run on
+    `main` that includes Runner: run `tools/update_store_screenshots.sh` after it)

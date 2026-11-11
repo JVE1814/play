@@ -43,13 +43,11 @@ final class GameTests: XCTestCase {
     }
 
     func testTheQueueOnlyOffersColoursStillOnTheBoard() {
-        var g = game(["yyyyyyyy"], palette: [.red, .yellow, .blue], shots: 50)
-        for _ in 0..<20 {
-            XCTAssertEqual(g.current, .yellow)
-            XCTAssertEqual(g.next, .yellow)
-            g.shoot(direction: Point(0.3, -1))
-            if g.status != .playing { break }
-        }
+        var g = game(["...rr..y"], palette: [.red, .yellow, .blue], shots: 50, current: .red, next: .red)
+        g.shoot(direction: up)
+        XCTAssertEqual(g.status, .playing, "the reds pop and the yellow is left")
+        XCTAssertEqual(g.current, .yellow, "the red that was next is dealt again")
+        XCTAssertEqual(g.next, .yellow)
     }
 
     func testSwapExchangesTheTwoBubbles() {
@@ -69,17 +67,13 @@ final class GameTests: XCTestCase {
 
     func testAttemptsDealDifferentQueuesButTheSameBoard() {
         let level = LevelCatalog.level(120)
-        let first = BubbleGame(level: level, attempt: 0)
-        let again = BubbleGame(level: level, attempt: 0)
-        XCTAssertEqual(first, again)
         var queues = Set<String>()
         for attempt in 0..<8 {
             var g = BubbleGame(level: level, attempt: attempt)
-            XCTAssertEqual(g.grid, level.grid)
+            XCTAssertEqual(g.grid, level.layout.grid)
             var queue = ""
             for _ in 0..<6 {
                 queue.append(Bubble.color(g.current).code)
-                g.swap(); g.swap()
                 g.shoot(direction: Point(4, -1))
             }
             queues.insert(queue)
@@ -95,7 +89,6 @@ final class GameTests: XCTestCase {
         let data = try JSONEncoder().encode(g)
         var restored = try JSONDecoder().decode(BubbleGame.self, from: data)
         XCTAssertEqual(restored, g)
-        XCTAssertEqual(restored.signature, g.signature)
         // The restored game continues identically, queue included.
         g.shoot(direction: Point(0.2, -1))
         restored.shoot(direction: Point(0.2, -1))

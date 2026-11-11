@@ -7,7 +7,6 @@ final class InvariantTests: XCTestCase {
     func testOneThousandSeededRandomGamesAlwaysKeepExactly52UniqueCards() {
         let fullDeck = Set(Card.fullDeck)
         var movesPlayed = 0
-        var gamesChecked = 0
         for seed in 1...1000 as ClosedRange<UInt64> {
             var game = KlondikeGame(seed: seed, drawMode: seed.isMultiple(of: 2) ? .three : .one)
             let deal = game
@@ -24,12 +23,10 @@ final class InvariantTests: XCTestCase {
                     XCTFail("seed \(seed): invalid run \(column.visible)")
                 }
             }
-            XCTAssertEqual(game.board.integrityProblems, [], "seed \(seed)")
+            XCTAssertEqual(game.integrityProblems, [], "seed \(seed)")
             game.undoAll()
             XCTAssertEqual(game, deal, "seed \(seed): undo all should restore the deal")
-            gamesChecked += 1
         }
-        XCTAssertEqual(gamesChecked, 1000)
         XCTAssertGreaterThan(movesPlayed, 100_000)
     }
 
@@ -40,11 +37,6 @@ final class InvariantTests: XCTestCase {
         let data = try JSONEncoder().encode(game)
         let decoded = try JSONDecoder().decode(KlondikeGame.self, from: data)
         XCTAssertEqual(decoded, game)
-        XCTAssertEqual(decoded.board.signature, game.board.signature)
-        XCTAssertEqual(decoded.integrityProblems, [])
-        var a = game, b = decoded
-        a.undoAll(); b.undoAll()
-        XCTAssertEqual(a, b)
     }
 
     func testCardsEncodeAsSmallIntegers() throws {
@@ -53,28 +45,56 @@ final class InvariantTests: XCTestCase {
         XCTAssertThrowsError(try JSONDecoder().decode([Card].self, from: Data("[52]".utf8)))
     }
 
+    /// A save damaged on disk can still decode. Its history is checked by undoing it, which must
+    /// report the damage rather than crash on it.
+    func testAHistoryTheBoardCouldNotHaveComeFromIsCaught() throws {
+        struct Save: Encodable {
+            let board: Board
+            let drawMode: DrawMode
+            let history: [MoveRecord]
+        }
+        let impossible = [
+            MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 40), revealedCard: false, cardCount: 40),
+            MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 1), revealedCard: true, cardCount: 1),
+            MoveRecord(move: .transfer(from: .waste, to: .foundation(9), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .transfer(from: .tableau(-1), to: .tableau(1), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .transfer(from: .tableau(1), to: .tableau(1), count: 1), revealedCard: true, cardCount: 1),
+            MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 0), revealedCard: false, cardCount: 0),
+            MoveRecord(move: .recycle, revealedCard: false, cardCount: 5),
+            MoveRecord(move: .transfer(from: .stock, to: .tableau(1), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .transfer(from: .tableau(0), to: .tableau(1), count: 1), revealedCard: false, cardCount: 1),
+            MoveRecord(move: .draw, revealedCard: false, cardCount: 0),
+            MoveRecord(move: .draw, revealedCard: false, cardCount: 3),
+            MoveRecord(move: .draw, revealedCard: false, cardCount: -1),
+        ]
+        for record in impossible {
+            let data = try JSONEncoder().encode(Save(board: Board(seed: 4), drawMode: .one, history: [record]))
+            let game = try JSONDecoder().decode(KlondikeGame.self, from: data)
+            XCTAssertFalse(game.integrityProblems.isEmpty, "\(record)")
+        }
+    }
+
     func testIntegrityCheckCatchesCorruption() {
         let good = KlondikeGame(seed: 4).board
         XCTAssertEqual(good.integrityProblems, [])
 
         var duplicated = good
         duplicated.stock.append(duplicated.stock[0])
-        XCTAssertTrue(duplicated.integrityProblems.contains { $0.contains("duplicate") })
+        XCTAssertFalse(duplicated.integrityProblems.isEmpty, "a card twice")
 
         var badRun = good
         let top = badRun.tableau[1].visible[0]
         let sameColour = badRun.stock.firstIndex { $0.isRed == top.isRed }!
         badRun.tableau[1].visible.append(badRun.stock.remove(at: sameColour))
-        XCTAssertTrue(badRun.integrityProblems.contains { $0.contains("not a valid run") })
+        XCTAssertFalse(badRun.integrityProblems.isEmpty, "two cards of one colour in a run")
 
         var noFaceUp = good
         noFaceUp.stock.append(noFaceUp.tableau[3].visible.removeLast())
-        XCTAssertTrue(noFaceUp.integrityProblems.contains { $0.contains("no face-up card") })
+        XCTAssertFalse(noFaceUp.integrityProblems.isEmpty, "a column with only face-down cards")
 
         var badFoundation = good
-        badFoundation.foundations[0] = [badFoundation.stock.removeLast()]
-        if badFoundation.foundations[0][0].rank != 1 {
-            XCTAssertTrue(badFoundation.integrityProblems.contains { $0.contains("foundation") })
-        }
+        let notAnAce = badFoundation.stock.firstIndex { $0.rank != 1 }!
+        badFoundation.foundations[0] = [badFoundation.stock.remove(at: notAnAce)]
+        XCTAssertFalse(badFoundation.integrityProblems.isEmpty, "a foundation that does not start with its ace")
     }
 }

@@ -13,7 +13,10 @@ public struct BubbleGrid: Hashable, Codable, Sendable {
     public static let width = Double(columns) + 0.5
     public static let rowHeight = 0.866_025_403_784_438_6 // √3 / 2
     /// Where shots start: centred, one bubble below the death row.
-    public static let launcher = Point(width / 2, 0.5 + Double(deathRow) * rowHeight + 1.0)
+    public static let launcher = Point(width / 2, y(ofRow: deathRow) + 1.0)
+
+    /// The height of the centres of row `row`.
+    public static func y(ofRow row: Int) -> Double { 0.5 + Double(row) * rowHeight }
 
     private var slots: [Bubble?]
 
@@ -26,18 +29,8 @@ public struct BubbleGrid: Hashable, Codable, Sendable {
         self.init()
         for (r, line) in rows.enumerated() {
             for (c, character) in line.enumerated() where character != "." && character != " " {
-                self[Cell(r, c)] = Self.bubble(for: character)
+                self[Cell(r, c)] = Bubble(code: character)
             }
-        }
-    }
-
-    static func bubble(for code: Character) -> Bubble? {
-        switch code {
-        case "S": return .stone
-        case "B": return .bomb
-        default:
-            guard let index = Array("rygbpc").firstIndex(of: code) else { return nil }
-            return .color(BubbleColor(rawValue: index)!)
         }
     }
 
@@ -76,7 +69,7 @@ public struct BubbleGrid: Hashable, Codable, Sendable {
     public var lowestRow: Int { occupied.last?.row ?? -1 }
 
     public static func center(of cell: Cell) -> Point {
-        Point(0.5 + Double(cell.column) + (cell.row % 2 == 1 ? 0.5 : 0), 0.5 + Double(cell.row) * rowHeight)
+        Point(0.5 + Double(cell.column) + (cell.row % 2 == 1 ? 0.5 : 0), y(ofRow: cell.row))
     }
 
     /// The (up to six) valid neighbours of a cell.
@@ -128,7 +121,6 @@ public struct BubbleGrid: Hashable, Codable, Sendable {
     }
 }
 
-/// The path a shot takes and where it settles.
 public struct ShotTrace: Hashable, Sendable {
     /// Start, every wall bounce, and the point where the bubble stops.
     public let path: [Point]
@@ -153,7 +145,6 @@ extension BubbleGrid {
         for _ in 0..<64 {
             var best = Double.infinity
             var hitBubble = false
-            // Bubbles.
             for cell in cells {
                 let f = position - Self.center(of: cell)
                 let b = f.dot(d)
@@ -166,13 +157,11 @@ extension BubbleGrid {
                     hitBubble = true
                 }
             }
-            // Ceiling.
             let tCeiling = (ceiling - position.y) / d.y
             if tCeiling < best {
                 best = tCeiling
                 hitBubble = false
             }
-            // Walls.
             var tWall = Double.infinity
             if d.x < 0 { tWall = (left - position.x) / d.x }
             if d.x > 0 { tWall = (right - position.x) / d.x }
@@ -211,10 +200,7 @@ extension BubbleGrid {
     }
 }
 
-/// What a shot did to the grid.
 public struct ShotResult: Hashable, Codable, Sendable {
-    /// Where the shot bubble settled.
-    public let landed: Cell
     /// Same-colour group that popped (includes the shot bubble), with what was there.
     public let popped: [Cell]
     /// Cells cleared by bombs (bombs included).
@@ -232,7 +218,6 @@ extension BubbleGrid {
     public mutating func resolve(placing bubble: Bubble, at cell: Cell) -> ShotResult {
         var removed: [Cell: Bubble] = [:]
         self[cell] = bubble
-        // Bombs next to the landing cell go off, setting off any bombs caught in their blast.
         var exploded: [Cell] = []
         var blasted = Set<Cell>()
         var detonated = Set<Cell>()
@@ -250,7 +235,6 @@ extension BubbleGrid {
             self[target] = nil
             exploded.append(target)
         }
-        // Three or more of a colour pop.
         var popped: [Cell] = []
         if self[cell] != nil {
             let group = self.group(at: cell)
@@ -262,7 +246,6 @@ extension BubbleGrid {
                 popped = group
             }
         }
-        // Anything no longer connected to the ceiling falls.
         var dropped: [Cell] = []
         if !popped.isEmpty || !exploded.isEmpty {
             let anchored = self.anchored()
@@ -272,6 +255,6 @@ extension BubbleGrid {
                 dropped.append(other)
             }
         }
-        return ShotResult(landed: cell, popped: popped, exploded: exploded, dropped: dropped, removed: removed)
+        return ShotResult(popped: popped, exploded: exploded, dropped: dropped, removed: removed)
     }
 }

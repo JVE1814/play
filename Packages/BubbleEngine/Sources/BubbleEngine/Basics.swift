@@ -15,21 +15,6 @@ public enum BubbleColor: Int, CaseIterable, Codable, Sendable, Comparable {
         }
     }
 
-    /// The shape drawn inside the bubble.
-    public var symbol: String {
-        switch self {
-        case .red: return "triangle"
-        case .yellow: return "circle"
-        case .green: return "square"
-        case .blue: return "diamond"
-        case .purple: return "plus"
-        case .cyan: return "star"
-        }
-    }
-
-    /// Spoken description, e.g. "Red triangle".
-    public var spokenName: String { "\(name) \(symbol)" }
-
     public static func < (lhs: BubbleColor, rhs: BubbleColor) -> Bool { lhs.rawValue < rhs.rawValue }
 }
 
@@ -47,21 +32,16 @@ public enum Bubble: Hashable, Codable, Sendable {
         return nil
     }
 
-    public var spokenName: String {
-        switch self {
-        case .color(let color): return color.spokenName
-        case .stone: return "Stone"
-        case .bomb: return "Bomb"
-        }
-    }
+    /// One-character codes used in signatures and hand-built grids: r y g b p c for the
+    /// colours, S for stone, B for bomb.
+    private static let codes: [(code: Character, bubble: Bubble)] =
+        zip("rygbpc", BubbleColor.allCases).map { ($0, .color($1)) } + [("S", .stone), ("B", .bomb)]
 
-    /// One-character code used in signatures: r y g b p c, S for stone, B for bomb.
-    public var code: Character {
-        switch self {
-        case .color(let color): return Array("rygbpc")[color.rawValue]
-        case .stone: return "S"
-        case .bomb: return "B"
-        }
+    public var code: Character { Self.codes.first { $0.bubble == self }!.code }
+
+    public init?(code: Character) {
+        guard let match = Self.codes.first(where: { $0.code == code }) else { return nil }
+        self = match.bubble
     }
 }
 
@@ -104,6 +84,41 @@ public struct Point: Hashable, Codable, Sendable {
     }
 
     public func distance(to other: Point) -> Double { (self - other).length }
+}
+
+/// A path as a list of corners, such as a shot with its bounces.
+extension Array where Element == Point {
+    public var pathLength: Double {
+        zip(self, dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
+    }
+
+    /// The point `distance` along the path (its end, once the path runs out).
+    public func point(atDistance distance: Double) -> Point? {
+        var remaining = distance
+        for (a, b) in zip(self, dropFirst()) {
+            let length = a.distance(to: b)
+            if remaining <= length, length > 0 { return a + (b - a) * (remaining / length) }
+            remaining -= length
+        }
+        return last
+    }
+
+    /// The start of the path, cut off after `length`.
+    public func truncated(to length: Double) -> [Point] {
+        guard let first else { return [] }
+        var result = [first]
+        var remaining = length
+        for (a, b) in zip(self, dropFirst()) {
+            let step = a.distance(to: b)
+            if step >= remaining {
+                result.append(a + (b - a) * (remaining / step))
+                break
+            }
+            result.append(b)
+            remaining -= step
+        }
+        return result
+    }
 }
 
 /// A small deterministic random number generator (SplitMix64) that can be saved with a game.

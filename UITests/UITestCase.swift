@@ -31,8 +31,22 @@ class UITestCase: XCTestCase {
     func waitFor(_ identifier: String, timeout: TimeInterval = 10,
                  file: StaticString = #filePath, line: UInt = #line) -> XCUIElement {
         let found = element(identifier)
-        XCTAssertTrue(found.waitForExistence(timeout: timeout), "\(identifier) did not appear", file: file, line: line)
+        // Looking first: waiting for something that is already there still takes a second.
+        XCTAssertTrue(found.exists || found.waitForExistence(timeout: timeout), "\(identifier) did not appear", file: file, line: line)
         return found
+    }
+
+    /// Opens a game from the home screen and waits for `landmark`, an element only its screen has.
+    func open(game id: String, showing landmark: String) {
+        waitFor("game-\(id)").tap()
+        waitFor(landmark)
+    }
+
+    /// Waits until the value of `identifier` is no longer `before`.
+    func waitForValue(of identifier: String, toChangeFrom before: String?) {
+        let changed = NSPredicate { _, _ in self.element(identifier).value as? String != before }
+        expectation(for: changed, evaluatedWith: nil)
+        waitForExpectations(timeout: 5)
     }
 
     /// Taps the middle of an element by coordinate (cards overlap, so hit-testing decides).

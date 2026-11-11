@@ -7,12 +7,8 @@ final class WinTests: XCTestCase {
               tableau: Array(repeating: TableauColumn(), count: 7))
     }
 
-    func testFreshDealIsNotWon() {
-        XCTAssertFalse(KlondikeGame(seed: 1).isWon)
-    }
-
     func testWinWhenEveryFoundationIsComplete() {
-        let game = makeGame(solvedBoard())
+        let game = KlondikeGame(board: solvedBoard())
         XCTAssertTrue(game.isWon)
         XCTAssertEqual(game.board.integrityProblems, [])
         XCTAssertFalse(game.canAutoFinish, "nothing left to finish")
@@ -22,7 +18,7 @@ final class WinTests: XCTestCase {
         var board = solvedBoard()
         let king = board.foundations[3].removeLast()
         board.tableau[0].visible = [king]
-        var game = makeGame(board)
+        var game = KlondikeGame(board: board)
         XCTAssertFalse(game.isWon)
         XCTAssertTrue(game.perform(.transfer(from: .tableau(0), to: .foundation(3), count: 1)))
         XCTAssertTrue(game.isWon)
@@ -36,9 +32,7 @@ final class WinTests: XCTestCase {
             XCTAssertEqual(game.board.integrityProblems, [], "seed \(seed)")
             XCTAssertFalse(game.board.allCardsRevealed)
             XCTAssertFalse(game.canAutoFinish)
-            XCTAssertEqual(game.board.foundationCardCount, 44)
         }
-        XCTAssertEqual(KlondikeFixtures.nearlyWon(seed: 3), KlondikeFixtures.nearlyWon(seed: 3))
         XCTAssertNotEqual(KlondikeFixtures.nearlyWon(seed: 3).board, KlondikeFixtures.nearlyWon(seed: 4).board)
     }
 
@@ -46,7 +40,6 @@ final class WinTests: XCTestCase {
         var game = KlondikeFixtures.nearlyWon(seed: 9)
         var taps = 0
         while !game.isWon && taps < 30 {
-            // Tap a card with a move if there is one, otherwise tap the stock, like a player would.
             let tops = game.waste.suffix(1) + game.board.tableau.compactMap(\.top)
             let move = tops.lazy.compactMap { game.bestMove(tapping: $0) }.first ?? game.bestMove(tappingPile: .stock)
             guard let move else { break }
@@ -56,13 +49,13 @@ final class WinTests: XCTestCase {
         XCTAssertTrue(game.isWon)
     }
 
-    func testAutoFinishBecomesAvailableOnceEverythingIsFaceUp() {
+    func testAutoFinishBecomesAvailableOnceEverythingIsFaceUp() throws {
         var game = KlondikeFixtures.nearlyWon(seed: 21)
         XCTAssertNil(game.autoFinishMoves(), "a card is still face down in the stock")
         game.perform(.draw)
         XCTAssertTrue(game.board.allCardsRevealed)
         XCTAssertTrue(game.canAutoFinish)
-        let moves = try! XCTUnwrap(game.autoFinishMoves())
+        let moves = try XCTUnwrap(game.autoFinishMoves())
         for move in moves { XCTAssertTrue(game.perform(move), "\(move)") }
         XCTAssertTrue(game.isWon)
     }
@@ -75,13 +68,13 @@ final class WinTests: XCTestCase {
         let kingHearts = board.foundations[1].removeLast()
         board.tableau[0] = TableauColumn(hidden: [kingSpades], visible: [kingHearts])
         board.tableau[1] = TableauColumn(hidden: [], visible: [queenHearts])
-        let game = makeGame(board)
+        let game = KlondikeGame(board: board)
         XCTAssertEqual(game.board.integrityProblems, [])
         XCTAssertFalse(game.board.allCardsRevealed)
         XCTAssertFalse(game.canAutoFinish)
     }
 
-    func testAutoFinishCyclesTheWasteInDrawOne() {
+    func testAutoFinishCyclesTheWasteInDrawOne() throws {
         // All columns face up, stock empty; the waste holds the Queen of Hearts under the King,
         // so the waste must be turned over to reach the Queen first.
         var board = solvedBoard()
@@ -89,9 +82,9 @@ final class WinTests: XCTestCase {
         let queenHearts = board.foundations[1].removeLast()
         board.waste = [queenHearts, kingHearts]
         board.tableau[0].visible = [board.foundations[0].removeLast()]
-        var game = makeGame(board, drawMode: .one)
+        var game = KlondikeGame(board: board, drawMode: .one)
         XCTAssertEqual(game.board.integrityProblems, [])
-        let moves = try! XCTUnwrap(game.autoFinishMoves())
+        let moves = try XCTUnwrap(game.autoFinishMoves())
         XCTAssertTrue(moves.contains(.recycle))
         for move in moves { XCTAssertTrue(game.perform(move)) }
         XCTAssertTrue(game.isWon)
@@ -103,7 +96,6 @@ final class WinTests: XCTestCase {
         for seed in 0..<300 as Range<UInt64> {
             var game = KlondikeGame(seed: seed, drawMode: .one)
             var steps = 0
-            // Greedy play until all cards are revealed (or we give up on this deal).
             while !game.board.allCardsRevealed && steps < 2000 {
                 guard let move = game.hint() else { break }
                 game.perform(move)

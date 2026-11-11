@@ -37,10 +37,18 @@ extension KlondikeGame {
     /// Problems with the board or history; empty for a consistent game.
     public var integrityProblems: [String] {
         var problems = board.integrityProblems
-        // Replaying the undo stack must lead somewhere legal without errors.
-        var copy = self
-        copy.undoAll()
-        problems += copy.board.integrityProblems.map { "after undoing all moves: \($0)" }
+        // The history must undo to a legal position, and playing it again from there must be
+        // legal at every move and arrive at exactly this game.
+        var replay = self
+        replay.undoAll()
+        guard !replay.canUndo else {
+            return problems + ["the history holds a move this board could not have come from"]
+        }
+        problems += replay.board.integrityProblems.map { "after undoing all moves: \($0)" }
+        for record in history where !replay.perform(record.move) {
+            return problems + ["the history holds an illegal move: \(record.move)"]
+        }
+        if replay != self { problems.append("the history does not lead to this board") }
         return problems
     }
 }

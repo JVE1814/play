@@ -29,6 +29,6 @@ public enum KlondikeFixtures {
             tableau[column] = TableauColumn(hidden: [], visible: stack)
         }
         let board = Board(stock: [Card(12, .diamonds)], waste: [], foundations: foundations, tableau: tableau)
-        return KlondikeGame(board: board, drawMode: drawMode, seed: seed)
+        return KlondikeGame(board: board, drawMode: drawMode)
     }
 }

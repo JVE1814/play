@@ -18,12 +18,10 @@ extension Color {
         self.init(uiColor: UIColor(hex: hex, alpha: CGFloat(opacity)))
     }
 
-    /// A colour that adapts to light and dark mode.
     public init(light: UInt32, dark: UInt32, opacity: Double = 1) {
         self.init(light: light, lightOpacity: opacity, dark: dark, darkOpacity: opacity)
     }
 
-    /// A colour that adapts to light and dark mode, with separate opacities.
     public init(light: UInt32, lightOpacity: Double, dark: UInt32, darkOpacity: Double) {
         self.init(uiColor: UIColor { traits in
             traits.userInterfaceStyle == .dark
@@ -53,7 +51,6 @@ public enum Theme {
         public static let m: CGFloat = 12
         public static let l: CGFloat = 16
         public static let xl: CGFloat = 24
-        public static let xxl: CGFloat = 32
     }
 
     public enum Radius {
@@ -80,13 +77,10 @@ public enum Typography {
 
 /// A game's accent colour and the colours derived from it. Each game picks one.
 public struct Accent {
-    public let name: String
     /// Bold, saturated fill for tiles and primary buttons. Same in light and dark mode.
     public let fill: Color
     /// Text and icons drawn on `fill`.
     public let onFill: Color
-    /// The accent as text or icons on the neutral background, contrast-tuned per mode.
-    public let strong: Color
     /// The game table: the bold fill in light mode, a deep tint in dark mode.
     public let table: Color
     /// Text and icons drawn on `table`.
@@ -96,28 +90,20 @@ public struct Accent {
     /// A darker companion colour, for example card backs.
     public let deep: Color
 
-    public init(name: String, fill: UInt32, onFill: UInt32, strongLight: UInt32, strongDark: UInt32,
-                tableDark: UInt32, onTableDark: UInt32, deepLight: UInt32) {
-        self.name = name
+    public init(fill: UInt32, onFill: UInt32, tableDark: UInt32, onTableDark: UInt32, deepLight: UInt32) {
         self.fill = Color(hex: fill)
         self.onFill = Color(hex: onFill)
-        self.strong = Color(light: strongLight, dark: strongDark)
         self.table = Color(light: fill, dark: tableDark)
         self.onTable = Color(light: onFill, dark: onTableDark)
         self.tableControl = Color(light: 0xFFFFFF, lightOpacity: 0.32, dark: 0xFFFFFF, darkOpacity: 0.10)
         self.deep = Color(light: deepLight, dark: fill)
     }
 
-    public static let jade = Accent(name: "Jade", fill: 0x1DB37A, onFill: 0x062A1C, strongLight: 0x0A7A50,
-                                    strongDark: 0x3EDC9A, tableDark: 0x0D2219, onTableDark: 0xEAF7F0, deepLight: 0x0A5A3C)
-    public static let grape = Accent(name: "Grape", fill: 0x9B6BFF, onFill: 0x14062E, strongLight: 0x6A3FD9,
-                                     strongDark: 0xB99AFF, tableDark: 0x1A1030, onTableDark: 0xF1EBFF, deepLight: 0x4B2AA8)
-    public static let coral = Accent(name: "Coral", fill: 0xFF6B57, onFill: 0x3A0B05, strongLight: 0xB8321F,
-                                     strongDark: 0xFF8A7A, tableDark: 0x2A1210, onTableDark: 0xFFEDEA, deepLight: 0x8C2416)
-    public static let sun = Accent(name: "Sun", fill: 0xFFC531, onFill: 0x2B2000, strongLight: 0x8A6400,
-                                   strongDark: 0xFFD666, tableDark: 0x2A2208, onTableDark: 0xFFF6DD, deepLight: 0x8A6400)
-    public static let sky = Accent(name: "Sky", fill: 0x38A3FF, onFill: 0x04213D, strongLight: 0x0B62B3,
-                                   strongDark: 0x7CC4FF, tableDark: 0x0B1B2C, onTableDark: 0xE7F3FF, deepLight: 0x0B4F8F)
+    public static let jade = Accent(fill: 0x1DB37A, onFill: 0x062A1C, tableDark: 0x0D2219, onTableDark: 0xEAF7F0, deepLight: 0x0A5A3C)
+    public static let grape = Accent(fill: 0x9B6BFF, onFill: 0x14062E, tableDark: 0x1A1030, onTableDark: 0xF1EBFF, deepLight: 0x4B2AA8)
+    public static let coral = Accent(fill: 0xFF6B57, onFill: 0x3A0B05, tableDark: 0x2A1210, onTableDark: 0xFFEDEA, deepLight: 0x8C2416)
+    public static let sun = Accent(fill: 0xFFC531, onFill: 0x2B2000, tableDark: 0x2A2208, onTableDark: 0xFFF6DD, deepLight: 0x8A6400)
+    public static let sky = Accent(fill: 0x38A3FF, onFill: 0x04213D, tableDark: 0x0B1B2C, onTableDark: 0xE7F3FF, deepLight: 0x0B4F8F)
 }
 
 private struct AccentKey: EnvironmentKey {

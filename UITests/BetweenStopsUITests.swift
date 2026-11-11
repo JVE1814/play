@@ -1,21 +1,20 @@
 import XCTest
 
-/// End-to-end tests. Each launch wipes saved data (`-resetState`) unless a test is checking
-/// what survives a relaunch, and disables animations so taps settle immediately.
+/// End-to-end tests for Solitaire and the screens every game shares.
 final class BetweenStopsUITests: UITestCase {
 
     // MARK: Gameplay
 
     func testHomeListsSolitaireAndOpensIt() {
         launch()
-        XCTAssertTrue(waitFor("homeTitle").exists)
+        waitFor("homeTitle")
         XCTAssertFalse(element("game-testgame").exists, "the test game only appears when requested")
         openSolitaire()
         for id in ["undo", "hint", "newGame", "moves", "timer", "back", "settings", "stock"] {
             XCTAssertTrue(element(id).exists, "\(id) missing")
         }
         element("back").tap()
-        XCTAssertTrue(waitFor("homeTitle").exists)
+        waitFor("homeTitle")
     }
 
     func testDrawingFromTheStockAndUndo() {
@@ -86,9 +85,8 @@ final class BetweenStopsUITests: UITestCase {
         tapCenter(waitFor("card-QD"))        // plays it to the diamonds foundation
         XCTAssertEqual(moves(), "2")
         waitFor("autoFinish").tap()          // every card is face up, so finish automatically
-        XCTAssertTrue(waitFor("winScreen", timeout: 15).exists)
+        waitFor("winScreen", timeout: 15)
         XCTAssertTrue(app.staticTexts["You won!"].exists)
-        XCTAssertTrue(signature().contains("F0:AD,2D,3D,4D,5D,6D,7D,8D,9D,10D,JD,QD,KD"), signature())
         element("winHome").tap()
         waitFor("statsButton").tap()
         XCTAssertTrue(labelled("Won: 1").waitForExistence(timeout: 5))
@@ -109,12 +107,12 @@ final class BetweenStopsUITests: UITestCase {
         app.terminate()                      // like swiping the app away: no chance to save
         launch(["-showBoardSignature"], reset: false)
 
-        XCTAssertTrue(waitFor("stock").exists, "reopens straight into the game")
+        waitFor("stock")
         XCTAssertFalse(element("homeTitle").exists)
         XCTAssertEqual(signature(), board)
         XCTAssertEqual(moves(), "4")
         element("undo").tap()                // the undo history survived too
-        XCTAssertEqual(moves(), "3")
+        XCTAssertEqual(moves(), "3", "undo enabled: \(element("undo").isEnabled), board: \(signature())")
     }
 
     func testTestOnlyGameAppearsOnHomeAndOpens() {
@@ -123,12 +121,12 @@ final class BetweenStopsUITests: UITestCase {
         XCTAssertTrue(element("game-klondike").exists)
         snap("30-test-game-on-home-light")
         tile.tap()
-        XCTAssertTrue(waitFor("testGameTitle").exists)
+        waitFor("testGameTitle")
         snap("31-test-game-open-light")
         element("testGameTap").tap()
         XCTAssertEqual(element("testGameCount").value as? String, "1")
         element("back").tap()
-        XCTAssertTrue(waitFor("game-testgame").exists)
+        waitFor("game-testgame")
     }
 
     func testDrawThreeSettingAppliesToTheNextDeal() {
@@ -165,13 +163,13 @@ final class BetweenStopsUITests: UITestCase {
 
     func testAccessibilityAudit() throws {
         launch(["-scenario", "midGame", "-seed", "11"])
-        _ = waitFor("homeTitle")
+        waitFor("homeTitle")
         try app.performAccessibilityAudit(for: [.sufficientElementDescription, .hitRegion])
         openSolitaire()
         try app.performAccessibilityAudit(for: [.sufficientElementDescription])
         element("back").tap()
         waitFor("settingsButton").tap()
-        _ = waitFor("done")
+        waitFor("done")
         try app.performAccessibilityAudit(for: [.sufficientElementDescription, .hitRegion])
     }
 
@@ -188,30 +186,30 @@ final class BetweenStopsUITests: UITestCase {
     func testScreenshotsLargeText() {
         launch(["-scenario", "midGame", "-seed", "11",
                 "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityL"], appearance: "light")
-        _ = waitFor("homeTitle")
+        waitFor("homeTitle")
         snap("20-large-text-home-light")
         openSolitaire()
         snap("21-large-text-game-light")
         element("back").tap()
         waitFor("statsButton").tap()
-        _ = waitFor("done")
+        waitFor("done")
         snap("22-large-text-stats-light")
     }
 
     private func captureScreens(appearance: String) {
         // A game in progress, with a hint showing.
         launch(["-scenario", "midGame", "-seed", "11"], appearance: appearance)
-        _ = waitFor("homeTitle")
+        waitFor("homeTitle")
         openSolitaire()
         snap("02-game-\(appearance)")
         element("hint").tap()
-        _ = waitFor("toast")
+        waitFor("toast")
         snap("03-hint-\(appearance)")
         element("back").tap()
-        _ = waitFor("homeTitle")
+        waitFor("homeTitle")
         snap("01-home-\(appearance)")
         element("settingsButton").tap()
-        _ = waitFor("done")
+        waitFor("done")
         snap("06-settings-\(appearance)")
         element("done").tap()
 
@@ -221,24 +219,22 @@ final class BetweenStopsUITests: UITestCase {
         tapCenter(element("stock"))
         tapCenter(waitFor("card-QD"))
         waitFor("autoFinish").tap()
-        _ = waitFor("winScreen", timeout: 15)
+        waitFor("winScreen", timeout: 15)
         snap("04-win-\(appearance)")
         element("winNewGame").tap()
-        _ = waitFor("stock")
+        waitFor("stock")
         snap("05-new-deal-\(appearance)")
         tapCenter(element("stock"))
         element("newGame").tap()
         let newDeal = app.buttons["New Deal"]
         XCTAssertTrue(newDeal.waitForExistence(timeout: 5))
         snap("08-confirm-new-deal-\(appearance)")
-        let keepPlaying = app.buttons["Keep Playing"]
-        XCTAssertTrue(keepPlaying.exists)
-        keepPlaying.tap()
+        app.buttons["Keep Playing"].tap()
         XCTAssertTrue(newDeal.waitForNonExistence(timeout: 5))
-        XCTAssertEqual(moves(), "1", "dismissing keeps the current game")
+        XCTAssertEqual(moves(), "1", "Keep Playing keeps the current game")
         element("back").tap()
         waitFor("statsButton").tap()
-        _ = waitFor("done")
+        waitFor("done")
         snap("07-stats-\(appearance)")
         element("done").tap()
     }
@@ -246,8 +242,7 @@ final class BetweenStopsUITests: UITestCase {
     // MARK: Solitaire helpers
 
     private func openSolitaire() {
-        waitFor("game-klondike").tap()
-        _ = waitFor("stock")
+        open(game: "klondike", showing: "stock")
     }
 
     private func moves() -> String {

@@ -3,40 +3,31 @@ import Foundation
 /// Small JSON files in Application Support. Every write is atomic, so a force quit can never
 /// leave a half-written save behind.
 public final class Storage {
-    public let root: URL
+    private let root: URL
 
     public init(root: URL) {
         self.root = root
         try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
     }
 
-    /// `Application Support/BetweenStops`.
     public static func defaultRoot() -> URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
         return base.appendingPathComponent("BetweenStops", isDirectory: true)
     }
 
-    public func url(for name: String) -> URL {
+    private func url(for name: String) -> URL {
         root.appendingPathComponent(name)
     }
 
-    public func read(_ name: String) -> Data? {
-        try? Data(contentsOf: url(for: name))
-    }
-
-    public func write(_ data: Data, to name: String) {
+    private func write(_ data: Data, to name: String) {
         let target = url(for: name)
         try? FileManager.default.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
         try? data.write(to: target, options: .atomic)
     }
 
-    public func remove(_ name: String) {
-        try? FileManager.default.removeItem(at: url(for: name))
-    }
-
     public func load<T: Decodable>(_ type: T.Type, from name: String) -> T? {
-        guard let data = read(name) else { return nil }
+        guard let data = try? Data(contentsOf: url(for: name)) else { return nil }
         return try? JSONDecoder().decode(type, from: data)
     }
 
@@ -45,7 +36,7 @@ public final class Storage {
         write(data, to: name)
     }
 
-    /// Delete everything (used by `-resetState`).
+    /// Used by `-resetState`.
     public func wipe() {
         try? FileManager.default.removeItem(at: root)
         try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
@@ -62,18 +53,12 @@ public struct SaveSlot {
         self.name = "saves/\(gameID).json"
     }
 
-    public var exists: Bool { storage.read(name) != nil }
-
     public func load<T: Decodable>(_ type: T.Type) -> T? {
         storage.load(type, from: name)
     }
 
     public func save<T: Encodable>(_ value: T) {
         storage.store(value, to: name)
-    }
-
-    public func clear() {
-        storage.remove(name)
     }
 }
 

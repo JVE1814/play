@@ -33,7 +33,6 @@ public enum Chapter: Int, CaseIterable, Codable, Sendable, Identifiable {
     }
 }
 
-/// One level: a distance, a target, a number of arrows and the conditions to shoot them in.
 public struct Level: Hashable, Codable, Sendable, Identifiable {
     public let number: Int
     public let name: String
@@ -96,7 +95,8 @@ public enum LevelCatalog {
     public static var count: Int { all.count }
 
     public static func level(_ number: Int) -> Level {
-        all[min(max(number, 1), all.count) - 1]
+        precondition((1...count).contains(number), "no such level")
+        return all[number - 1]
     }
 
     private static func make(_ number: Int, _ name: String, distance: Double, layout: TargetLayout = .single(.full122),

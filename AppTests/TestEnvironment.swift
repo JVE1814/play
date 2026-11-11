@@ -21,9 +21,12 @@ struct TestEnvironment {
         feedback = Feedback(settings: settings)
     }
 
-    func context(gameID: String = "klondike", accent: Accent = .jade, options: LaunchOptions = LaunchOptions()) -> GameContext {
-        GameContext(gameID: gameID, accent: accent, storage: storage, stats: stats, settings: settings,
-                    defaults: defaults, feedback: feedback, options: options)
+    /// The context `module`'s game would get if the app had been launched with `arguments`.
+    /// Animations are off unless asked for, so sessions act at once instead of after a pause.
+    func context(for module: any GameModule, arguments: [String] = [], animated: Bool = false) -> GameContext {
+        GameContext(gameID: module.id, accent: module.accent, storage: storage, stats: stats, defaults: defaults,
+                    feedback: feedback,
+                    options: Self.options(arguments + (animated ? [] : ["-disableAnimations"])))
     }
 
     /// Options as if the app had been launched with these arguments (debug builds only).

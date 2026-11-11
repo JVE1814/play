@@ -6,11 +6,11 @@ final class PlayKitTests: XCTestCase {
     func testWinsLossesStreaksAndBestTime() {
         var stats = GameStats()
         XCTAssertEqual(stats.winRate, 0)
-        stats.recordWin(time: 300, moves: 120)
-        stats.recordWin(time: 240, moves: 140)
+        stats.recordWin(time: 300)
+        stats.recordWin(time: 240)
         XCTAssertEqual(stats.currentStreak, 2)
         stats.recordLoss()
-        stats.recordWin(time: 500, moves: 90)
+        stats.recordWin(time: 500)
         XCTAssertEqual(stats.played, 4)
         XCTAssertEqual(stats.won, 3)
         XCTAssertEqual(stats.lost, 1)
@@ -18,12 +18,11 @@ final class PlayKitTests: XCTestCase {
         XCTAssertEqual(stats.currentStreak, 1)
         XCTAssertEqual(stats.bestStreak, 2)
         XCTAssertEqual(stats.bestTime, 240)
-        XCTAssertEqual(stats.fewestMoves, 90)
     }
 
     func testStatsAreKeptPerGameAndPersisted() {
         let env = TestEnvironment()
-        env.stats.recordWin(gameID: "a", time: 100, moves: 50)
+        env.stats.recordWin(gameID: "a", time: 100)
         env.stats.recordLoss(gameID: "b")
         let reloaded = StatsStore(storage: env.storage)
         XCTAssertEqual(reloaded.stats(for: "a").won, 1)
@@ -34,16 +33,44 @@ final class PlayKitTests: XCTestCase {
         XCTAssertEqual(StatsStore(storage: env.storage).stats(for: "a"), GameStats())
     }
 
-    func testSaveSlotRoundTripAndClear() {
+    func testEachGameHasItsOwnSaveSlot() {
         struct Sample: Codable, Equatable { var value: Int }
         let env = TestEnvironment()
         let slot = SaveSlot(storage: env.storage, gameID: "sample")
-        XCTAssertFalse(slot.exists)
+        XCTAssertNil(slot.load(Sample.self))
         slot.save(Sample(value: 7))
         XCTAssertEqual(SaveSlot(storage: env.storage, gameID: "sample").load(Sample.self), Sample(value: 7))
         XCTAssertNil(SaveSlot(storage: env.storage, gameID: "other").load(Sample.self))
-        slot.clear()
-        XCTAssertFalse(slot.exists)
+    }
+
+    func testLevelProgressKeepsTheBestAndUnlocksTheNextLevelOnAStar() {
+        var progress = LevelProgress()
+        XCTAssertTrue(progress.isUnlocked(1))
+        XCTAssertFalse(progress.isUnlocked(2))
+        progress.record(level: 1, stars: 0, score: 12, of: 30)
+        XCTAssertEqual(progress.bestScore(for: 1), 12)
+        XCTAssertFalse(progress.isUnlocked(2), "a score without a star doesn't unlock the next level")
+        progress.record(level: 1, stars: 2, score: 26, of: 30)
+        progress.record(level: 1, stars: 1, score: 20, of: 30)
+        XCTAssertEqual(progress.stars(for: 1), 2, "the best result is kept")
+        XCTAssertEqual(progress.bestScore(for: 1), 26)
+        XCTAssertEqual(progress.unlocked, 2)
+        progress.record(level: 2, stars: 3, of: 30)
+        XCTAssertEqual(progress.totalStars, 5)
+        XCTAssertNil(progress.bestScore(for: 2), "a game that keeps no scores has none")
+        progress.record(level: 30, stars: 3, of: 30)
+        XCTAssertEqual(progress.unlocked, 30, "never beyond the last level")
+    }
+
+    /// Saves written before level progress was shared have no best scores.
+    func testLevelProgressReadsASaveWithoutBestScores() throws {
+        let old = Data(#"{"unlocked":3,"stars":[3,1]}"#.utf8)
+        let progress = try JSONDecoder().decode(LevelProgress.self, from: old)
+        XCTAssertEqual(progress.unlocked, 3)
+        XCTAssertEqual(progress.stars(for: 2), 1)
+        XCTAssertNil(progress.bestScore(for: 1))
+        let damaged = try JSONDecoder().decode(LevelProgress.self, from: Data(#"{"unlocked":0,"stars":[]}"#.utf8))
+        XCTAssertTrue(damaged.isUnlocked(1), "level 1 can always be played")
     }
 
     func testOpenGameIsRemembered() {
@@ -58,7 +85,7 @@ final class PlayKitTests: XCTestCase {
         env.stats.recordLoss(gameID: "a")
         SaveSlot(storage: env.storage, gameID: "a").save(1)
         env.storage.wipe()
-        XCTAssertFalse(SaveSlot(storage: env.storage, gameID: "a").exists)
+        XCTAssertNil(SaveSlot(storage: env.storage, gameID: "a").load(Int.self))
         XCTAssertEqual(StatsStore(storage: env.storage).stats(for: "a"), GameStats())
     }
 
@@ -83,12 +110,9 @@ final class PlayKitTests: XCTestCase {
         XCTAssertEqual(b.int("draw", default: 1), 1)
     }
 
-    func testFeedbackPlaysEveryEventWithSoundOn() {
-        let env = TestEnvironment()
-        env.settings.soundEnabled = true
+    func testEveryFeedbackEventHasASound() {
         for event in FeedbackEvent.allCases {
             XCTAssertNotNil(Feedback.soundURL(for: event), "\(event) has a sound")
-            env.feedback.play(event)
         }
     }
 
@@ -96,7 +120,7 @@ final class PlayKitTests: XCTestCase {
         let options = TestEnvironment.options(["-resetState", "-seed", "42", "-scenario", "nearWin",
                                                "-forceAppearance", "dark", "-includeTestGames"])
         XCTAssertTrue(options.resetState)
-        XCTAssertEqual(options.seed, 42)
+        XCTAssertEqual(options.value(after: "-seed"), "42")
         XCTAssertEqual(options.scenario, "nearWin")
         XCTAssertEqual(options.forcedAppearance, .dark)
         XCTAssertTrue(options.includeTestGames)

@@ -36,7 +36,6 @@ public struct TableauColumn: Hashable, Codable, Sendable {
     public var top: Card? { visible.last }
 }
 
-/// Where a card currently lies.
 public struct CardLocation: Hashable, Sendable {
     public let pile: Pile
     /// Position within the pile, 0 = bottom. For tableau columns this counts hidden cards too.
@@ -85,8 +84,7 @@ public struct Board: Hashable, Codable, Sendable {
                 next += 1
             }
         }
-        // The rest of the deck is the stock; deck order is preserved (last = top).
-        self.init(stock: Array(deck[next...]), waste: [], foundations: Array(repeating: [], count: 4), tableau: columns)
+        self.init(stock: Array(deck[next...]), waste: [], foundations: Array(repeating: [], count: Board.foundationCount), tableau: columns)
     }
 
     /// Every card on the board, in a fixed pile order.
@@ -99,10 +97,7 @@ public struct Board: Hashable, Codable, Sendable {
 
     public var isWon: Bool { foundations.allSatisfy { $0.count == 13 } }
 
-    /// True when no card is face down: the stock is empty and every tableau card is turned up.
     public var allCardsRevealed: Bool { stock.isEmpty && tableau.allSatisfy { $0.hidden.isEmpty } }
-
-    public var foundationCardCount: Int { foundations.reduce(0) { $0 + $1.count } }
 
     public func location(of card: Card) -> CardLocation? {
         if let i = stock.firstIndex(of: card) { return CardLocation(pile: .stock, index: i, isFaceUp: false) }
@@ -154,8 +149,18 @@ public struct Board: Hashable, Codable, Sendable {
         return top.isRed != card.isRed && card.rank == top.rank - 1
     }
 
-    static let foundationIndices = 0..<foundationCount
-    static let columnIndices = 0..<columnCount
+    public static let foundationIndices = 0..<foundationCount
+    public static let columnIndices = 0..<columnCount
+
+    /// The card on top of `pile`: the next to draw from the stock, the playable one elsewhere.
+    public func topCard(of pile: Pile) -> Card? {
+        switch pile {
+        case .stock: return stock.last
+        case .waste: return waste.last
+        case .foundation(let f): return foundations[f].last
+        case .tableau(let t): return tableau[t].top
+        }
+    }
 
     /// A compact, human-readable, deterministic description of the whole board.
     /// Face-down cards are shown in lowercase. Used by tests to compare boards exactly.

@@ -5,11 +5,10 @@ import SwiftUI
 struct StatsView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var stats: StatsStore
-    @Environment(\.dismiss) private var dismiss
     @State private var resetCandidate: RegisteredGame?
 
     var body: some View {
-        NavigationStack {
+        SheetPage("Statistics") {
             ScrollView {
                 VStack(spacing: Theme.Space.l) {
                     ForEach(model.games) { game in
@@ -19,15 +18,6 @@ struct StatsView: View {
                     }
                 }
                 .padding(Theme.Space.l)
-            }
-            .background(Theme.background.ignoresSafeArea())
-            .navigationTitle("Statistics")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                        .font(Typography.headline)
-                        .accessibilityIdentifier("done")
-                }
             }
             .alert("Reset statistics?", isPresented: Binding(
                 get: { resetCandidate != nil },

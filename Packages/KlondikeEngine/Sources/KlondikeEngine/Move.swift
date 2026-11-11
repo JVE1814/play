@@ -8,7 +8,6 @@ public enum DrawMode: Int, Codable, CaseIterable, Sendable {
     public var title: String { self == .one ? "Draw 1" : "Draw 3" }
 }
 
-/// A player action.
 public enum Move: Hashable, Codable, Sendable, CustomStringConvertible {
     /// Turn one or three cards from the stock onto the waste.
     case draw

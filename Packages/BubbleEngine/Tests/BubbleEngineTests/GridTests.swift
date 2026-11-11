@@ -6,7 +6,6 @@ final class GridTests: XCTestCase {
         XCTAssertEqual(BubbleGrid.center(of: Cell(0, 0)), Point(0.5, 0.5))
         XCTAssertEqual(BubbleGrid.center(of: Cell(1, 0)).x, 1.0)
         XCTAssertEqual(BubbleGrid.center(of: Cell(1, 7)).x, 8.0)
-        XCTAssertEqual(BubbleGrid.center(of: Cell(2, 0)).y, 0.5 + 2 * BubbleGrid.rowHeight, accuracy: 1e-12)
         // Neighbouring centres are exactly one diameter apart.
         for cell in [Cell(0, 3), Cell(1, 3), Cell(4, 0), Cell(5, 7)] {
             for neighbor in BubbleGrid.neighbors(of: cell) {

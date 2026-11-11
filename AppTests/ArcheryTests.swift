@@ -5,11 +5,10 @@ import XCTest
 
 @MainActor
 final class ArcheryTests: XCTestCase {
-    private func session(_ env: TestEnvironment, _ arguments: [String] = []) -> ArcherySession {
-        let context = env.context(gameID: "archery", accent: .coral, options: TestEnvironment.options(arguments))
+    private func session(_ env: TestEnvironment, _ arguments: [String] = [], animated: Bool = false) -> ArcherySession {
+        let context = env.context(for: ArcheryModule(), arguments: arguments, animated: animated)
         let session = ArcherySession(context: context)
-        session.animationsEnabled = false
-        session.setOnScreen(true)
+        session.setInView(true)
         return session
     }
 
@@ -17,22 +16,6 @@ final class ArcheryTests: XCTestCase {
     private func shoot(_ session: ArcherySession, held: Double = 1.0, at start: Date = Date()) {
         session.beginDraw(at: start)
         session.release(at: start.addingTimeInterval(Sway.drawTime + held))
-    }
-
-    func testProgressKeepsTheBestAndUnlocksOnlyAPass() {
-        var progress = ArcheryProgress()
-        progress.record(level: 1, score: 12, stars: 0)
-        XCTAssertEqual(progress.bestScore(for: 1), 12)
-        XCTAssertFalse(progress.isUnlocked(2), "a score without a star doesn't unlock the next level")
-        progress.record(level: 1, score: 26, stars: 2)
-        progress.record(level: 1, score: 20, stars: 1)
-        XCTAssertEqual(progress.stars(for: 1), 2)
-        XCTAssertEqual(progress.bestScore(for: 1), 26)
-        XCTAssertTrue(progress.isUnlocked(2))
-        XCTAssertEqual(progress.totalStars, 2)
-        progress.record(level: LevelCatalog.count, score: 50, stars: 3)
-        XCTAssertEqual(progress.unlocked, LevelCatalog.count, "never beyond the last level")
-        XCTAssertNil(progress.bestScore(for: 5))
     }
 
     func testANewArcherStartsAtLevelOneWithTheTip() {
@@ -114,8 +97,7 @@ final class ArcheryTests: XCTestCase {
 
     func testClosingTheAppWhileTheLastArrowFliesStillRecordsTheEnd() {
         let env = TestEnvironment()
-        let s = session(env, ["-scenario", "archeryNearWin"])
-        s.animationsEnabled = true
+        let s = session(env, ["-scenario", "archeryNearWin"], animated: true)
         shoot(s)
         XCTAssertNotNil(s.flight, "the last arrow is in the air")
         XCTAssertTrue(s.round.isOver)
@@ -124,32 +106,30 @@ final class ArcheryTests: XCTestCase {
         XCTAssertTrue(relaunched.showsResult)
         XCTAssertEqual(relaunched.progress.stars(for: 1), 3)
         XCTAssertTrue(relaunched.progress.isUnlocked(2), "Next Level works")
-        XCTAssertEqual(env.stats.stats(for: "archery").won, 1)
+        XCTAssertEqual(s.context.gameStats.won, 1)
     }
 
     func testLeavingWhileTheLastArrowFliesLandsItAndRecordsTheEnd() {
         let env = TestEnvironment()
-        let s = session(env, ["-scenario", "archeryNearWin"])
-        s.animationsEnabled = true
+        let s = session(env, ["-scenario", "archeryNearWin"], animated: true)
         shoot(s)
-        s.setOnScreen(false)
+        s.setInView(false)
         XCTAssertNil(s.flight)
         XCTAssertEqual(s.landedArrows, 3)
-        XCTAssertEqual(env.stats.stats(for: "archery").won, 1)
+        XCTAssertEqual(s.context.gameStats.won, 1)
         XCTAssertEqual(session(env).progress.stars(for: 1), 3, "saved too")
     }
 
     func testRestartWaitsForAFlyingArrowAndAChosenLevelRecordsTheEndFirst() {
         let env = TestEnvironment()
-        let s = session(env, ["-scenario", "archeryNearWin"])
-        s.animationsEnabled = true
+        let s = session(env, ["-scenario", "archeryNearWin"], animated: true)
         shoot(s)
         s.requestRestart()
         XCTAssertNotNil(s.flight, "restart waits for the arrow to land")
         XCTAssertEqual(s.round.shots.count, 3)
         s.start(level: 1)
         XCTAssertTrue(s.round.shots.isEmpty)
-        XCTAssertEqual(env.stats.stats(for: "archery").won, 1, "the finished end still counts")
+        XCTAssertEqual(s.context.gameStats.won, 1, "the finished end still counts")
         XCTAssertEqual(s.progress.stars(for: 1), 3)
     }
 
@@ -158,12 +138,12 @@ final class ArcheryTests: XCTestCase {
         let s = session(env, ["-level", "9"])
         let start = Date()
         shoot(s, at: start)
-        s.setCovered(true)
+        s.setInView(false)
         let left = try XCTUnwrap(s.timeLeft(at: start.addingTimeInterval(60)))
         XCTAssertGreaterThan(left, 15, "no time passes behind Settings")
         s.beginDraw(at: start.addingTimeInterval(60))
         XCTAssertFalse(s.round.isOver)
-        s.setCovered(false)
+        s.setInView(true)
         XCTAssertFalse(s.round.isOver)
     }
 
@@ -204,7 +184,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertTrue(s.showsResult)
         XCTAssertEqual(s.progress.stars(for: 1), 3)
         XCTAssertTrue(s.progress.isUnlocked(2))
-        XCTAssertEqual(env.stats.stats(for: "archery").won, 1)
+        XCTAssertEqual(s.context.gameStats.won, 1)
         XCTAssertEqual(ArcheryModule().statusLine(context: s.context), "Level 1 · 3 ★")
         s.nextLevel()
         XCTAssertEqual(s.level.number, 2)
@@ -220,7 +200,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertTrue(s.round.isOver)
         XCTAssertFalse(s.round.passed)
         XCTAssertTrue(s.showsResult)
-        let stats = env.stats.stats(for: "archery")
+        let stats = s.context.gameStats
         XCTAssertEqual(stats.played, 1)
         XCTAssertEqual(stats.won, 0)
         XCTAssertFalse(s.progress.isUnlocked(2))
@@ -246,7 +226,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertFalse(s.isDrawing)
         XCTAssertTrue(s.showsResult)
         XCTAssertEqual(s.round.shots.count, 1)
-        XCTAssertEqual(env.stats.stats(for: "archery").played, 1)
+        XCTAssertEqual(s.context.gameStats.played, 1)
     }
 
     func testEarlyLevelsSayWhatTheWindDid() throws {
@@ -256,7 +236,7 @@ final class ArcheryTests: XCTestCase {
         let shot = try XCTUnwrap(s.round.shots.first)
         XCTAssertGreaterThan(shot.drift, 0.1, "1.8 m/s from the left at 30 m")
         let notice = try XCTUnwrap(s.notice)
-        XCTAssertTrue(notice.hasPrefix("The wind carried it \(Int((shot.drift * 100).rounded())) cm to the right."), notice)
+        XCTAssertTrue(notice.hasPrefix("The wind carried it 18 cm to the right."), notice)
         XCTAssertTrue(notice.hasSuffix("Aim a little further left."), notice)
         let calm = session(TestEnvironment())
         shoot(calm)
@@ -273,7 +253,7 @@ final class ArcheryTests: XCTestCase {
         XCTAssertTrue(s.confirmingRestart)
         s.retry()
         XCTAssertTrue(s.round.shots.isEmpty)
-        XCTAssertEqual(env.stats.stats(for: "archery").played, 0, "restarting is not a loss")
+        XCTAssertEqual(s.context.gameStats.played, 0, "restarting is not a loss")
     }
 
     func testLockedLevelsCannotBeStarted() {
@@ -312,13 +292,13 @@ final class ArcheryTests: XCTestCase {
 
     func testPreferencesAreRemembered() {
         let env = TestEnvironment()
-        let prefs = ArcheryPreferences(preferences: GamePreferences(gameID: "archery", defaults: env.defaults))
-        XCTAssertEqual(prefs.aimSpeed, 1)
-        prefs.aimSpeed = 2
+        let prefs = ArcheryPreferences(preferences: GamePreferences(gameID: ArcheryModule().id, defaults: env.defaults))
+        XCTAssertEqual(prefs.aimSpeed, .normal)
+        prefs.aimSpeed = .fast
         prefs.leftHanded = true
-        let again = ArcheryPreferences(preferences: GamePreferences(gameID: "archery", defaults: env.defaults))
-        XCTAssertEqual(again.aimSpeed, 2)
+        let again = ArcheryPreferences(preferences: GamePreferences(gameID: ArcheryModule().id, defaults: env.defaults))
+        XCTAssertEqual(again.aimSpeed, .fast)
         XCTAssertTrue(again.leftHanded)
-        XCTAssertEqual(again.aimGain, 0.65)
+        XCTAssertEqual(again.aimSpeed.gain, 0.65)
     }
 }

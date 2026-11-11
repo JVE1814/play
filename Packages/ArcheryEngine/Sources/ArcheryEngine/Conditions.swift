@@ -49,15 +49,13 @@ public struct Wind: Hashable, Codable, Sendable {
         Wind(base: base, gust: gust, period: period, phase: phase + extra)
     }
 
-    /// "2.4 m/s from the left", "Calm".
-    public static func describe(_ speed: Double) -> String {
-        let rounded = (abs(speed) * 10).rounded() / 10
-        guard rounded >= 0.1 else { return "Calm" }
-        return String(format: "%.1f m/s from the %@", rounded, speed > 0 ? "left" : "right")
+    /// A speed as a gauge reads it: to a tenth of a metre per second, and exactly zero when
+    /// that is calm.
+    public static func reading(_ speed: Double) -> Double {
+        (speed * 10).rounded() / 10
     }
 }
 
-/// How the target moves.
 public enum Motion: Hashable, Codable, Sendable {
     /// Stands still on its stand.
     case still
@@ -81,15 +79,6 @@ public enum Motion: Hashable, Codable, Sendable {
     }
 
     public var isMoving: Bool { self != .still }
-
-    /// Top speed across the range, in metres per second.
-    public var topSpeed: Double {
-        switch self {
-        case .still: return 0
-        case .slide(let amplitude, let period): return amplitude * 2 * .pi / period
-        case .swing(let length, let angle, let period): return length * angle * 2 * .pi / period
-        }
-    }
 }
 
 /// How the sight drifts while the bow is held at full draw. The first moments are shaky while

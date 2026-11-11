@@ -14,12 +14,8 @@ extension KlondikeGame {
     public func bestMove(tapping card: Card) -> Move? {
         guard let location = board.location(of: card) else { return nil }
         switch location.pile {
-        case .stock:
-            return bestMove(tappingPile: .stock)
-        case .waste:
-            return bestTransfer(from: .waste, count: 1)
-        case .foundation(let f):
-            return bestTransfer(from: .foundation(f), count: 1)
+        case .stock, .waste, .foundation:
+            return bestMove(tappingPile: location.pile)
         case .tableau(let t):
             guard location.isFaceUp else { return nil }
             let column = board.tableau[t]
@@ -39,9 +35,7 @@ extension KlondikeGame {
     public func bestMove(tappingPile pile: Pile) -> Move? {
         switch pile {
         case .stock:
-            if isLegal(.draw) { return .draw }
-            if isLegal(.recycle) { return .recycle }
-            return nil
+            return stockMove
         case .waste:
             return bestTransfer(from: .waste, count: 1)
         case .foundation(let f):
@@ -55,10 +49,7 @@ extension KlondikeGame {
     /// The highest-scoring legal transfer of `count` cards from `pile`, ignoring pointless moves.
     func bestTransfer(from pile: Pile, count: Int) -> Move? {
         var best: (move: Move, score: Int)?
-        var destinations: [Pile] = []
-        if count == 1 { destinations += Board.foundationIndices.map { Pile.foundation($0) } }
-        destinations += Board.columnIndices.map { Pile.tableau($0) }
-        for destination in destinations {
+        for destination in destinations(from: pile, count: count) {
             let move = Move.transfer(from: pile, to: destination, count: count)
             guard let score = score(of: move), score > 0 else { continue }
             if best == nil || score > best!.score { best = (move, score) }
@@ -80,10 +71,13 @@ extension KlondikeGame {
             if best == nil || score > best!.score { best = (move, score) }
         }
         if let best { return best.move }
-        if stockHoldsPlayableCard {
-            if isLegal(.draw) { return .draw }
-            if isLegal(.recycle) { return .recycle }
-        }
+        return stockHoldsPlayableCard ? stockMove : nil
+    }
+
+    /// What a tap on the stock does: draw, or turn the waste over once the stock is empty.
+    var stockMove: Move? {
+        if isLegal(.draw) { return .draw }
+        if isLegal(.recycle) { return .recycle }
         return nil
     }
 
@@ -96,10 +90,9 @@ extension KlondikeGame {
         }
     }
 
-    /// Heuristic value of a move; nil if illegal, 0 if legal but pointless.
+    /// Heuristic value of a transfer; nil if illegal, 0 if legal but pointless.
     func score(of move: Move) -> Int? {
-        guard isLegal(move) else { return nil }
-        guard case let .transfer(from, to, count) = move else { return 5 }
+        guard case let .transfer(from, to, count) = move, isLegal(move) else { return nil }
         var revealsHidden = false
         var emptiesColumn = false
         if case .tableau(let t) = from {
@@ -169,13 +162,9 @@ extension KlondikeGame {
             }
             let remaining = game.board.stock.count + game.board.waste.count
             guard remaining > 0, turnsWithoutProgress <= 2 * (remaining + 1) else { return nil }
-            if game.perform(.draw) {
-                moves.append(.draw)
-            } else if game.perform(.recycle) {
-                moves.append(.recycle)
-            } else {
-                return nil
-            }
+            guard let turn = game.stockMove else { return nil }
+            game.perform(turn)
+            moves.append(turn)
             turnsWithoutProgress += 1
         }
         return moves
