@@ -36,20 +36,21 @@ struct PierView: View {
                     let frame = makeFrame(size: proxy.size, date: live ? timeline.date : Date())
                     let probe = session.probe
                     let owner = session
-                    rendered(Canvas { context, _ in
+                    Canvas { context, _ in
                         var context = context
                         let begin = CACurrentMediaTime()
                         PierPainter(f: frame).paint(&context)
                         if let probe, probe.record(begin: begin, end: CACurrentMediaTime()) {
                             Task { @MainActor in owner.togglePause() }
                         }
-                    })
-                    .modifier(PierAccessibility(session: session, hud: Self.still, speaks: voiceOver, applies: !session.tuning.contains(.quietAccessibility)))
+                    }
+                    // Drawn on the GPU: on the CPU, a frame of the pier is too much for 120 Hz.
+                    // It covers its whole frame, so nothing beneath needs blending in.
+                    .drawingGroup(opaque: true)
                 }
                 // Outside the timeline, the pier's accessibility is not rebuilt every frame; what
                 // VoiceOver says follows the heads-up display instead.
-                .modifier(PierAccessibility(session: session, hud: voiceOver ? session.hud : Self.still, speaks: voiceOver,
-                                            applies: session.tuning.contains(.quietAccessibility)))
+                .modifier(PierAccessibility(session: session, hud: voiceOver ? session.hud : Self.still, speaks: voiceOver))
                 .contentShape(Rectangle())
                 .gesture(swipes)
 
@@ -71,20 +72,11 @@ struct PierView: View {
     /// Nothing is redrawn while the pier is out of view, the run is paused, or the result is up.
     private var paused: Bool { !session.inView || !live || session.phase == .paused || session.showsResult }
 
-    /// Full frame rate while running; half on the start line and after the run, where only
-    /// the sea glitters.
+    /// While running, the display's own rate: up to 120 Hz on ProMotion. (A 60 Hz minimum
+    /// interval skips any frame that comes a hair early.) Half that on the start line and after
+    /// the run, where only the sea glitters.
     private var frameInterval: Double? {
-        guard session.phase == .running else { return 1.0 / 30 }
-        return session.tuning.contains(.fullRate) ? nil : 1.0 / 60
-    }
-
-    @ViewBuilder
-    private func rendered(_ canvas: some View) -> some View {
-        if session.tuning.contains(.gpu) {
-            canvas.drawingGroup()
-        } else {
-            canvas
-        }
+        session.phase == .running ? nil : 1.0 / 30
     }
 
     private func makeFrame(size: CGSize, date: Date) -> PierFrame {
@@ -289,10 +281,10 @@ struct StartCard: View {
                 .font(.system(size: 20, weight: .bold))
                 .frame(width: 44, height: 44)
                 .background(Circle().fill(Theme.hairline))
-                .accessibilityHidden(true)
+            .accessibilityHidden(true)
             Text(name)
                 .font(Typography.label)
-                .accessibilityLabel("Swipe to \(name.lowercased())")
+            .accessibilityLabel("Swipe to \(name.lowercased())")
         }
         .foregroundStyle(Theme.ink)
         .frame(maxWidth: .infinity)
@@ -332,7 +324,7 @@ struct PromptCard: View {
         HStack(spacing: Theme.Space.s) {
             Image(systemName: move.arrow)
                 .font(.system(size: 22, weight: .heavy))
-                .accessibilityHidden(true)
+            .accessibilityHidden(true)
             Text(move.instruction)
                 .font(Typography.headline)
         }
@@ -382,24 +374,19 @@ private struct PierAccessibility: ViewModifier {
     let session: RunnerSession
     @ObservedObject var hud: RunnerHUD
     let speaks: Bool
-    let applies: Bool
 
     func body(content: Content) -> some View {
-        if applies {
-            content
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Pier")
-                .accessibilityValue(speaks ? session.spokenStatus : "")
-                .accessibilityHint("Swipe left or right to change lane, up to jump, down to slide. Double-tap to start or carry on.")
-                .accessibilityAddTraits(.allowsDirectInteraction)
-                .accessibilityAction { session.tap() }
-                .accessibilityAction(named: "Move left") { session.perform(.left) }
-                .accessibilityAction(named: "Move right") { session.perform(.right) }
-                .accessibilityAction(named: "Jump") { session.perform(.jump) }
-                .accessibilityAction(named: "Slide") { session.perform(.slide) }
-                .accessibilityIdentifier("pier")
-        } else {
-            content
-        }
+        content
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Pier")
+            .accessibilityValue(speaks ? session.spokenStatus : "")
+            .accessibilityHint("Swipe left or right to change lane, up to jump, down to slide. Double-tap to start or carry on.")
+            .accessibilityAddTraits(.allowsDirectInteraction)
+            .accessibilityAction { session.tap() }
+            .accessibilityAction(named: "Move left") { session.perform(.left) }
+            .accessibilityAction(named: "Move right") { session.perform(.right) }
+            .accessibilityAction(named: "Jump") { session.perform(.jump) }
+            .accessibilityAction(named: "Slide") { session.perform(.slide) }
+            .accessibilityIdentifier("pier")
     }
 }

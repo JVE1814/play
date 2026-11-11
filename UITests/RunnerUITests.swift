@@ -55,29 +55,36 @@ final class RunnerUITests: UITestCase {
 
     // MARK: Smoothness
 
-    /// Runs a busy course live for eight seconds with each way of drawing and clocking the pier,
-    /// and prints how evenly the frames came (`RUNNER-PERF` lines in the test log).
+    /// Runs a busy course live for eight seconds, in each appearance, and prints how evenly the
+    /// frames came and what each cost (`RUNNER-PERF` lines in the test log). A frame's own work,
+    /// from its view update to the end of its painting, has to fit a 120 Hz frame.
+    ///
+    /// The simulator's frame rate says more about how busy the CI machine is than about the
+    /// app; the main thread's CPU time (`main_cpu_*`, `cpu_*`) and the frame's work do not.
     func testThePierIsDrawnSmoothly() {
-        // Taken in turns, twice, so that the machine growing busier or quieter as the test runs
-        // does not pass for a difference between them.
-        let rounds = ["gpu,rate,clock", "gpu,rate,clock,ax", "gpu,rate,clock,ax,hud", "none"]
-        for (index, (tuning, appearance, sound)) in (rounds + rounds.dropLast()).map({ ($0, "dark", false) }).enumerated() {
-            launch(["-scenario", "runnerProbe", "-frameProbe", "8", "-pierTuning", tuning] + (sound ? ["-settings.sound", "YES"] : []),
-                   appearance: appearance, animated: true)
+        for appearance in ["dark", "light"] {
+            launch(["-scenario", "runnerProbe", "-frameProbe", "8"], appearance: appearance, animated: true)
             waitFor("game-runner").tap()
             // The run starts by itself and pauses once measured. Nothing asks the app anything
             // meanwhile: a query of what is on screen holds up the frames it would measure.
             Thread.sleep(forTimeInterval: 11)
             let probe = element("frameProbe")
-            XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(tuning))")
+            XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(appearance))")
             let report = probe.value as? String ?? ""
-            print("RUNNER-PERF live #\(index) tuning=\(tuning) appearance=\(appearance) sound=\(sound) \(report)")
+            print("RUNNER-PERF live appearance=\(appearance) \(report)")
             let attachment = XCTAttachment(string: report)
-            attachment.name = "frame-probe-\(tuning)-\(appearance)\(sound ? "-sound" : "")"
+            attachment.name = "frame-probe-\(appearance)"
             attachment.lifetime = .keepAlways
             add(attachment)
-            XCTAssertTrue(report.hasPrefix("frames="), report)
+            XCTAssertGreaterThan(measure("frames", in: report), 60, report)
+            XCTAssertLessThan(measure("work_p95", in: report), 1_000.0 / 120, "a frame's work does not fit 120 Hz: \(report)")
         }
+    }
+
+    /// The number after `name=` in a probe's report.
+    private func measure(_ name: String, in report: String) -> Double {
+        let field = report.split(separator: " ").first { $0.hasPrefix("\(name)=") }
+        return field.flatMap { Double($0.dropFirst(name.count + 1)) } ?? .nan
     }
 
     // MARK: Screenshots

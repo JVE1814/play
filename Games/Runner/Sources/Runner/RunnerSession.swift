@@ -13,16 +13,9 @@ public final class RunnerHUD: ObservableObject {
     /// Whole seconds of magnet left (0 without one).
     @Published public private(set) var magnetSeconds = 0
 
-    private var shownAt = 0.0
-
-    /// - Parameter calm: the score and coins change at most 15 times a second (`at` is the
-    ///   time in seconds).
-    func show(_ run: Run, calm: Bool = false, at time: Double = 0) {
-        if !calm || time - shownAt >= 1.0 / 15 || time < shownAt || run.status != .running {
-            if score != run.score || coins != run.coinCount { shownAt = time }
-            if score != run.score { score = run.score }
-            if coins != run.coinCount { coins = run.coinCount }
-        }
+    func show(_ run: Run) {
+        if score != run.score { score = run.score }
+        if coins != run.coinCount { coins = run.coinCount }
         if hasShield != run.hasShield { hasShield = run.hasShield }
         let seconds = Int(run.magnetLeft.rounded(.up))
         if magnetSeconds != seconds { magnetSeconds = seconds }
@@ -79,7 +72,6 @@ public final class RunnerSession: ObservableObject, GameSession {
 
     public let context: GameContext
     public let hud = RunnerHUD()
-    let tuning: PierTuning
     /// Debug builds, `-frameProbe`: measures how evenly the pier is drawn.
     let probe: FrameProbe?
     public private(set) var run: Run
@@ -90,7 +82,6 @@ public final class RunnerSession: ObservableObject, GameSession {
     private var resultRecorded: Bool
     /// The moment the run has been played up to, while the clock is running.
     private var playedTo: Date? = nil
-    private var loop: Task<Void, Never>? = nil
     private var ticker: FrameTicker? = nil
     private var probeTicker: FrameTicker? = nil
     private var lastSaved = Date.distantPast
@@ -113,7 +104,6 @@ public final class RunnerSession: ObservableObject, GameSession {
 
     public init(context: GameContext) {
         self.context = context
-        tuning = PierTuning(options: context.options)
         probe = FrameProbe(options: context.options)
         let run: Run
         let best: Int
@@ -328,7 +318,7 @@ public final class RunnerSession: ObservableObject, GameSession {
                 break
             }
         }
-        hud.show(run, calm: tuning.contains(.calmHUD), at: now.timeIntervalSinceReferenceDate)
+        hud.show(run)
         if prompt != run.prompt {
             prompt = run.prompt
             if let prompt { context.announce(prompt.instruction) }
@@ -338,7 +328,7 @@ public final class RunnerSession: ObservableObject, GameSession {
             context.feedback.play(.win)
             context.announce("Goal reached")
         }
-        if phase == .running && now.timeIntervalSince(lastSaved) > 2 { save(waiting: !tuning.contains(.frameClock)) }
+        if phase == .running && now.timeIntervalSince(lastSaved) > 2 { save(waiting: false) }
     }
 
     /// In UI tests, a touch moves the clock on.
@@ -375,33 +365,22 @@ public final class RunnerSession: ObservableObject, GameSession {
         context.feedback.play(.tap)
     }
 
-    /// Lets time pass from `moment` on: the run is then played forward sixty times a second.
-    /// (The pier's timeline draws from `run(at:)`, so what is seen never waits for this.)
+    /// Lets time pass from `moment` on: the run is then played forward with every frame the
+    /// display shows, up to sixty a second. (The pier's timeline draws from `run(at:)`, so what
+    /// is seen never waits for this, at 120 Hz too.)
     private func startClock(at moment: Date) {
         guard !isStepped else { return }
         playedTo = moment
-        guard loop == nil, ticker == nil else { return }
-        if tuning.contains(.frameClock) {
-            ticker = FrameTicker { [weak self] in
-                guard let self else { return false }
-                self.advance(to: Date())
-                return true
-            }
-            return
-        }
-        loop = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 16_000_000)
-                guard !Task.isCancelled, let self else { return }
-                self.advance(to: Date())
-            }
+        guard ticker == nil else { return }
+        ticker = FrameTicker { [weak self] in
+            guard let self else { return false }
+            self.advance(to: Date())
+            return true
         }
     }
 
     private func stopClock() {
         playedTo = nil
-        loop?.cancel()
-        loop = nil
         ticker?.stop()
         ticker = nil
     }

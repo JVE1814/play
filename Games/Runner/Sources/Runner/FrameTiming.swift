@@ -2,41 +2,6 @@ import Foundation
 import PlayKit
 import QuartzCore
 
-/// How the pier is drawn and the run is clocked. Every option is on in the app; debug builds
-/// can turn them off with `-pierTuning` (a comma-separated list, or `none`) to measure what
-/// each one is worth.
-struct PierTuning: OptionSet {
-    let rawValue: Int
-
-    /// The pier is rendered on the GPU (`drawingGroup`) instead of rasterized on the CPU.
-    static let gpu = PierTuning(rawValue: 1 << 0)
-    /// While running, the pier is drawn at the display's own rate (up to 120 Hz on ProMotion)
-    /// instead of being held to a 60 Hz schedule, which skips frames that arrive a little early.
-    static let fullRate = PierTuning(rawValue: 1 << 1)
-    /// The run is played forward on the display's clock instead of a sleeping task, and the
-    /// saves made along the way are written off the main thread.
-    static let frameClock = PierTuning(rawValue: 1 << 2)
-
-    /// The pier's accessibility is set outside the timeline, so it is not rebuilt every frame.
-    static let quietAccessibility = PierTuning(rawValue: 1 << 3)
-    /// The score and coins in the heads-up display change at most 15 times a second.
-    static let calmHUD = PierTuning(rawValue: 1 << 4)
-
-    /// The calm heads-up display is tried by name only (`hud`): it lags the score a little.
-    static let all: PierTuning = [.gpu, .fullRate, .frameClock, .quietAccessibility]
-
-    init(rawValue: Int) { self.rawValue = rawValue }
-
-    init(options: LaunchOptions) {
-        guard let list = options.value(after: "-pierTuning") else {
-            self = .all
-            return
-        }
-        let names: [String: PierTuning] = ["gpu": .gpu, "rate": .fullRate, "clock": .frameClock, "ax": .quietAccessibility, "hud": .calmHUD]
-        self = PierTuning(list.split(separator: ",").compactMap { names[String($0)] })
-    }
-}
-
 /// Calls `tick` once for every frame the display shows, at up to 60 a second, until `stop()`
 /// or until `tick` returns false.
 @MainActor
