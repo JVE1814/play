@@ -20,7 +20,9 @@ extension MinesGame {
         if field.mines.count != difficulty.mineCount {
             problems.append("\(field.mines.count) mines on a \(difficulty.key) board")
         }
-        if let firstTap {
+        if let firstTap, !MinesGrid.isValid(firstTap) {
+            problems.append("the first tap is off the board")
+        } else if let firstTap {
             if !field.mines.isDisjoint(with: MinesGrid.zone(around: firstTap)) {
                 problems.append("a mine next to the first tap")
             } else if !field.flood(from: firstTap).isSubset(of: opened) {

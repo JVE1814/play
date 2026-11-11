@@ -66,6 +66,7 @@ final class SaveTests: XCTestCase {
             ("wrong mine count", damaged(field: .some(tooFewMines))),
             ("mine next to the first tap", damaged(field: .some(mineByTheTap))),
             ("no first tap", damaged(firstTap: .some(nil))),
+            ("first tap off the board", damaged(firstTap: .some(96))),
             ("first opening covered", damaged(opened: good.opened.subtracting(CellSet([cell(6, 3)])))),
             ("open mine", damaged(opened: good.opened.union(CellSet([anyMine])))),
             ("flag on an open square", damaged(flagged: good.flagged.union(CellSet([openZero])))),
