@@ -1,5 +1,6 @@
 import Foundation
 import PlayKit
+import QuartzCore
 import RunnerEngine
 
 /// The numbers above the pier. They change many times a second, so they are published apart
@@ -84,6 +85,7 @@ public final class RunnerSession: ObservableObject, GameSession {
     private var playedTo: Date? = nil
     private var loop: Task<Void, Never>? = nil
     private var ticker: FrameTicker? = nil
+    private var probeTicker: FrameTicker? = nil
     private var lastSaved = Date.distantPast
     private var lastCoinSound = Date.distantPast
     private let resultReveal = Pending()
@@ -202,7 +204,10 @@ public final class RunnerSession: ObservableObject, GameSession {
         guard self.inView != inView else { return }
         self.inView = inView
         if !inView { pause() }
-        if inView, probe != nil, phase == .ready { start(at: Date()) }
+        if inView, let probe, phase == .ready {
+            start(at: Date())
+            probeTicker = FrameTicker { probe.beat(at: CACurrentMediaTime()) }
+        }
     }
 
     // MARK: Player actions

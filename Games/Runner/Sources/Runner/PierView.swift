@@ -92,6 +92,7 @@ struct PierView: View {
     }
 
     private func makeFrame(size: CGSize, date: Date) -> PierFrame {
+        session.probe?.updateBegins(at: CACurrentMediaTime())
         let moments = session.moments
         func since(_ moment: Date?) -> Double? {
             moment.map { date.timeIntervalSince($0) }

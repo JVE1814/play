@@ -66,6 +66,13 @@ final class FrameProbe {
     private var last: CFTimeInterval?
     private var intervals: [Double] = []
     private var paints: [Double] = []
+    /// From the start of the frame's view update to the end of its painting.
+    private var works: [Double] = []
+    private var updateBegan: CFTimeInterval?
+    /// The gaps between the beats of a display link of the probe's own: one that arrives late
+    /// means the main thread was held up, rather than the drawing falling behind.
+    private var beats: [Double] = []
+    private var lastBeat: CFTimeInterval?
     private(set) var report: String?
 
     /// Frames in the first half second are not counted: the screen is still settling.
@@ -76,6 +83,19 @@ final class FrameProbe {
         seconds = value
     }
 
+    /// The view update of a frame begins.
+    func updateBegins(at time: CFTimeInterval) {
+        updateBegan = time
+    }
+
+    /// A beat of the probe's display link. False once the probe is done.
+    func beat(at time: CFTimeInterval) -> Bool {
+        guard report == nil else { return false }
+        if let lastBeat, let started, time - started > Self.warmUp { beats.append(time - lastBeat) }
+        lastBeat = time
+        return true
+    }
+
     /// Records one frame, painted from `begin` to `end`. True once the probe has seen enough.
     func record(begin: CFTimeInterval, end: CFTimeInterval) -> Bool {
         guard report == nil else { return false }
@@ -84,20 +104,22 @@ final class FrameProbe {
         if let last, begin - start > Self.warmUp {
             intervals.append(begin - last)
             paints.append(end - begin)
+            if let updateBegan, updateBegan <= begin, begin - updateBegan < 0.1 { works.append(end - updateBegan) }
         }
         last = begin
         guard begin - start > Self.warmUp + seconds else { return false }
-        report = Self.describe(intervals: intervals, paints: paints)
+        report = Self.describe(intervals: intervals, paints: paints, works: works, beats: beats)
         return true
     }
 
-    private static func describe(intervals: [Double], paints: [Double]) -> String {
+    private static func describe(intervals: [Double], paints: [Double], works: [Double], beats: [Double]) -> String {
         func ms(_ value: Double) -> String { String(format: "%.2f", value * 1_000) }
         func centile(_ sorted: [Double], _ p: Double) -> Double {
             sorted.isEmpty ? 0 : sorted[min(sorted.count - 1, Int(Double(sorted.count) * p))]
         }
         let gaps = intervals.sorted()
         let paint = paints.sorted()
+        let work = works.sorted()
         let total = intervals.reduce(0, +)
         // A frame that took more than one and a half of the usual is a hitch.
         let usual = centile(gaps, 0.5)
@@ -105,5 +127,9 @@ final class FrameProbe {
         return "frames=\(intervals.count) fps=\(String(format: "%.1f", Double(intervals.count) / max(total, 0.001)))"
             + " gap_p50=\(ms(usual)) gap_p95=\(ms(centile(gaps, 0.95))) gap_p99=\(ms(centile(gaps, 0.99))) gap_max=\(ms(gaps.last ?? 0))"
             + " hitches=\(hitches) paint_p50=\(ms(centile(paint, 0.5))) paint_p95=\(ms(centile(paint, 0.95))) paint_max=\(ms(paint.last ?? 0))"
+            + " work_p50=\(ms(centile(work, 0.5))) work_p95=\(ms(centile(work, 0.95)))"
+            // The probe's display link asks for 60 a second: a beat more than 25 ms after the
+            // last one is a frame the main thread missed.
+            + " main_beats=\(beats.count) main_missed=\(beats.filter { $0 > 0.025 }.count) main_gap_max=\(ms(beats.max() ?? 0))"
     }
 }

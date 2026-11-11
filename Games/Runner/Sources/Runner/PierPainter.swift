@@ -248,9 +248,11 @@ struct PierPainter {
         context.fill(strip(half - kerb, half, from: near, to: far), with: .color(scenery.kerb))
 
         // The gaps between the planks, coming towards the runner. Each is level across the
-        // view, so it is drawn as a thin bar; the near ones, at full strength, all at once.
+        // view, so it is drawn as a thin bar, and the bars are drawn together, in a few steps
+        // of strength as they fade into the distance.
         let plank = 1.25
-        var gaps = Path()
+        let steps = 6
+        var gaps = [Path](repeating: Path(), count: steps + 1)
         var z = plank - distance.truncatingRemainder(dividingBy: plank) + near - plank
         while z < 70 {
             if z >= near {
@@ -259,15 +261,13 @@ struct PierPainter {
                 let thickness = max(0.5, cam.scale(z) * 0.035)
                 let bar = CGRect(x: left.x, y: left.y - thickness / 2, width: right.x - left.x, height: thickness)
                 let strength = min(1, (70 - z) / 30)
-                if strength >= 1 {
-                    gaps.addRect(bar)
-                } else {
-                    context.fill(Path(bar), with: .color(scenery.plankLine.opacity(strength)))
-                }
+                gaps[Int((strength * Double(steps)).rounded())].addRect(bar)
             }
             z += plank
         }
-        context.fill(gaps, with: .color(scenery.plankLine))
+        for step in 1...steps {
+            context.fill(gaps[step], with: .color(scenery.plankLine.opacity(Double(step) / Double(steps))))
+        }
 
         // The lanes: two pale lines painted in dashes.
         let dash = 5.0
@@ -357,6 +357,11 @@ struct PierPainter {
         let bottomRight = cam.point(x1, y0, z)
         let width = bottomRight.x - topLeft.x
         let height = bottomRight.y - topLeft.y
+        guard width / Double(blocks) > 1.5 else {
+            // Blocks under a point and a half wide blur into one colour.
+            context.fill(Path.box(x: topLeft.x, y: topLeft.y, width: width, height: height, radius: height * 0.2), with: .color(colors.0))
+            return
+        }
         var board = context
         board.clip(to: Path.box(x: topLeft.x, y: topLeft.y, width: width, height: height, radius: height * 0.2))
         let block = width / Double(blocks)
