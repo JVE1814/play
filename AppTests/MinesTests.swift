@@ -130,7 +130,7 @@ final class MinesTests: XCTestCase {
         XCTAssertEqual(s.context.gameStats.played, 1)
         XCTAssertEqual(s.context.gameStats.won, 0)
         XCTAssertEqual(s.game.status, .fresh)
-        XCTAssertEqual(s.game.seed, 43, "board 1 of seed 42")
+        XCTAssertEqual(s.game.seed, 44, "New on a fresh board starts the next one too, so this is board 2 of seed 42")
     }
 
     func testClearingTheBoardIsAWinRecordedOnceWithABestTime() {

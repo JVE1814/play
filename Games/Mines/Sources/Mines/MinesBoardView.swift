@@ -55,8 +55,7 @@ struct MinesBoardView: View {
                     .animation(animate ? .linear(duration: 0.3) : nil, value: shakes)
                     .frame(width: layout.pitch, height: layout.pitch)
                     .contentShape(Rectangle())
-                    .onTapGesture { session.tap(square) }
-                    .onLongPressGesture(minimumDuration: Self.longPress) { session.longPress(square) }
+                    .gesture(squareGesture(square))
                     .modifier(SquareAccessibility(square: square, state: state, session: session))
                     .position(layout.center(of: square))
             }
@@ -64,6 +63,19 @@ struct MinesBoardView: View {
         .frame(width: layout.size.width, height: layout.size.height)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("minesBoard")
+    }
+
+    /// A hold flags the square once it has lasted `longPress`, while the finger is still down;
+    /// a touch lifted sooner is a tap. The long press comes first, so a hold is never also a tap.
+    private func squareGesture(_ square: Int) -> some Gesture {
+        LongPressGesture(minimumDuration: Self.longPress)
+            .exclusively(before: TapGesture())
+            .onEnded { value in
+                switch value {
+                case .first: session.longPress(square)
+                case .second: session.tap(square)
+                }
+            }
     }
 
     /// Squares opened together appear outward from the one tapped.
