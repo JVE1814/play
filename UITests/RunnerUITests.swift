@@ -55,22 +55,25 @@ final class RunnerUITests: UITestCase {
 
     // MARK: Smoothness
 
-    /// Runs a busy course live for eight seconds, in each appearance, and prints how evenly the
-    /// frames came and what each cost (`RUNNER-PERF` lines in the test log). A frame's own work,
-    /// from its view update to the end of its painting, has to fit a 120 Hz frame.
+    /// Runs a busy course live for six seconds, rendered on and off the main thread, and prints
+    /// how evenly the frames came and what each cost (`RUNNER-PERF` lines in the test log). A
+    /// frame's own work, from its view update to the end of its painting, has to fit a 120 Hz
+    /// frame.
     ///
     /// The simulator's frame rate says more about how busy the CI machine is than about the
     /// app; the main thread's CPU time (`main_cpu_*`, `cpu_*`) and the frame's work do not.
     func testThePierIsDrawnSmoothly() {
-        let ways = [("gpu", "dark"), ("cpu", "dark"), ("gpu-async", "dark"), ("cpu-async", "dark"), ("gpu", "light")]
+        // Drawn on the main thread, and rendered off it. (Each way costs the suite about 20
+        // seconds; the job has none to spare on a slow machine.)
+        let ways = [("gpu", "dark"), ("gpu-async", "dark")]
         for (render, appearance) in ways {
-            launch(["-scenario", "runnerProbe", "-frameProbe", "8", "-pierRender", render], appearance: appearance, animated: true)
+            launch(["-scenario", "runnerProbe", "-frameProbe", "6", "-pierRender", render], appearance: appearance, animated: true)
             waitFor("game-runner").tap()
             // The run starts by itself and pauses once measured. Nothing asks the app anything
             // meanwhile: a query of what is on screen holds up the frames it would measure.
-            Thread.sleep(forTimeInterval: 11)
+            Thread.sleep(forTimeInterval: 8)
             let probe = element("frameProbe")
-            XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(appearance))")
+            XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(render))")
             let report = probe.value as? String ?? ""
             print("RUNNER-PERF live render=\(render) appearance=\(appearance) \(report)")
             let attachment = XCTAttachment(string: report)
