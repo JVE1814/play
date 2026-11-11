@@ -29,6 +29,12 @@ struct PierFrame {
         case noItems
         /// Only a sky, the planks and the runner.
         case sketch
+        /// Without the bollards, ropes and lamps.
+        case noFurniture
+        /// Without the obstacles.
+        case noObstacles
+        /// Without the coins and power-ups.
+        case noCoins
     }
 }
 
@@ -96,11 +102,15 @@ struct PierPainter {
             farCoins = Path()
         }
         for item in f.drawn == .noItems ? [.runner] : items() {
-            if case .coin(let coin, let z) = item, let shape = farCoin(coin, z: z) {
+            if case .coin(let coin, let z) = item, f.drawn != .noCoins, let shape = farCoin(coin, z: z) {
                 farCoins.addPath(shape)
                 continue
             }
             drawFarCoins()
+            switch (item, f.drawn) {
+            case (.furniture, .noFurniture), (.obstacle, .noObstacles), (.coin, .noCoins), (.pickup, .noCoins): continue
+            default: break
+            }
             switch item {
             case .furniture(let index, let z): furniture(&context, index: index, z: z)
             case .obstacle(let obstacle, let z): draw(obstacle, z: z, in: &context)
