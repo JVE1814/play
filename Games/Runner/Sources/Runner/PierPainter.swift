@@ -155,22 +155,22 @@ struct PierPainter {
         }
 
         // The sun on the horizon, or the moon above it, a little to the right. Nothing of
-        // either shows below the horizon.
+        // either shows below the horizon: the sea is painted over it next. (Clipping instead
+        // costs the renderer a layer of its own every frame.)
         var above = context
-        above.clip(to: Path.box(x: -10, y: -10, width: w + 20, height: horizon + 10))
         let centre = Spot(x: w * 0.64 - cam.x * 3, y: horizon - horizon * scenery.discHeight)
         let radius = w * scenery.discRadius
         above.fill(Path.disc(x: centre.x, y: centre.y, r: radius * 4.5),
                    with: .radialGradient(Gradient(colors: [scenery.discGlow, scenery.discGlow.opacity(0)]),
                                          center: centre.point, startRadius: radius * 0.6, endRadius: radius * 4.5))
         let disc = Path.disc(x: centre.x, y: centre.y, r: radius)
-        above.fill(disc, with: .color(scenery.disc))
         if scenery.isNight {
             // A crescent: the dark side covers most of the disc.
-            var moon = above
-            moon.clip(to: disc)
-            moon.fill(Path.disc(x: centre.x - radius * 0.45, y: centre.y - radius * 0.2, r: radius * 0.95),
-                      with: .color(scenery.discShade))
+            let shade = Path.disc(x: centre.x - radius * 0.45, y: centre.y - radius * 0.2, r: radius * 0.95)
+            above.fill(disc, with: .color(scenery.discShade))
+            above.fill(disc.subtracting(shade), with: .color(scenery.disc))
+        } else {
+            above.fill(disc, with: .color(scenery.disc))
         }
 
         // Long thin clouds, drifting.
@@ -372,14 +372,23 @@ struct PierPainter {
             context.fill(Path.box(x: topLeft.x, y: topLeft.y, width: width, height: height, radius: height * 0.2), with: .color(colors.0))
             return
         }
-        var board = context
-        board.clip(to: Path.box(x: topLeft.x, y: topLeft.y, width: width, height: height, radius: height * 0.2))
+        // The blocks at the ends carry the board's rounded corners, so it needs no clipping
+        // (which costs the renderer a layer of its own for every board).
         let block = width / Double(blocks)
+        let radius = min(height * 0.2, block / 2)
         for index in 0..<blocks {
-            board.fill(Path.box(x: topLeft.x + Double(index) * block - 0.5, y: topLeft.y, width: block + 1, height: height),
-                       with: .color(index % 2 == 0 ? colors.0 : colors.1))
+            let first = index == 0
+            let last = index == blocks - 1
+            let left = topLeft.x + Double(index) * block - (first ? 0 : 0.5)
+            let right = topLeft.x + Double(index + 1) * block + (last ? 0 : 0.5)
+            let shape = UnevenRoundedRectangle(topLeadingRadius: first ? radius : 0, bottomLeadingRadius: first ? radius : 0,
+                                               bottomTrailingRadius: last ? radius : 0, topTrailingRadius: last ? radius : 0)
+            context.fill(shape.path(in: CGRect(x: left, y: topLeft.y, width: right - left, height: height)),
+                         with: .color(index % 2 == 0 ? colors.0 : colors.1))
         }
-        board.fill(Path.box(x: topLeft.x, y: topLeft.y + height * 0.72, width: width, height: height * 0.28), with: .color(.black.opacity(0.12)))
+        let shadow = UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: radius, bottomTrailingRadius: radius, topTrailingRadius: 0)
+        context.fill(shadow.path(in: CGRect(x: topLeft.x, y: topLeft.y + height * 0.72, width: width, height: height * 0.28)),
+                     with: .color(.black.opacity(0.12)))
     }
 
     private func crate(_ context: inout GraphicsContext, x x0: Double, _ x1: Double, y y0: Double, _ y1: Double, z near: Double, _ far: Double) {
@@ -472,19 +481,24 @@ struct PierPainter {
         let corner = cam.point(x - 0.52, 0.72, z)
         let width = scale * 1.04
         let height = scale * 0.72
-        let body = Path.box(x: corner.x, y: corner.y, width: width, height: height, radius: height * 0.42)
-        context.fill(body, with: .color(PierStyle.barrel))
-        var staves = context
-        staves.clip(to: body)
+        let outline = RoundedOutline(rect: CGRect(x: corner.x, y: corner.y, width: width, height: height), radius: height * 0.42)
+        context.fill(Path(roundedRect: outline.rect, cornerRadius: outline.radius), with: .color(PierStyle.barrel))
+        // The staves, the light along the top and the hoops are cut to the barrel's outline
+        // here, rather than clipped to it (which costs the renderer a layer of its own).
         let spin = f.reduceMotion ? 0.3 : (f.clock * 2.2).truncatingRemainder(dividingBy: 1)
+        var staves = Path()
         for stave in -1..<4 {
             let y = corner.y + height * (Double(stave) + spin) / 3
-            staves.stroke(Path.line(Spot(x: corner.x, y: y), Spot(x: corner.x + width, y: y)),
-                          with: .color(Color(hex: 0x3C1905, opacity: 0.45)), lineWidth: max(0.6, scale * 0.03))
+            guard y > outline.rect.minY, y < outline.rect.maxY else { continue }
+            let inset = outline.inset(atY: y)
+            staves.move(to: CGPoint(x: outline.rect.minX + inset, y: y))
+            staves.addLine(to: CGPoint(x: outline.rect.maxX - inset, y: y))
         }
-        staves.fill(Path.box(x: corner.x, y: corner.y, width: width, height: height * 0.3), with: .color(Color(hex: 0xFFDCAA, opacity: 0.18)))
-        staves.fill(Path.box(x: corner.x + width * 0.14, y: corner.y, width: width * 0.08, height: height), with: .color(PierStyle.hoop))
-        staves.fill(Path.box(x: corner.x + width * 0.78, y: corner.y, width: width * 0.08, height: height), with: .color(PierStyle.hoop))
+        context.stroke(staves, with: .color(Color(hex: 0x3C1905, opacity: 0.45)), lineWidth: max(0.6, scale * 0.03))
+        context.fill(outline.rows(from: corner.y, to: corner.y + height * 0.3), with: .color(Color(hex: 0xFFDCAA, opacity: 0.18)))
+        var hoops = outline.columns(from: corner.x + width * 0.14, to: corner.x + width * 0.22)
+        hoops.addPath(outline.columns(from: corner.x + width * 0.78, to: corner.x + width * 0.86))
+        context.fill(hoops, with: .color(PierStyle.hoop))
     }
 
     private func draw(_ coin: Coin, z: Double, in context: inout GraphicsContext) {
@@ -657,10 +671,11 @@ enum RunnerFigure {
 
     private static func head(_ context: inout GraphicsContext, y: Double) {
         context.fill(Path.disc(x: 0, y: y, r: 0.17), with: .color(PierStyle.skin))
-        // The hat covers the top half of the head.
-        var crown = context
-        crown.clip(to: Path.box(x: -0.2, y: y + 0.02, width: 0.4, height: 0.2))
-        crown.fill(Path.disc(x: 0, y: y + 0.02, r: 0.185), with: .color(PierStyle.hat))
+        // The hat covers the top half of the head (y is up here).
+        var crown = Path()
+        crown.addArc(center: CGPoint(x: 0, y: y + 0.02), radius: 0.185, startAngle: .zero, endAngle: .degrees(180), clockwise: false)
+        crown.closeSubpath()
+        context.fill(crown, with: .color(PierStyle.hat))
         context.fill(Path.box(x: -0.19, y: y - 0.03, width: 0.38, height: 0.08, radius: 0.03), with: .color(PierStyle.hatBrim))
         context.fill(Path.disc(x: 0, y: y + 0.22, r: 0.055), with: .color(PierStyle.cream))
     }
@@ -758,9 +773,14 @@ enum PowerUpShape {
         }
         context.fill(outline(1), with: .color(Color(hex: 0x3F8CF0)))
         // The right half catches the light.
-        var half = context
-        half.clip(to: Path.box(x: x, y: y - size, width: size, height: size * 2.2))
-        half.fill(outline(0.62), with: .color(.white.opacity(0.85)))
+        let s = size * 0.62
+        var half = Path()
+        half.move(to: CGPoint(x: x, y: y - s))
+        half.addLine(to: CGPoint(x: x + s * 0.85, y: y - s * 0.62))
+        half.addLine(to: CGPoint(x: x + s * 0.85, y: y + s * 0.05))
+        half.addQuadCurve(to: CGPoint(x: x, y: y + s * 1.05), control: CGPoint(x: x + s * 0.8, y: y + s * 0.75))
+        half.closeSubpath()
+        context.fill(half, with: .color(.white.opacity(0.85)))
     }
 
     static func star(x: Double, y: Double, radius: Double) -> Path {
@@ -770,6 +790,73 @@ enum PowerUpShape {
             let reach = point % 2 == 0 ? radius : radius * 0.45
             let spot = CGPoint(x: x + reach * cos(angle), y: y + reach * sin(angle))
             if point == 0 { path.move(to: spot) } else { path.addLine(to: spot) }
+        }
+        path.closeSubpath()
+        return path
+    }
+}
+
+/// A rounded rectangle, and the parts of it between two heights or two widths: what a clip to
+/// it would leave, without the clip.
+struct RoundedOutline {
+    let rect: CGRect
+    let radius: Double
+
+    init(rect: CGRect, radius: Double) {
+        self.rect = rect
+        self.radius = min(radius, Double(min(rect.width, rect.height)) / 2)
+    }
+
+    /// How far in from the left and right sides the outline is at height `y`.
+    func inset(atY y: Double) -> Double {
+        Self.inset(depth: max(0, Double(rect.minY) + radius - y, y - (Double(rect.maxY) - radius)), radius: radius)
+    }
+
+    /// How far in from the top and bottom the outline is at `x`.
+    func inset(atX x: Double) -> Double {
+        Self.inset(depth: max(0, Double(rect.minX) + radius - x, x - (Double(rect.maxX) - radius)), radius: radius)
+    }
+
+    private static func inset(depth: Double, radius: Double) -> Double {
+        let d = min(depth, radius)
+        return radius - (radius * radius - d * d).squareRoot()
+    }
+
+    private static let steps = 6
+
+    /// The part between heights `y0` and `y1`, its rounded ends followed in a few straight steps.
+    func rows(from y0: Double, to y1: Double) -> Path {
+        let top = max(y0, Double(rect.minY))
+        let bottom = min(y1, Double(rect.maxY))
+        guard bottom > top else { return Path() }
+        var path = Path()
+        for step in 0...Self.steps {
+            let y = top + (bottom - top) * Double(step) / Double(Self.steps)
+            let point = CGPoint(x: Double(rect.minX) + inset(atY: y), y: y)
+            if step == 0 { path.move(to: point) } else { path.addLine(to: point) }
+        }
+        for step in (0...Self.steps).reversed() {
+            let y = top + (bottom - top) * Double(step) / Double(Self.steps)
+            path.addLine(to: CGPoint(x: Double(rect.maxX) - inset(atY: y), y: y))
+        }
+        path.closeSubpath()
+        return path
+    }
+
+    /// The part between `x0` and `x1`.
+    func columns(from x0: Double, to x1: Double) -> Path {
+        let left = max(x0, Double(rect.minX))
+        let right = min(x1, Double(rect.maxX))
+        guard right > left else { return Path() }
+        var path = Path()
+        for step in 0...Self.steps {
+            let x = left + (right - left) * Double(step) / Double(Self.steps)
+            let point = CGPoint(x: x, y: Double(rect.minY) + inset(atX: x))
+            if step == 0 { path.move(to: point) } else { path.addLine(to: point) }
+        }
+        for step in (0...Self.steps).reversed() {
+            let x = left + (right - left) * Double(step) / Double(Self.steps)
+            path.addLine(to: CGPoint(x: x, y: Double(rect.maxY) - inset(atX: x)))
         }
         path.closeSubpath()
         return path
