@@ -1,9 +1,9 @@
 # Between Stops
 
 An offline collection of quick games for iPhone, built for one-handed play in short sessions on
-a train. It has four games: **Solitaire** (Klondike), **Bubbles**, a bubble shooter with
-2,000 levels, **Archery**, 30 levels of target archery from 10 to 90 metres, and **Runner**,
-an endless run down a pier.
+a train. It has five games: **Solitaire** (Klondike), **Bubbles**, a bubble shooter with
+2,000 levels, **Archery**, 30 levels of target archery from 10 to 90 metres, **Runner**,
+an endless run down a pier, and **Mines**, a logic puzzle whose boards never need a guess.
 
 - Native Swift and SwiftUI, iPhone, portrait, iOS 17+.
 - No network code, accounts, ads, analytics or tracking. No third-party runtime dependencies.
@@ -27,6 +27,8 @@ an endless run down a pier.
 | `Games/Archery/` | The Archery game module (SwiftUI): the range drawn in a Canvas, drawing and aiming, the target camera, levels by venue. |
 | `Packages/RunnerEngine/` | Endless runner engine. Imports only Foundation. A course laid row by row from a seed (barriers, beams, crates, containers, rolling barrels, coins, a magnet and a shield), the runner's lanes, jumps and slides in fixed time steps, and bots: one proves every course can be run, weaker ones set the difficulty (`swift run -c release runner-calibrate` prints how far they get). |
 | `Games/Runner/` | The Runner game module (SwiftUI): the pier drawn in a Canvas at sunset or by night, swipes, goals, the coached first run. |
+| `Packages/MinesEngine/` | Mines engine. Imports only Foundation. An 8 by 12 board whose mines are laid by the first tap, opening, flags, opening around a number, one take-back per board, and a solver that sees only what the player sees: a board is kept only if it clears it without guessing (`swift run -c release mines-calibrate` prints how often a layout passes and how long a board takes). |
+| `Games/Mines/` | The Mines game module (SwiftUI): the board, taps and long presses, flag mode, three difficulties, the slip question. |
 | `Games/TestGame/` | A tiny debug-only game: the smallest example of one, and proof that adding a game needs no home screen changes. |
 | `AppTests/`, `UITests/` | Unit tests and UI tests (including screenshot capture). |
 | `ci/` | `run.sh` (the CI pipeline), `engine_tests.sh` (the rules engines' tests), `audit.sh` (no networking or third-party code), `lib.sh` (what those share, including how the engines are found), `release.sh` (archive and upload). |
@@ -58,6 +60,7 @@ cd Packages/KlondikeEngine && swift test
 cd Packages/BubbleEngine && swift test
 cd Packages/ArcheryEngine && swift test
 cd Packages/RunnerEngine && swift test
+cd Packages/MinesEngine && swift test
 # or, on Linux or any machine with Docker:
 docker run --rm -v "$PWD/Packages/BubbleEngine":/pkg -w /pkg swift:6.3 swift test
 ```
@@ -79,6 +82,13 @@ pier in, no lane is a dead end, nothing stands where a barrel rolls in, and it g
 distance. A bot that looks 1.3 seconds ahead must run every course for three kilometres, and
 standing still must never get far.
 
+The Mines tests cover the grid, opening and the area it spreads through, flags, opening around
+a number, the take-back, winning and losing, saving, and damaged saves. They check the solver
+never opens a mine or marks a safe square on 2,000 random layouts, and that for every first tap
+on every difficulty the board opens an area and the solver clears it without guessing, well
+inside the generator's attempt limit. The solver also wins boards through the same moves a
+player makes.
+
 **App unit and UI tests** (needs Xcode):
 
 ```sh
@@ -87,8 +97,9 @@ xcodebuild test -project BetweenStops.xcodeproj -scheme BetweenStops \
 ```
 
 The UI tests cover tapping and dragging cards, undo, hints, Draw 3 and the left-handed layout,
-aiming and shooting in Bubbles, drawing, shooting and finishing levels in Archery, and starting,
-swiping, pausing and crashing in Runner.
+aiming and shooting in Bubbles, drawing, shooting and finishing levels in Archery, starting,
+swiping, pausing and crashing in Runner, and opening, flagging, taking back a slip and clearing
+a board in Mines.
 They also play a near-finished game to the win screen, force-quit mid-game and check that the
 exact board and undo history come back, open the test-only game from the home screen, run an
 accessibility audit, and capture screenshots of every screen in light mode, dark mode and large text.
@@ -142,4 +153,6 @@ color is never needed. Dynamic Type is supported, along with light and dark mode
 a time (swipe up or down, or the Aim actions), says where it points and what the wind is doing,
 and shoots with a double-tap. Score chips show the number as well as the ring's colour. In Runner,
 the pier takes swipes directly under VoiceOver, has the four moves as actions, and says what is
-coming in the runner's lane.
+coming in the runner's lane. In Mines, every square is its own element ("Row 3, column 5",
+"2 mines around"): double-tap does what a tap does, and the actions flag, open, and open around
+a number. Numbers are always shown as digits, so their colours are never needed.

@@ -311,3 +311,64 @@ worth a look before you submit are marked **review**.
 84. **UI tests look before they wait.** `waitForExistence` takes a second even for something
     already on screen, and the suite asks hundreds of times. With a fourth game's tests the
     job would not have fitted its 30 minutes otherwise.
+
+## Mines
+
+85. **The fifth game is a logic puzzle, named plainly "Mines".** Its art, rules details and
+    boards are its own, and it is not modelled on any particular game. Every square is either
+    a mine or shows how many of its eight neighbours are; open every safe square to win.
+86. **One board size on every phone: 8 columns by 12 rows, with no panning or zooming.** Panning
+    and pinching are hard with one thumb on a train, and one size keeps boards and saves the
+    same everywhere. The board rests at the bottom of the table, nearest the thumb. Squares are
+    about 38 pt on the 375 × 667 pt iPhone SE (where height is the limit), 42 pt on 375 × 812
+    phones, 45 pt on a 6.1" phone and 50 pt on the largest. That is below the collection's 52 pt
+    touch target, close to Solitaire's cards, so each square answers touches over its whole
+    share of the board, gaps included. A unit test holds these sizes.
+87. **Tap opens; a long press (0.4 s) or the Flag toggle flags.** In flag mode a tap flags and
+    a long press still does. Tapping an open number whose flags match it opens the squares
+    around it. A tap on a flagged square does nothing (with a shake), so a flag protects a
+    square from a slip. No flags before the first tap: there is nothing to reason from yet.
+88. **review: Every board can be won without guessing.** The first tap and its eight
+    neighbours never hold a mine, so the first tap always opens an area. The rest are laid at
+    random, and a layout is kept only if the engine's solver clears it from that opening. The
+    solver sees only what the player sees, the open numbers and the board's mine count, and
+    opens a square only when they prove it safe. On Easy it reads one number at a time (plus
+    the count); on Medium and Hard it also reads two overlapping numbers together, as in the
+    familiar 1-2-1 along an edge. It never enumerates combinations, so no board asks for more
+    than two numbers at once. Measured with `mines-calibrate` over 2,000 boards each: 54% of
+    random Easy layouts, 55% of Medium and 24% of Hard are fair (17% for a Hard corner tap,
+    the hardest case). A board typically takes 0.02 ms to make on a Linux test machine and the
+    slowest of 24,000 under 2 ms, so it is laid on the first tap with no waiting. After 400 unfair layouts
+    the generator would fall back to a block of mines in the far corner, which the first tap
+    clears; no tested tap comes within a third of that.
+89. **The first mine opened on a board can be taken back.** On a moving train a bump should
+    not cost a whole board, and with no guessing every loss is a slip. Opening a mine changes
+    nothing on the board, so taking it back restores it exactly. The second mine ends the
+    board. "Forgive one slip" in Settings, on by default, turns it off. The slip question is
+    saved, so a force quit while it is up comes back to it, and the clock waits while it is up.
+90. **Three difficulties on the same board: Easy 12 mines, Medium 16, Hard 20.** Medium is
+    the default. Statistics are kept per game, so the three share one set, as Draw 1 and Draw 3
+    do (decision 18); the save also keeps the best time for each difficulty, and the result
+    panel shows that one. A new difficulty applies from the next board, or at once to a board
+    not yet started.
+91. **A board counts once it is won or lost, or abandoned after the first tap.** New on a
+    started board asks first ("Keep Playing" is a plain button, decision 35) and counts as a
+    loss; on a fresh or finished board it just starts the next. The result panel offers
+    New Board, See the Board (a tap on the board brings the panel back) and All Games. Panels
+    move to the half of the screen away from the opened mine.
+92. **Yellow, the palette's unused accent.** Covered squares are dark gold on the yellow
+    table and bright gold on the dark one; open squares are cream, or dark olive at night.
+    Numbers are always digits, coloured one to eight for quicker reading but never needed, and
+    each digit colour has at least 4.5:1 contrast on an open square in both modes. Covered
+    squares carry a small diamond and mines and flags have their own shapes, so nothing depends
+    on colour. The toolbar's prominent style is the same yellow as the table, so ToolbarButton
+    gained `isOn`: a switched-on Flag is drawn inverted, and VoiceOver reads it as on or off.
+93. **Accessibility:** every square is a VoiceOver element ("Row 3, column 5", "2 mines
+    around"). Double-tap does what a tap does; the actions flag or unflag, open (in flag
+    mode), and open around a number. Openings, flags, the slip and the result are announced.
+    Reduce Motion turns off the ripple as an area opens and the shake of a refused tap.
+94. **No new sounds**: opening plays `tap`, a flag `place`, a mine `crash`, a win `win`.
+95. **Three UI tests and three launches**, to keep the CI job inside its 30 minutes (the last
+    run before Mines took 1,267 s). One plays a prepared board through opening, both ways of
+    flagging, a slip taken back and a win; two capture the screenshots in light and dark. The
+    rest is covered by unit tests, which take seconds.
