@@ -100,8 +100,9 @@ final class BubblesUITests: UITestCase {
         XCTAssertEqual(waitFor("level-210").value as? String, "0 of 3 stars, current")
         XCTAssertEqual(element("level-211").value as? String, "Locked")
         snap("44-bubbles-levels-\(appearance)")
-        element("level-12").tap()
-        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "12 of \(levelCount)")
+        // The list is lazy and scrolled to the current level, so pick its open neighbour.
+        element("level-209").tap()
+        XCTAssertEqual(waitFor("bubbleLevel").value as? String, "209 of \(levelCount)")
 
         launch(["-scenario", "bubblesNearWin"], appearance: appearance)
         openBubbles()
