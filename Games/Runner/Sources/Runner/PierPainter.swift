@@ -35,6 +35,9 @@ struct PierFrame {
         case noObstacles
         /// Without the coins and power-ups.
         case noCoins
+        /// Without the lines drawn on what stands on the pier: ropes, lamp posts, crate
+        /// frames, container ribs, barrel staves.
+        case noStrokes
     }
 }
 
@@ -54,6 +57,7 @@ struct PierPainter {
 
     private var run: Run { f.run }
     private var glows: Bool { f.drawn != .noGlows }
+    private var strokes: Bool { f.drawn != .noStrokes }
     private var scenery: Scenery { f.scenery }
     private var w: Double { cam.width }
     private var h: Double { cam.height }
@@ -395,7 +399,7 @@ struct PierPainter {
     /// A bollard on each edge with a rope sagging to the next, and a lamp at every fourth.
     private func furniture(_ context: inout GraphicsContext, index: Int, z: Double) {
         var layer = context
-        layer.opacity = haze(z)
+        if haze(z) < 1 { layer.opacity = haze(z) }
         let scale = cam.scale(z)
         // The two edges of the pier never overlap, so each part of both is drawn at once.
         var ropes = Path()
@@ -419,11 +423,11 @@ struct PierPainter {
             lampPosts.addLine(to: arm.point)
             lamps.append(arm)
         }
-        layer.stroke(ropes, with: .color(scenery.rope), style: StrokeStyle(lineWidth: max(0.6, scale * 0.035), lineCap: .round))
+        if strokes { layer.stroke(ropes, with: .color(scenery.rope), style: StrokeStyle(lineWidth: max(0.6, scale * 0.035), lineCap: .round)) }
         fill(posts, in: &layer, front: scenery.post, side: scenery.postSide, top: scenery.postTop)
         if !caps.isEmpty { layer.fill(caps, with: .color(scenery.postCap)) }
         guard !lamps.isEmpty else { return }
-        layer.stroke(lampPosts, with: .color(scenery.lampPost), style: StrokeStyle(lineWidth: max(1, scale * 0.09), lineCap: .round, lineJoin: .round))
+        if strokes { layer.stroke(lampPosts, with: .color(scenery.lampPost), style: StrokeStyle(lineWidth: max(1, scale * 0.09), lineCap: .round, lineJoin: .round)) }
         var bulbs = Path()
         for arm in lamps {
             if glows {
@@ -490,18 +494,18 @@ struct PierPainter {
         let inset = scale * 0.035
         let frame = CGRect(x: topLeft.x + inset, y: topLeft.y + inset,
                            width: bottomRight.x - topLeft.x - 2 * inset, height: bottomRight.y - topLeft.y - 2 * inset)
-        context.stroke(Path(frame), with: .color(PierStyle.crateFrame), lineWidth: max(0.8, scale * 0.07))
+        if strokes { context.stroke(Path(frame), with: .color(PierStyle.crateFrame), lineWidth: max(0.8, scale * 0.07)) }
         var brace = Path()
         brace.move(to: CGPoint(x: frame.minX, y: frame.minY))
         brace.addLine(to: CGPoint(x: frame.maxX, y: frame.maxY))
-        context.stroke(brace, with: .color(PierStyle.crateFrame), lineWidth: max(0.6, scale * 0.05))
+        if strokes { context.stroke(brace, with: .color(PierStyle.crateFrame), lineWidth: max(0.6, scale * 0.05)) }
     }
 
     private func draw(_ obstacle: Obstacle, z: Double, in context: inout GraphicsContext) {
         let visible = haze(z) * passed(z + obstacle.length)
         guard visible > 0 else { return }
         var layer = context
-        layer.opacity = visible
+        if visible < 1 { layer.opacity = visible }
         let x = PierCamera.x(ofLane: Double(obstacle.lane))
         let near = max(z, PierCamera.near)
         let scale = cam.scale(near)
@@ -587,16 +591,16 @@ struct PierPainter {
             var ribZ = z + 1.1
             while ribZ < far {
                 if ribZ > near {
-                    context.stroke(Path.line(cam.point(side, 0.12, ribZ), cam.point(side, 2.38, ribZ)),
-                                   with: .color(.black.opacity(0.16)), lineWidth: max(0.6, cam.scale(ribZ) * 0.03))
+                    if strokes { context.stroke(Path.line(cam.point(side, 0.12, ribZ), cam.point(side, 2.38, ribZ)),
+                                   with: .color(.black.opacity(0.16)), lineWidth: max(0.6, cam.scale(ribZ) * 0.03)) }
                 }
                 ribZ += 1.1
             }
         }
         for rib in 1..<6 {
             let ribX = x - 0.66 + Double(rib) * 1.32 / 6
-            context.stroke(Path.line(cam.point(ribX, 0.12, near), cam.point(ribX, 2.38, near)),
-                           with: .color(.black.opacity(0.18)), lineWidth: max(0.6, scale * 0.03))
+            if strokes { context.stroke(Path.line(cam.point(ribX, 0.12, near), cam.point(ribX, 2.38, near)),
+                           with: .color(.black.opacity(0.18)), lineWidth: max(0.6, scale * 0.03)) }
         }
         let bar = cam.point(x - 0.5, 1.25, near)
         context.fill(Path.box(x: bar.x, y: bar.y, width: scale * 0.34, height: max(1, scale * 0.06)), with: .color(.white.opacity(0.75)))
@@ -621,7 +625,7 @@ struct PierPainter {
             staves.move(to: CGPoint(x: outline.rect.minX + inset, y: y))
             staves.addLine(to: CGPoint(x: outline.rect.maxX - inset, y: y))
         }
-        context.stroke(staves, with: .color(Color(hex: 0x3C1905, opacity: 0.45)), lineWidth: max(0.6, scale * 0.03))
+        if strokes { context.stroke(staves, with: .color(Color(hex: 0x3C1905, opacity: 0.45)), lineWidth: max(0.6, scale * 0.03)) }
         context.fill(outline.rows(from: corner.y, to: corner.y + height * 0.3), with: .color(Color(hex: 0xFFDCAA, opacity: 0.18)))
         var hoops = outline.columns(from: corner.x + width * 0.14, to: corner.x + width * 0.22)
         hoops.addPath(outline.columns(from: corner.x + width * 0.78, to: corner.x + width * 0.86))
@@ -656,7 +660,7 @@ struct PierPainter {
     private func draw(_ coin: Coin, z: Double, in context: inout GraphicsContext) {
         let (centre, radius, across) = look(of: coin, z: z)
         var layer = context
-        layer.opacity = haze(z) * passed(z)
+        if haze(z) * passed(z) < 1 { layer.opacity = haze(z) * passed(z) }
         guard radius > 2.5 else {
             // A couple of pixels across: the face alone.
             layer.fill(Path.oval(x: centre.x, y: centre.y, rx: across, ry: radius), with: .color(PierStyle.coin))
@@ -676,7 +680,7 @@ struct PierPainter {
         let radius = max(2, cam.scale(z) * 0.42)
         let color = pickup.kind == .magnet ? PierStyle.magnet : PierStyle.shield
         var layer = context
-        layer.opacity = haze(z) * passed(z)
+        if haze(z) * passed(z) < 1 { layer.opacity = haze(z) * passed(z) }
         // A shaft of light above it, so it is seen from far off.
         layer.fill(Path.box(x: centre.x - radius * 0.5, y: centre.y - radius * 5, width: radius, height: radius * 5),
                    with: .linearGradient(Gradient(colors: [color.opacity(0), color.opacity(0.35)]),
