@@ -44,6 +44,10 @@ packages:
     path: Packages/RunnerEngine
   Runner:
     path: Games/Runner
+  MinesEngine:
+    path: Packages/MinesEngine
+  Mines:
+    path: Games/Mines
   TestGame:
     path: Games/TestGame
 
@@ -60,6 +64,7 @@ targets:
       - package: Bubbles
       - package: Archery
       - package: Runner
+      - package: Mines
       - package: TestGame
     settings:
       base:
@@ -89,6 +94,8 @@ targets:
       - package: Archery
       - package: RunnerEngine
       - package: Runner
+      - package: MinesEngine
+      - package: Mines
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).tests
