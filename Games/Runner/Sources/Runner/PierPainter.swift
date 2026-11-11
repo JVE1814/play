@@ -17,6 +17,9 @@ struct PierFrame {
     let sinceCoin: Double?
     let sinceShieldBroke: Double?
     let sinceCrash: Double?
+    /// Debug builds, `-pierSketch YES`: only the sky, the planks and the runner, to measure what
+    /// a frame costs with almost nothing drawn.
+    var sketch = false
 }
 
 /// Draws the pier: sky and sea, the planks running to the horizon, bollards and lamps going
@@ -62,6 +65,13 @@ struct PierPainter {
             // The view shakes when the runner hits something.
             let strength = 7 * (1 - since / 0.4)
             context.translateBy(x: strength * sin(since * 70), y: strength * cos(since * 55))
+        }
+        if f.sketch {
+            context.fill(Path.box(x: -10, y: -10, width: w + 20, height: h + 20),
+                         with: .linearGradient(Gradient(stops: scenery.sky), startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
+            deck(&context)
+            runner(&context)
+            return
         }
         sky(&context)
         sea(&context)

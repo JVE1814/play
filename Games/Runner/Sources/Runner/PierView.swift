@@ -85,11 +85,13 @@ struct PierView: View {
         func since(_ moment: Date?) -> Double? {
             moment.map { date.timeIntervalSince($0) }
         }
-        return PierFrame(size: size, run: session.run(at: date), scenery: Scenery.of(colorScheme),
-                         clock: live ? date.timeIntervalSince(Self.opened) : 1.37,
-                         reduceMotion: reduceMotion, standing: session.phase == .ready,
-                         sinceCoin: since(moments.coin), sinceShieldBroke: since(moments.shieldBroke),
-                         sinceCrash: since(moments.crash))
+        var frame = PierFrame(size: size, run: session.run(at: date), scenery: Scenery.of(colorScheme),
+                              clock: live ? date.timeIntervalSince(Self.opened) : 1.37,
+                              reduceMotion: reduceMotion, standing: session.phase == .ready,
+                              sinceCoin: since(moments.coin), sinceShieldBroke: since(moments.shieldBroke),
+                              sinceCrash: since(moments.crash))
+        frame.sketch = session.context.options.value(after: "-pierSketch") == "YES"
+        return frame
     }
 
     /// One move for each touch, made as soon as the thumb has gone far enough: nobody waits

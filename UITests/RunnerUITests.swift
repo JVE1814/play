@@ -63,10 +63,12 @@ final class RunnerUITests: UITestCase {
     /// The simulator's frame rate says more about how busy the CI machine is than about the
     /// app; the main thread's CPU time (`main_cpu_*`, `cpu_*`) and the frame's work do not.
     func testThePierIsDrawnSmoothly() {
-        // Once, in the dark (the night sky has the most stars): each run costs the suite about
-        // 20 seconds, and the job has none to spare on a slow machine.
-        for appearance in ["dark"] {
-            launch(["-scenario", "runnerProbe", "-frameProbe", "6"], appearance: appearance, animated: true)
+        // In the dark (the night sky has the most stars), and once more with almost nothing
+        // drawn, to tell what the pier costs from what any frame costs on this machine. Each run
+        // costs the suite about 20 seconds, and the job has little to spare on a slow machine.
+        for (appearance, sketch) in [("dark", false), ("dark", true)] {
+            launch(["-scenario", "runnerProbe", "-frameProbe", "6"] + (sketch ? ["-pierSketch", "YES"] : []),
+                   appearance: appearance, animated: true)
             waitFor("game-runner").tap()
             // The run starts by itself and pauses once measured. Nothing asks the app anything
             // meanwhile: a query of what is on screen holds up the frames it would measure.
@@ -74,9 +76,9 @@ final class RunnerUITests: UITestCase {
             let probe = element("frameProbe")
             XCTAssertTrue(probe.waitForExistence(timeout: 30), "no report from the probe (\(appearance))")
             let report = probe.value as? String ?? ""
-            print("RUNNER-PERF live appearance=\(appearance) \(report)")
+            print("RUNNER-PERF live appearance=\(appearance) sketch=\(sketch) \(report)")
             let attachment = XCTAttachment(string: report)
-            attachment.name = "frame-probe-\(appearance)"
+            attachment.name = "frame-probe-\(appearance)\(sketch ? "-sketch" : "")"
             attachment.lifetime = .keepAlways
             add(attachment)
             XCTAssertGreaterThan(measure("frames", in: report), 60, report)
