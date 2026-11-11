@@ -61,6 +61,8 @@ final class FrameProbe {
         Double(clock_gettime_nsec_np(CLOCK_THREAD_CPUTIME_ID)) / 1e9
     }
     private var watcher: CFRunLoopObserver?
+    /// Where the main thread's time goes, sampled over the measurement.
+    private var sampler: MainThreadSampler?
     private(set) var report: String?
 
     /// Frames in the first half second are not counted: the screen is still settling.
@@ -76,9 +78,10 @@ final class FrameProbe {
         updateBegan = time
     }
 
-    /// Starts timing the main thread's working stretches.
+    /// Starts timing the main thread's working stretches. Call on the main thread.
     func watchMainThread() {
         guard watcher == nil else { return }
+        sampler = Thread.isMainThread ? MainThreadSampler() : nil
         let activities = CFRunLoopActivity.afterWaiting.rawValue | CFRunLoopActivity.beforeWaiting.rawValue
         let watcher = CFRunLoopObserverCreateWithHandler(nil, activities, true, 0) { [weak self] _, activity in
             guard let self, self.report == nil else { return }
@@ -115,6 +118,7 @@ final class FrameProbe {
         if begin - start > Self.warmUp, cpuAtStart == nil {
             cpuAtStart = Self.threadCPU()
             wallAtStart = begin
+            sampler?.start()
         }
         if let last, begin - start > Self.warmUp {
             intervals.append(begin - last)
@@ -128,6 +132,7 @@ final class FrameProbe {
             // The main thread's CPU per frame drawn, in milliseconds.
             + String(format: " main_cpu_use=%.3f main_cpu_per_frame=%.2f", usage,
                      usage * intervals.reduce(0, +) * 1_000 / max(1, Double(intervals.count)))
+            + (sampler?.stop() ?? "")
         if let watcher { CFRunLoopObserverInvalidate(watcher) }
         return true
     }
