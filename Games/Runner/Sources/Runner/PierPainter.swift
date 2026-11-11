@@ -17,9 +17,19 @@ struct PierFrame {
     let sinceCoin: Double?
     let sinceShieldBroke: Double?
     let sinceCrash: Double?
-    /// Debug builds, `-pierSketch YES`: only the sky, the planks and the runner, to measure what
-    /// a frame costs with almost nothing drawn.
-    var sketch = false
+    /// Debug builds, `-pierDraw`: less than the whole pier, to measure what each part costs.
+    var drawn = Drawn.all
+
+    enum Drawn: String {
+        case all
+        /// Without the radial glows: the sun's, the lighthouse's, the lamps', the power-ups'
+        /// and the shield's.
+        case noGlows
+        /// The sky, the sea, the planks and the runner: nothing standing on the pier.
+        case noItems
+        /// Only a sky, the planks and the runner.
+        case sketch
+    }
 }
 
 /// Draws the pier: sky and sea, the planks running to the horizon, bollards and lamps going
@@ -37,6 +47,7 @@ struct PierPainter {
     }
 
     private var run: Run { f.run }
+    private var glows: Bool { f.drawn != .noGlows }
     private var scenery: Scenery { f.scenery }
     private var w: Double { cam.width }
     private var h: Double { cam.height }
@@ -66,7 +77,7 @@ struct PierPainter {
             let strength = 7 * (1 - since / 0.4)
             context.translateBy(x: strength * sin(since * 70), y: strength * cos(since * 55))
         }
-        if f.sketch {
+        if f.drawn == .sketch {
             context.fill(Path.box(x: -10, y: -10, width: w + 20, height: h + 20),
                          with: .linearGradient(Gradient(stops: scenery.sky), startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
             deck(&context)
@@ -84,7 +95,7 @@ struct PierPainter {
             context.fill(farCoins, with: .color(PierStyle.coin))
             farCoins = Path()
         }
-        for item in items() {
+        for item in f.drawn == .noItems ? [.runner] : items() {
             if case .coin(let coin, let z) = item, let shape = farCoin(coin, z: z) {
                 farCoins.addPath(shape)
                 continue
@@ -187,9 +198,11 @@ struct PierPainter {
         var above = context
         let centre = Spot(x: w * 0.64 - cam.x * 3, y: horizon - horizon * scenery.discHeight)
         let radius = w * scenery.discRadius
-        above.fill(Path.disc(x: centre.x, y: centre.y, r: radius * 4.5),
-                   with: .radialGradient(Gradient(colors: [scenery.discGlow, scenery.discGlow.opacity(0)]),
-                                         center: centre.point, startRadius: radius * 0.6, endRadius: radius * 4.5))
+        if glows {
+            above.fill(Path.disc(x: centre.x, y: centre.y, r: radius * 4.5),
+                       with: .radialGradient(Gradient(colors: [scenery.discGlow, scenery.discGlow.opacity(0)]),
+                                             center: centre.point, startRadius: radius * 0.6, endRadius: radius * 4.5))
+        }
         let disc = Path.disc(x: centre.x, y: centre.y, r: radius)
         if scenery.isNight {
             // A crescent: the dark side covers most of the disc.
@@ -240,9 +253,11 @@ struct PierPainter {
         let blink = f.reduceMotion ? 1 : 0.5 + 0.5 * sin(f.clock * 1.6)
         let light = Spot(x: foot.x, y: foot.y - tall * 1.08)
         let lightColor = Color(hex: 0xFFF0BE)
-        context.fill(Path.disc(x: light.x, y: light.y, r: tall * 0.9),
-                     with: .radialGradient(Gradient(colors: [lightColor.opacity(0.9 * blink), lightColor.opacity(0)]),
-                                           center: light.point, startRadius: 0, endRadius: tall * 0.9))
+        if glows {
+            context.fill(Path.disc(x: light.x, y: light.y, r: tall * 0.9),
+                         with: .radialGradient(Gradient(colors: [lightColor.opacity(0.9 * blink), lightColor.opacity(0)]),
+                                               center: light.point, startRadius: 0, endRadius: tall * 0.9))
+        }
     }
 
     private func sea(_ context: inout GraphicsContext) {
@@ -401,9 +416,11 @@ struct PierPainter {
         layer.stroke(lampPosts, with: .color(scenery.lampPost), style: StrokeStyle(lineWidth: max(1, scale * 0.09), lineCap: .round, lineJoin: .round))
         var bulbs = Path()
         for arm in lamps {
-            layer.fill(Path.disc(x: arm.x, y: arm.y, r: scale * 1.1),
-                       with: .radialGradient(Gradient(colors: [scenery.lampGlow, scenery.lampGlow.opacity(0)]),
-                                             center: arm.point, startRadius: 0, endRadius: scale * 1.1))
+            if glows {
+                layer.fill(Path.disc(x: arm.x, y: arm.y, r: scale * 1.1),
+                           with: .radialGradient(Gradient(colors: [scenery.lampGlow, scenery.lampGlow.opacity(0)]),
+                                                 center: arm.point, startRadius: 0, endRadius: scale * 1.1))
+            }
             bulbs.addPath(Path.disc(x: arm.x, y: arm.y + scale * 0.05, r: scale * 0.13))
         }
         layer.fill(bulbs, with: .color(scenery.lamp))
@@ -618,9 +635,11 @@ struct PierPainter {
         layer.fill(Path.box(x: centre.x - radius * 0.5, y: centre.y - radius * 5, width: radius, height: radius * 5),
                    with: .linearGradient(Gradient(colors: [color.opacity(0), color.opacity(0.35)]),
                                          startPoint: CGPoint(x: centre.x, y: centre.y - radius * 5), endPoint: centre.point))
-        layer.fill(Path.disc(x: centre.x, y: centre.y, r: radius * 1.7),
-                   with: .radialGradient(Gradient(colors: [color.opacity(0.55), color.opacity(0)]),
-                                         center: centre.point, startRadius: radius * 0.3, endRadius: radius * 1.7))
+        if glows {
+            layer.fill(Path.disc(x: centre.x, y: centre.y, r: radius * 1.7),
+                       with: .radialGradient(Gradient(colors: [color.opacity(0.55), color.opacity(0)]),
+                                             center: centre.point, startRadius: radius * 0.3, endRadius: radius * 1.7))
+        }
         layer.fill(Path.disc(x: centre.x, y: centre.y, r: radius), with: .color(PierStyle.cream))
         layer.stroke(Path.disc(x: centre.x, y: centre.y, r: radius * 0.93), with: .color(color), lineWidth: max(1, radius * 0.14))
         switch pickup.kind {
@@ -692,10 +711,12 @@ struct PierPainter {
         if run.hasShield {
             let radius = scale * (sliding ? 0.7 : 1.08)
             let glass = PierStyle.shield
-            context.fill(Path.disc(x: middle.x, y: middle.y, r: radius),
-                         with: .radialGradient(Gradient(stops: [.init(color: glass.opacity(0), location: 0), .init(color: glass.opacity(0.28), location: 0.7),
-                                                                .init(color: Color(hex: 0xB4DCFF, opacity: 0.75), location: 1)]),
-                                               center: middle.point, startRadius: radius * 0.55, endRadius: radius))
+            if glows {
+                context.fill(Path.disc(x: middle.x, y: middle.y, r: radius),
+                             with: .radialGradient(Gradient(stops: [.init(color: glass.opacity(0), location: 0), .init(color: glass.opacity(0.28), location: 0.7),
+                                                                    .init(color: Color(hex: 0xB4DCFF, opacity: 0.75), location: 1)]),
+                                                   center: middle.point, startRadius: radius * 0.55, endRadius: radius))
+            }
         }
         if run.hasMagnet {
             for ring in 0..<2 {

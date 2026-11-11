@@ -90,7 +90,7 @@ struct PierView: View {
                               reduceMotion: reduceMotion, standing: session.phase == .ready,
                               sinceCoin: since(moments.coin), sinceShieldBroke: since(moments.shieldBroke),
                               sinceCrash: since(moments.crash))
-        frame.sketch = session.context.options.value(after: "-pierSketch") == "YES"
+        frame.drawn = session.context.options.value(after: "-pierDraw").flatMap(PierFrame.Drawn.init) ?? .all
         return frame
     }
 

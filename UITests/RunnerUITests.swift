@@ -63,22 +63,22 @@ final class RunnerUITests: UITestCase {
     /// The simulator's frame rate says more about how busy the CI machine is than about the
     /// app; the main thread's CPU time (`main_cpu_*`, `cpu_*`) and the frame's work do not.
     func testThePierIsDrawnSmoothly() {
-        // In the dark (the night sky has the most stars), and once more with almost nothing
-        // drawn, to tell what the pier costs from what any frame costs on this machine. Each run
-        // costs the suite about 20 seconds, and the job has little to spare on a slow machine.
-        for (appearance, sketch) in [("dark", false), ("dark", true)] {
-            launch(["-scenario", "runnerProbe", "-frameProbe", "6"] + (sketch ? ["-pierSketch", "YES"] : []),
-                   appearance: appearance, animated: true)
+        // In the dark (the night sky has the most stars): the whole pier, then without its glows,
+        // without anything standing on it, and with almost nothing at all, to tell what each part
+        // costs from what any frame costs on this machine. Each run costs the suite about 15
+        // seconds, and the job has little to spare on a slow machine.
+        for (appearance, drawn) in [("dark", "all"), ("dark", "noGlows"), ("dark", "noItems"), ("dark", "sketch")] {
+            launch(["-scenario", "runnerProbe", "-frameProbe", "5", "-pierDraw", drawn], appearance: appearance, animated: true)
             waitFor("game-runner").tap()
             // The run starts by itself and pauses once measured. Nothing asks the app anything
             // meanwhile: a query of what is on screen holds up the frames it would measure.
-            Thread.sleep(forTimeInterval: 8)
+            Thread.sleep(forTimeInterval: 7)
             let probe = element("frameProbe")
             XCTAssertTrue(probe.waitForExistence(timeout: 30), "no report from the probe (\(appearance))")
             let report = probe.value as? String ?? ""
-            print("RUNNER-PERF live appearance=\(appearance) sketch=\(sketch) \(report)")
+            print("RUNNER-PERF live appearance=\(appearance) drawn=\(drawn) \(report)")
             let attachment = XCTAttachment(string: report)
-            attachment.name = "frame-probe-\(appearance)\(sketch ? "-sketch" : "")"
+            attachment.name = "frame-probe-\(appearance)-\(drawn)"
             attachment.lifetime = .keepAlways
             add(attachment)
             XCTAssertGreaterThan(measure("frames", in: report), 60, report)
