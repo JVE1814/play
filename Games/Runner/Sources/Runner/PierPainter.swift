@@ -35,9 +35,6 @@ struct PierFrame {
         case noObstacles
         /// Without the coins and power-ups.
         case noCoins
-        /// Without the lines drawn on what stands on the pier: ropes, lamp posts, crate
-        /// frames, container ribs, barrel staves.
-        case noStrokes
     }
 }
 
@@ -57,7 +54,6 @@ struct PierPainter {
 
     private var run: Run { f.run }
     private var glows: Bool { f.drawn != .noGlows }
-    private var strokes: Bool { f.drawn != .noStrokes }
     private var scenery: Scenery { f.scenery }
     private var w: Double { cam.width }
     private var h: Double { cam.height }
@@ -402,6 +398,10 @@ struct PierPainter {
         if haze(z) < 1 { layer.opacity = haze(z) }
         let scale = cam.scale(z)
         // The two edges of the pier never overlap, so each part of both is drawn at once.
+        // Ropes and lamp posts are filled shapes rather than strokes, which cost the renderer far
+        // more to draw.
+        let ropeWidth = max(0.6, scale * 0.035)
+        let lampPostWidth = max(1, scale * 0.09)
         var ropes = Path()
         var posts = Faces()
         var caps = Path()
@@ -409,8 +409,8 @@ struct PierPainter {
         var lamps: [Spot] = []
         for side in [-1.0, 1.0] {
             let x = side * (PierCamera.halfWidth + 0.12)
-            ropes.move(to: cam.point(x, 0.8, z).point)
-            ropes.addQuadCurve(to: cam.point(x, 0.8, z + Self.bollardSpacing).point, control: cam.point(x, 0.1, z + Self.bollardSpacing / 2).point)
+            ropes.addPath(Path.ribbon(cam.point(x, 0.8, z), cam.point(x, 0.8, z + Self.bollardSpacing),
+                                      control: cam.point(x, 0.1, z + Self.bollardSpacing / 2), width: ropeWidth))
             add(&posts, x: x - 0.1, x + 0.1, y: 0, 0.9, z: z, z + 0.2)
             let cap = cam.point(x, 0.9, z)
             if scale > Self.farDetail {
@@ -418,16 +418,17 @@ struct PierPainter {
             }
             guard index % 4 == 0 else { continue }
             let arm = cam.point(x - side * 0.5, 3.4, z)
-            lampPosts.move(to: cam.point(x + side * 0.05, 0, z).point)
-            lampPosts.addLine(to: cam.point(x + side * 0.05, 3.4, z).point)
-            lampPosts.addLine(to: arm.point)
+            let head = cam.point(x + side * 0.05, 3.4, z)
+            lampPosts.addPath(Path.bar(cam.point(x + side * 0.05, 0, z), head, width: lampPostWidth))
+            lampPosts.addPath(Path.bar(head, arm, width: lampPostWidth))
+            lampPosts.addPath(Path.disc(x: head.x, y: head.y, r: lampPostWidth / 2))
             lamps.append(arm)
         }
-        if strokes { layer.stroke(ropes, with: .color(scenery.rope), style: StrokeStyle(lineWidth: max(0.6, scale * 0.035), lineCap: .round)) }
+        layer.fill(ropes, with: .color(scenery.rope))
         fill(posts, in: &layer, front: scenery.post, side: scenery.postSide, top: scenery.postTop)
         if !caps.isEmpty { layer.fill(caps, with: .color(scenery.postCap)) }
         guard !lamps.isEmpty else { return }
-        if strokes { layer.stroke(lampPosts, with: .color(scenery.lampPost), style: StrokeStyle(lineWidth: max(1, scale * 0.09), lineCap: .round, lineJoin: .round)) }
+        layer.fill(lampPosts, with: .color(scenery.lampPost))
         var bulbs = Path()
         for arm in lamps {
             if glows {
@@ -494,11 +495,13 @@ struct PierPainter {
         let inset = scale * 0.035
         let frame = CGRect(x: topLeft.x + inset, y: topLeft.y + inset,
                            width: bottomRight.x - topLeft.x - 2 * inset, height: bottomRight.y - topLeft.y - 2 * inset)
-        if strokes { context.stroke(Path(frame), with: .color(PierStyle.crateFrame), lineWidth: max(0.8, scale * 0.07)) }
-        var brace = Path()
-        brace.move(to: CGPoint(x: frame.minX, y: frame.minY))
-        brace.addLine(to: CGPoint(x: frame.maxX, y: frame.maxY))
-        if strokes { context.stroke(brace, with: .color(PierStyle.crateFrame), lineWidth: max(0.6, scale * 0.05)) }
+        // The frame is a ring (the rectangle less its inside) and the brace a bar, both filled.
+        let frameWidth = max(0.8, scale * 0.07)
+        var ring = Path(frame.insetBy(dx: -frameWidth / 2, dy: -frameWidth / 2))
+        ring.addRect(frame.insetBy(dx: frameWidth / 2, dy: frameWidth / 2))
+        context.fill(ring, with: .color(PierStyle.crateFrame), style: FillStyle(eoFill: true))
+        context.fill(Path.bar(Spot(x: frame.minX, y: frame.minY), Spot(x: frame.maxX, y: frame.maxY), width: max(0.6, scale * 0.05)),
+                     with: .color(PierStyle.crateFrame))
     }
 
     private func draw(_ obstacle: Obstacle, z: Double, in context: inout GraphicsContext) {
@@ -588,20 +591,22 @@ struct PierPainter {
         box(&context, x: x - 0.66, x + 0.66, y: 0, 2.5, z: near, far, front: paint.front, side: paint.side, top: paint.top)
         // Ribs down the side the camera sees, so its length reads as it goes by.
         if let side = [x - 0.66, x + 0.66].first(where: { ($0 < x) == (cam.x < $0) }) {
+            var ribs = Path()
             var ribZ = z + 1.1
             while ribZ < far {
                 if ribZ > near {
-                    if strokes { context.stroke(Path.line(cam.point(side, 0.12, ribZ), cam.point(side, 2.38, ribZ)),
-                                   with: .color(.black.opacity(0.16)), lineWidth: max(0.6, cam.scale(ribZ) * 0.03)) }
+                    ribs.addPath(Path.bar(cam.point(side, 0.12, ribZ), cam.point(side, 2.38, ribZ), width: max(0.6, cam.scale(ribZ) * 0.03)))
                 }
                 ribZ += 1.1
             }
+            context.fill(ribs, with: .color(.black.opacity(0.16)))
         }
+        var endRibs = Path()
         for rib in 1..<6 {
             let ribX = x - 0.66 + Double(rib) * 1.32 / 6
-            if strokes { context.stroke(Path.line(cam.point(ribX, 0.12, near), cam.point(ribX, 2.38, near)),
-                           with: .color(.black.opacity(0.18)), lineWidth: max(0.6, scale * 0.03)) }
+            endRibs.addPath(Path.bar(cam.point(ribX, 0.12, near), cam.point(ribX, 2.38, near), width: max(0.6, scale * 0.03)))
         }
+        context.fill(endRibs, with: .color(.black.opacity(0.18)))
         let bar = cam.point(x - 0.5, 1.25, near)
         context.fill(Path.box(x: bar.x, y: bar.y, width: scale * 0.34, height: max(1, scale * 0.06)), with: .color(.white.opacity(0.75)))
     }
@@ -622,10 +627,9 @@ struct PierPainter {
             let y = corner.y + height * (Double(stave) + spin) / 3
             guard y > outline.rect.minY, y < outline.rect.maxY else { continue }
             let inset = outline.inset(atY: y)
-            staves.move(to: CGPoint(x: outline.rect.minX + inset, y: y))
-            staves.addLine(to: CGPoint(x: outline.rect.maxX - inset, y: y))
+            staves.addPath(Path.bar(Spot(x: outline.rect.minX + inset, y: y), Spot(x: outline.rect.maxX - inset, y: y), width: max(0.6, scale * 0.03)))
         }
-        if strokes { context.stroke(staves, with: .color(Color(hex: 0x3C1905, opacity: 0.45)), lineWidth: max(0.6, scale * 0.03)) }
+        context.fill(staves, with: .color(Color(hex: 0x3C1905, opacity: 0.45)))
         context.fill(outline.rows(from: corner.y, to: corner.y + height * 0.3), with: .color(Color(hex: 0xFFDCAA, opacity: 0.18)))
         var hoops = outline.columns(from: corner.x + width * 0.14, to: corner.x + width * 0.22)
         hoops.addPath(outline.columns(from: corner.x + width * 0.78, to: corner.x + width * 0.86))
@@ -801,11 +805,10 @@ struct PierPainter {
             let length = (10 + 26 * random.nextUnit()) * rush
             let outward = (x - w / 2) / w
             let downward = (y - cam.horizon) / h
-            streaks[Self.step(1 - age)].addPath(Path.line(Spot(x: x, y: y), Spot(x: x + outward * length, y: y + downward * length * 1.6)))
+            streaks[Self.step(1 - age)].addPath(Path.bar(Spot(x: x, y: y), Spot(x: x + outward * length, y: y + downward * length * 1.6), width: 1.2))
         }
         for (step, shape) in streaks.enumerated() where step > 0 && !shape.isEmpty {
-            context.stroke(shape, with: .color(.white.opacity(0.25 * rush * Double(step) / Double(Self.steps))),
-                           style: StrokeStyle(lineWidth: 1.2, lineCap: .round))
+            context.fill(shape, with: .color(.white.opacity(0.25 * rush * Double(step) / Double(Self.steps))))
         }
     }
 }

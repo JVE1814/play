@@ -63,12 +63,11 @@ final class RunnerUITests: UITestCase {
     /// The simulator's frame rate says more about how busy the CI machine is than about the
     /// app; the main thread's CPU time (`main_cpu_*`, `cpu_*`) and the frame's work do not.
     func testThePierIsDrawnSmoothly() {
-        // In the dark (the night sky has the most stars): the whole pier, then without the lines
-        // drawn on what stands on it, then with nothing standing on it, to tell what each costs on
-        // this machine. (-pierDraw also takes noGlows, noFurniture, noObstacles, noCoins and
-        // sketch.) Each run costs the suite about 15
+        // In the dark (the night sky has the most stars): the whole pier, then with nothing
+        // standing on it, to tell what that costs on this machine. (-pierDraw also takes noGlows,
+        // noFurniture, noObstacles, noCoins and sketch.) Each run costs the suite about 15
         // seconds, and the job has little to spare on a slow machine.
-        for (appearance, drawn) in [("dark", "all"), ("dark", "noStrokes"), ("dark", "noItems")] {
+        for (appearance, drawn) in [("dark", "all"), ("dark", "noItems")] {
             launch(["-scenario", "runnerProbe", "-frameProbe", "5", "-pierDraw", drawn], appearance: appearance, animated: true)
             waitFor("game-runner").tap()
             // The run starts by itself and pauses once measured. Nothing asks the app anything
