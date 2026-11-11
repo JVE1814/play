@@ -186,6 +186,52 @@ extension Path {
         return path
     }
 
+    static func quad(_ a: Spot, _ b: Spot, _ c: Spot, _ d: Spot) -> Path {
+        var path = Path()
+        path.move(to: a.point)
+        path.addLine(to: b.point)
+        path.addLine(to: c.point)
+        path.addLine(to: d.point)
+        path.closeSubpath()
+        return path
+    }
+
+    /// A straight line drawn as a filled bar `width` wide. (A stroke costs the renderer far
+    /// more to draw than a fill of the same shape.)
+    static func bar(_ from: Spot, _ to: Spot, width: Double) -> Path {
+        let dx = to.x - from.x
+        let dy = to.y - from.y
+        let length = max(0.0001, (dx * dx + dy * dy).squareRoot())
+        let nx = -dy / length * width / 2
+        let ny = dx / length * width / 2
+        return quad(Spot(x: from.x + nx, y: from.y + ny), Spot(x: to.x + nx, y: to.y + ny),
+                    Spot(x: to.x - nx, y: to.y - ny), Spot(x: from.x - nx, y: from.y - ny))
+    }
+
+    /// A quadratic curve drawn as a filled ribbon `width` wide, followed in a few straight steps.
+    static func ribbon(_ from: Spot, _ to: Spot, control: Spot, width: Double, steps: Int = 8) -> Path {
+        var left: [CGPoint] = []
+        var right: [CGPoint] = []
+        for step in 0...steps {
+            let t = Double(step) / Double(steps)
+            let u = 1 - t
+            let x = u * u * from.x + 2 * u * t * control.x + t * t * to.x
+            let y = u * u * from.y + 2 * u * t * control.y + t * t * to.y
+            // The curve's direction here, turned a quarter, is the way across the ribbon.
+            let dx = 2 * u * (control.x - from.x) + 2 * t * (to.x - control.x)
+            let dy = 2 * u * (control.y - from.y) + 2 * t * (to.y - control.y)
+            let length = max(0.0001, (dx * dx + dy * dy).squareRoot())
+            let nx = -dy / length * width / 2
+            let ny = dx / length * width / 2
+            left.append(CGPoint(x: x + nx, y: y + ny))
+            right.append(CGPoint(x: x - nx, y: y - ny))
+        }
+        var path = Path()
+        path.addLines(left + right.reversed())
+        path.closeSubpath()
+        return path
+    }
+
     static func line(_ from: Spot, _ to: Spot) -> Path {
         var path = Path()
         path.move(to: from.point)

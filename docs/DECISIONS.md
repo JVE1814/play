@@ -286,16 +286,18 @@ worth a look before you submit are marked **review**.
     (45 seconds), the regular's close to four kilometres. A jump lasts 0.7 seconds and the low
     obstacles count for a little less than they look, so a foot that seems to clip one gets over.
 77. **The run moves in fixed steps of 1/120 second and is not published.** The same seed and
-    the same moves give the same run at any frame rate. The session plays it forward sixty
-    times a second for sounds, the score and the end; the pier draws from a copy played up to
-    the frame's own time, so what is seen never waits. The score and coins are published by a
-    small object of their own, so only the readouts follow them.
+    the same moves give the same run at any frame rate. The session plays it forward with the
+    display's frames (a display link, up to sixty a second) for sounds, the score and the end;
+    the pier draws from a copy played up to the frame's own time, so what is seen never waits,
+    at 120 Hz too. The score and coins are published by a small object of their own, so only
+    the readouts follow them.
 78. **A goal makes a run a win or a loss.** Statistics count wins, and an endless game has
     none, so each run is after a score: the first rung of a ladder (250, 500, 750, 1,000 ...)
     above the best so far. Reaching it is a win. A metre is a point and a coin five.
 79. **Leaving pauses; coming back waits for a tap, then a moment more.** A run saves every two
     seconds and whenever it stops, so a force quit costs two seconds at most and comes back
-    paused. After the tap the run stands still for a second and a half.
+    paused. The saves along the way are written on a queue of their own, which every save and
+    load of a run goes through, so the main thread never waits for one. After the tap the run stands still for a second and a half.
 80. **The first runs are coached.** Until a run has scored 100, the course opens with three
     easy rows (go round, jump, slide) and says which swipe each needs. The jump and the slide
     are asked for when it is time to make them, not before: doing as told at once, or a
@@ -379,3 +381,29 @@ worth a look before you submit are marked **review**.
     the level count, the current level and the next one locked, and Bubbles picks a level from
     it. That saves two launches, and dropping Mines' dark screenshot test a third (its game
     test runs in dark mode instead), about a minute in all. Decision 73's precedent.
+
+## Runner, made smooth
+
+97. **The pier runs at the display's rate, 120 Hz on ProMotion, and is drawn on the GPU.** The
+    first version lagged: its Canvas was rasterized on the CPU (four full-screen gradients,
+    a sun glow, lamp glows and about a thousand paths at 3x), its timeline was held to a 60 Hz
+    minimum interval (which skips any frame that comes a hair early, and keeps ProMotion at
+    60), the run was clocked by a sleeping task, and saves were written on the main thread.
+    Now the Canvas is a `drawingGroup`, the timeline has no minimum interval while running,
+    Info.plist lets iPhones go above 60 Hz, a display link clocks the run, and saves and sounds
+    are started off the main thread. What is too far off to see is not drawn (faces thinner
+    than half a point, far caps and crate frames, far coins as one disc, far striped boards as
+    one bar) and the plank gaps and lane dashes are drawn in a few fills, not ninety. The
+    pier's accessibility sits outside the timeline, so it is not rebuilt every frame.
+98. **Smoothness is measured, not guessed.** `-frameProbe SECONDS` with `-scenario runnerProbe`
+    (a busy course that never ends a run left in the middle lane) starts the run by itself and
+    reports frame gaps, paint time, each frame's work from view update to painted, missed beats
+    of a display link of its own, the main thread's CPU time, and a sampling profile of the
+    main thread by library and symbol. A UI test runs it once and holds a frame's work within a
+    120 Hz frame; a unit test times rasterizing pier frames on the CPU. CI prints the
+    `RUNNER-PERF` lines. In the simulator on CI the frame rate is not the app's: about two
+    thirds of the main thread's time is spent blocked in Metal's `waitUntilScheduled` as
+    RenderBox finishes each frame (the simulator serializes every GPU command to the host),
+    while the frame's own work is about 3 ms. The CPU times are what to compare from one change
+    to the next. Rendering the canvas asynchronously, to take that wait off the main thread,
+    never finished a measured run in the simulator, so it is not used.

@@ -28,12 +28,13 @@ public enum FeedbackEvent: String, CaseIterable, Sendable {
 
 /// Plays sounds (off by default) and light haptics (on by default) according to `AppSettings`.
 /// Sounds use the ambient audio session, so they respect the silent switch and never stop
-/// the music or podcast you are listening to on the train.
+/// the music or podcast you are listening to on the train. They are started off the main
+/// thread, where a sound starting can take long enough to cost a frame.
 @MainActor
 public final class Feedback {
     private let settings: AppSettings
-    private var players: [FeedbackEvent: AVAudioPlayer] = [:]
-    private var audioSessionConfigured = false
+    private let sounds = SoundBank()
+    private let audio = DispatchQueue(label: "Feedback.sounds", qos: .userInitiated)
     private let light = UIImpactFeedbackGenerator(style: .light)
     private let soft = UIImpactFeedbackGenerator(style: .soft)
     private let rigid = UIImpactFeedbackGenerator(style: .rigid)
@@ -63,12 +64,23 @@ public final class Feedback {
         }
     }
 
-    public static func soundURL(for event: FeedbackEvent) -> URL? {
+    public nonisolated static func soundURL(for event: FeedbackEvent) -> URL? {
         Bundle.module.url(forResource: event.rawValue, withExtension: "wav")
             ?? Bundle.module.url(forResource: event.rawValue, withExtension: "wav", subdirectory: "Sounds")
     }
 
     private func sound(for event: FeedbackEvent) {
+        let sounds = sounds
+        audio.async { sounds.play(event) }
+    }
+}
+
+/// The sounds' players. Used only on `Feedback`'s audio queue, one sound at a time.
+private final class SoundBank: @unchecked Sendable {
+    private var players: [FeedbackEvent: AVAudioPlayer] = [:]
+    private var audioSessionConfigured = false
+
+    func play(_ event: FeedbackEvent) {
         if !audioSessionConfigured {
             try? AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [.mixWithOthers])
             audioSessionConfigured = true
@@ -76,7 +88,7 @@ public final class Feedback {
         let player: AVAudioPlayer?
         if let cached = players[event] {
             player = cached
-        } else if let url = Self.soundURL(for: event) {
+        } else if let url = Feedback.soundURL(for: event) {
             player = try? AVAudioPlayer(contentsOf: url)
             player?.volume = 0.6
             player?.prepareToPlay()

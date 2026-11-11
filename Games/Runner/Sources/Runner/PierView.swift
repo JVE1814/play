@@ -1,4 +1,5 @@
 import PlayKit
+import QuartzCore
 import RunnerEngine
 import SwiftUI
 
@@ -14,9 +15,14 @@ struct PierView: View {
     /// every frame, so the app goes idle between steps.
     let live: Bool
     @Environment(\.colorScheme) private var colorScheme
+    /// What VoiceOver says about the pier is worked out every frame only while it is listening.
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
     /// Where the touch that has already made its move began. (A touch the system takes away
     /// never ends, so a plain flag would leave the next one ignored.)
     @State private var spentTouch: CGPoint?
+
+    /// A heads-up display that never changes, for accessibility that need not follow the run.
+    private static let still = RunnerHUD()
 
     /// How far a thumb has to travel to count as a swipe.
     private static let swipeDistance: CGFloat = 22
@@ -28,26 +34,33 @@ struct PierView: View {
             ZStack {
                 TimelineView(.animation(minimumInterval: frameInterval, paused: paused)) { timeline in
                     let frame = makeFrame(size: proxy.size, date: live ? timeline.date : Date())
-                    Canvas { context, _ in
+                    let probe = session.probe
+                    let owner = session
+                    Canvas(opaque: true) { context, _ in
                         var context = context
+                        let begin = CACurrentMediaTime()
                         PierPainter(f: frame).paint(&context)
+                        if let probe, probe.record(begin: begin, end: CACurrentMediaTime()) {
+                            Task { @MainActor in owner.togglePause() }
+                        }
                     }
-                    // Inside the timeline, so what VoiceOver says follows the run.
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Pier")
-                    .accessibilityValue(session.spokenStatus)
-                    .accessibilityHint("Swipe left or right to change lane, up to jump, down to slide. Double-tap to start or carry on.")
-                    .accessibilityAddTraits(.allowsDirectInteraction)
-                    .accessibilityAction { session.tap() }
-                    .accessibilityAction(named: "Move left") { session.perform(.left) }
-                    .accessibilityAction(named: "Move right") { session.perform(.right) }
-                    .accessibilityAction(named: "Jump") { session.perform(.jump) }
-                    .accessibilityAction(named: "Slide") { session.perform(.slide) }
-                    .accessibilityIdentifier("pier")
+                    // Drawn on the GPU: on the CPU, a frame of the pier is too much for 120 Hz.
+                    // It covers its whole frame, so nothing beneath needs blending in.
+                    .drawingGroup(opaque: true)
                 }
+                // Outside the timeline, the pier's accessibility is not rebuilt every frame; what
+                // VoiceOver says follows the heads-up display instead.
+                .modifier(PierAccessibility(session: session, hud: voiceOver ? session.hud : Self.still, speaks: voiceOver))
                 .contentShape(Rectangle())
                 .gesture(swipes)
 
+                if let report = session.probe?.report {
+                    Text(report)
+                        .font(.system(size: 6))
+                        .foregroundStyle(.white)
+                        .accessibilityIdentifier("frameProbe")
+                        .accessibilityValue(report)
+                }
                 PierDisplay(session: session, hud: session.hud)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 cards
@@ -59,22 +72,26 @@ struct PierView: View {
     /// Nothing is redrawn while the pier is out of view, the run is paused, or the result is up.
     private var paused: Bool { !session.inView || !live || session.phase == .paused || session.showsResult }
 
-    /// Full frame rate while running; half on the start line and after the run, where only
-    /// the sea glitters.
-    private var frameInterval: Double {
-        session.phase == .running ? 1.0 / 60 : 1.0 / 30
+    /// While running, the display's own rate: up to 120 Hz on ProMotion. (A 60 Hz minimum
+    /// interval skips any frame that comes a hair early.) Half that on the start line and after
+    /// the run, where only the sea glitters.
+    private var frameInterval: Double? {
+        session.phase == .running ? nil : 1.0 / 30
     }
 
     private func makeFrame(size: CGSize, date: Date) -> PierFrame {
+        session.probe?.updateBegins(at: CACurrentMediaTime())
         let moments = session.moments
         func since(_ moment: Date?) -> Double? {
             moment.map { date.timeIntervalSince($0) }
         }
-        return PierFrame(size: size, run: session.run(at: date), scenery: Scenery.of(colorScheme),
-                         clock: live ? date.timeIntervalSince(Self.opened) : 1.37,
-                         reduceMotion: reduceMotion, standing: session.phase == .ready,
-                         sinceCoin: since(moments.coin), sinceShieldBroke: since(moments.shieldBroke),
-                         sinceCrash: since(moments.crash))
+        var frame = PierFrame(size: size, run: session.run(at: date), scenery: Scenery.of(colorScheme),
+                              clock: live ? date.timeIntervalSince(Self.opened) : 1.37,
+                              reduceMotion: reduceMotion, standing: session.phase == .ready,
+                              sinceCoin: since(moments.coin), sinceShieldBroke: since(moments.shieldBroke),
+                              sinceCrash: since(moments.crash))
+        frame.drawn = session.context.options.value(after: "-pierDraw").flatMap(PierFrame.Drawn.init) ?? .all
+        return frame
     }
 
     /// One move for each touch, made as soon as the thumb has gone far enough: nobody waits
@@ -266,10 +283,10 @@ struct StartCard: View {
                 .font(.system(size: 20, weight: .bold))
                 .frame(width: 44, height: 44)
                 .background(Circle().fill(Theme.hairline))
-                .accessibilityHidden(true)
+            .accessibilityHidden(true)
             Text(name)
                 .font(Typography.label)
-                .accessibilityLabel("Swipe to \(name.lowercased())")
+            .accessibilityLabel("Swipe to \(name.lowercased())")
         }
         .foregroundStyle(Theme.ink)
         .frame(maxWidth: .infinity)
@@ -309,7 +326,7 @@ struct PromptCard: View {
         HStack(spacing: Theme.Space.s) {
             Image(systemName: move.arrow)
                 .font(.system(size: 22, weight: .heavy))
-                .accessibilityHidden(true)
+            .accessibilityHidden(true)
             Text(move.instruction)
                 .font(Typography.headline)
         }
@@ -351,5 +368,27 @@ struct RunnerIcon: View {
             figure.scaleBy(x: scale, y: -scale)
             RunnerFigure.upright(in: &figure, swing: 0.9, tucked: false, armsUp: false, scarfWave: 0.03)
         }
+    }
+}
+
+/// The pier as VoiceOver and the UI tests see it: one element that takes the four moves.
+private struct PierAccessibility: ViewModifier {
+    let session: RunnerSession
+    @ObservedObject var hud: RunnerHUD
+    let speaks: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Pier")
+            .accessibilityValue(speaks ? session.spokenStatus : "")
+            .accessibilityHint("Swipe left or right to change lane, up to jump, down to slide. Double-tap to start or carry on.")
+            .accessibilityAddTraits(.allowsDirectInteraction)
+            .accessibilityAction { session.tap() }
+            .accessibilityAction(named: "Move left") { session.perform(.left) }
+            .accessibilityAction(named: "Move right") { session.perform(.right) }
+            .accessibilityAction(named: "Jump") { session.perform(.jump) }
+            .accessibilityAction(named: "Slide") { session.perform(.slide) }
+            .accessibilityIdentifier("pier")
     }
 }

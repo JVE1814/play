@@ -130,6 +130,9 @@ if [ "$BUILD_RC" -eq 0 ]; then
   echo "xcodebuild test exit $TEST_RC"
   grep -E "Executed [0-9]+ tests?, with" "$OUT/test.log" | tail -5
 
+  step "Runner smoothness (RUNNER-PERF lines from the tests)"
+  grep -h "RUNNER-PERF" "$OUT/test.log" | sed -E 's/.*RUNNER-PERF/RUNNER-PERF/' | sort -u | tee "$OUT/runner-perf.txt"
+
   step "Collect results"
   python3 ci/xcresult_summary.py "$BUILD/Tests.xcresult" "$OUT" "$OUT/test.log"
   SUMMARY_RC=$?
