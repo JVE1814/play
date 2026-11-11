@@ -58,10 +58,10 @@ final class RunnerUITests: UITestCase {
     /// Runs a busy course live for eight seconds with each way of drawing and clocking the pier,
     /// and prints how evenly the frames came (`RUNNER-PERF` lines in the test log).
     func testThePierIsDrawnSmoothly() {
-        for (tuning, appearance, sound) in [("none", "dark", false), ("gpu,rate,clock", "dark", false),
-                                            ("gpu,rate,clock,ax", "dark", false), ("gpu,rate,clock,hud", "dark", false),
-                                            ("gpu,rate,clock,ax,hud", "dark", false), ("gpu,rate,clock,ax,hud", "light", false),
-                                            ("gpu,rate,clock,ax,hud", "dark", true)] {
+        // Taken in turns, twice, so that the machine growing busier or quieter as the test runs
+        // does not pass for a difference between them.
+        let rounds = ["gpu,rate,clock", "gpu,rate,clock,ax", "gpu,rate,clock,ax,hud", "none"]
+        for (index, (tuning, appearance, sound)) in (rounds + rounds.dropLast()).map({ ($0, "dark", false) }).enumerated() {
             launch(["-scenario", "runnerProbe", "-frameProbe", "8", "-pierTuning", tuning] + (sound ? ["-settings.sound", "YES"] : []),
                    appearance: appearance, animated: true)
             waitFor("game-runner").tap()
@@ -71,7 +71,7 @@ final class RunnerUITests: UITestCase {
             let probe = element("frameProbe")
             XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(tuning))")
             let report = probe.value as? String ?? ""
-            print("RUNNER-PERF live tuning=\(tuning) appearance=\(appearance) sound=\(sound) \(report)")
+            print("RUNNER-PERF live #\(index) tuning=\(tuning) appearance=\(appearance) sound=\(sound) \(report)")
             let attachment = XCTAttachment(string: report)
             attachment.name = "frame-probe-\(tuning)-\(appearance)\(sound ? "-sound" : "")"
             attachment.lifetime = .keepAlways

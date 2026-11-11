@@ -84,6 +84,17 @@ final class FrameProbe {
     /// stretches with what woke it.
     private var busy: [Double] = []
     private var woke: CFTimeInterval?
+    /// The same stretches in the main thread's own CPU time, which a busy machine does not
+    /// stretch, and the main thread's CPU time over the whole measurement, everything included.
+    private var busyCPU: [Double] = []
+    private var wokeCPU: Double?
+    private var cpuAtStart: Double?
+    private var wallAtStart: CFTimeInterval?
+
+    /// Seconds of CPU the calling thread has used.
+    private static func threadCPU() -> Double {
+        Double(clock_gettime_nsec_np(CLOCK_THREAD_CPUTIME_ID)) / 1e9
+    }
     private var watcher: CFRunLoopObserver?
     private(set) var report: String?
 
@@ -107,10 +118,15 @@ final class FrameProbe {
         let watcher = CFRunLoopObserverCreateWithHandler(nil, activities, true, 0) { [weak self] _, activity in
             guard let self, self.report == nil else { return }
             let now = CACurrentMediaTime()
+            let cpu = Self.threadCPU()
             if activity == .afterWaiting {
                 self.woke = now
-            } else if let woke = self.woke {
-                if let started = self.started, now - started > Self.warmUp { self.busy.append(now - woke) }
+                self.wokeCPU = cpu
+            } else if let woke = self.woke, let wokeCPU = self.wokeCPU {
+                if let started = self.started, now - started > Self.warmUp {
+                    self.busy.append(now - woke)
+                    self.busyCPU.append(cpu - wokeCPU)
+                }
                 self.woke = nil
             }
         }
@@ -131,6 +147,10 @@ final class FrameProbe {
         guard report == nil else { return false }
         let start = started ?? begin
         started = start
+        if begin - start > Self.warmUp, cpuAtStart == nil {
+            cpuAtStart = Self.threadCPU()
+            wallAtStart = begin
+        }
         if let last, begin - start > Self.warmUp {
             intervals.append(begin - last)
             paints.append(end - begin)
@@ -138,12 +158,16 @@ final class FrameProbe {
         }
         last = begin
         guard begin - start > Self.warmUp + seconds else { return false }
-        report = Self.describe(intervals: intervals, paints: paints, works: works, beats: beats, busy: busy)
+        let usage = cpuAtStart.flatMap { cpu in wallAtStart.map { (Self.threadCPU() - cpu) / max(0.001, begin - $0) } } ?? 0
+        report = Self.describe(intervals: intervals, paints: paints, works: works, beats: beats, busy: busy, busyCPU: busyCPU)
+            // The main thread's CPU per frame drawn, in milliseconds.
+            + String(format: " main_cpu_use=%.3f main_cpu_per_frame=%.2f", usage,
+                     usage * intervals.reduce(0, +) * 1_000 / max(1, Double(intervals.count)))
         if let watcher { CFRunLoopObserverInvalidate(watcher) }
         return true
     }
 
-    private static func describe(intervals: [Double], paints: [Double], works: [Double], beats: [Double], busy: [Double]) -> String {
+    private static func describe(intervals: [Double], paints: [Double], works: [Double], beats: [Double], busy: [Double], busyCPU: [Double]) -> String {
         func ms(_ value: Double) -> String { String(format: "%.2f", value * 1_000) }
         func centile(_ sorted: [Double], _ p: Double) -> Double {
             sorted.isEmpty ? 0 : sorted[min(sorted.count - 1, Int(Double(sorted.count) * p))]
@@ -164,5 +188,6 @@ final class FrameProbe {
             + " main_beats=\(beats.count) main_missed=\(beats.filter { $0 > 0.025 }.count) main_gap_max=\(ms(beats.max() ?? 0))"
             + " busy_n=\(busy.count) busy_p50=\(ms(centile(busy.sorted(), 0.5))) busy_p95=\(ms(centile(busy.sorted(), 0.95)))"
             + " busy_p99=\(ms(centile(busy.sorted(), 0.99))) busy_max=\(ms(busy.max() ?? 0)) busy_over16=\(busy.filter { $0 > 0.016 }.count)"
+            + " cpu_p50=\(ms(centile(busyCPU.sorted(), 0.5))) cpu_p95=\(ms(centile(busyCPU.sorted(), 0.95))) cpu_max=\(ms(busyCPU.max() ?? 0))"
     }
 }
