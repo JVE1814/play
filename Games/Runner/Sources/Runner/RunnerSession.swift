@@ -207,6 +207,7 @@ public final class RunnerSession: ObservableObject, GameSession {
         if inView, let probe, phase == .ready {
             start(at: Date())
             probeTicker = FrameTicker { probe.beat(at: CACurrentMediaTime()) }
+            probe.watchMainThread()
         }
     }
 

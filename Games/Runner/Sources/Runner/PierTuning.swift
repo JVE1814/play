@@ -73,6 +73,12 @@ final class FrameProbe {
     /// means the main thread was held up, rather than the drawing falling behind.
     private var beats: [Double] = []
     private var lastBeat: CFTimeInterval?
+    /// How long the main thread works each time it wakes, everything included (view updates,
+    /// painting, rendering what was painted, the session's tick), and the longest of those
+    /// stretches with what woke it.
+    private var busy: [Double] = []
+    private var woke: CFTimeInterval?
+    private var watcher: CFRunLoopObserver?
     private(set) var report: String?
 
     /// Frames in the first half second are not counted: the screen is still settling.
@@ -86,6 +92,24 @@ final class FrameProbe {
     /// The view update of a frame begins.
     func updateBegins(at time: CFTimeInterval) {
         updateBegan = time
+    }
+
+    /// Starts timing the main thread's working stretches.
+    func watchMainThread() {
+        guard watcher == nil else { return }
+        let activities = CFRunLoopActivity.afterWaiting.rawValue | CFRunLoopActivity.beforeWaiting.rawValue
+        let watcher = CFRunLoopObserverCreateWithHandler(nil, activities, true, 0) { [weak self] _, activity in
+            guard let self, self.report == nil else { return }
+            let now = CACurrentMediaTime()
+            if activity == .afterWaiting {
+                self.woke = now
+            } else if let woke = self.woke {
+                if let started = self.started, now - started > Self.warmUp { self.busy.append(now - woke) }
+                self.woke = nil
+            }
+        }
+        CFRunLoopAddObserver(CFRunLoopGetMain(), watcher, .commonModes)
+        self.watcher = watcher
     }
 
     /// A beat of the probe's display link. False once the probe is done.
@@ -108,11 +132,12 @@ final class FrameProbe {
         }
         last = begin
         guard begin - start > Self.warmUp + seconds else { return false }
-        report = Self.describe(intervals: intervals, paints: paints, works: works, beats: beats)
+        report = Self.describe(intervals: intervals, paints: paints, works: works, beats: beats, busy: busy)
+        if let watcher { CFRunLoopObserverInvalidate(watcher) }
         return true
     }
 
-    private static func describe(intervals: [Double], paints: [Double], works: [Double], beats: [Double]) -> String {
+    private static func describe(intervals: [Double], paints: [Double], works: [Double], beats: [Double], busy: [Double]) -> String {
         func ms(_ value: Double) -> String { String(format: "%.2f", value * 1_000) }
         func centile(_ sorted: [Double], _ p: Double) -> Double {
             sorted.isEmpty ? 0 : sorted[min(sorted.count - 1, Int(Double(sorted.count) * p))]
@@ -131,5 +156,7 @@ final class FrameProbe {
             // The probe's display link asks for 60 a second: a beat more than 25 ms after the
             // last one is a frame the main thread missed.
             + " main_beats=\(beats.count) main_missed=\(beats.filter { $0 > 0.025 }.count) main_gap_max=\(ms(beats.max() ?? 0))"
+            + " busy_n=\(busy.count) busy_p50=\(ms(centile(busy.sorted(), 0.5))) busy_p95=\(ms(centile(busy.sorted(), 0.95)))"
+            + " busy_p99=\(ms(centile(busy.sorted(), 0.99))) busy_max=\(ms(busy.max() ?? 0)) busy_over16=\(busy.filter { $0 > 0.016 }.count)"
     }
 }
