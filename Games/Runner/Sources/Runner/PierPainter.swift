@@ -495,6 +495,12 @@ struct PierPainter {
         let x = PierCamera.x(ofLane: Double(obstacle.lane))
         let near = max(z, PierCamera.near)
         let scale = cam.scale(near)
+        // Far off (about 40 m and more, where most of the course is), a few points high: drawn
+        // as a silhouette in its main colours.
+        if scale < Self.farDetail, obstacle.kind != .stack || obstacle.length <= 5 {
+            silhouette(of: obstacle, x: x, z: near, in: &layer)
+            return
+        }
         switch obstacle.kind {
         case .barrier:
             groundShadow(&layer, x: x, z: near, halfWidth: 0.72, depth: 0.3)
@@ -526,6 +532,36 @@ struct PierPainter {
         case .barrel:
             groundShadow(&layer, x: x, z: near, halfWidth: 0.6, depth: 0.6)
             barrel(&layer, x: x, z: near)
+        }
+    }
+
+    /// An obstacle far off, as the flat shapes of its front: a board on two posts, a stack of
+    /// crates, a barrel.
+    private func silhouette(of obstacle: Obstacle, x: Double, z: Double, in context: inout GraphicsContext) {
+        func face(_ x0: Double, _ x1: Double, _ y0: Double, _ y1: Double) -> CGRect {
+            let topLeft = cam.point(x0, y1, z)
+            let bottomRight = cam.point(x1, y0, z)
+            return CGRect(x: topLeft.x, y: topLeft.y, width: bottomRight.x - topLeft.x, height: bottomRight.y - topLeft.y)
+        }
+        switch obstacle.kind {
+        case .barrier, .beam:
+            let barrier = obstacle.kind == .barrier
+            let reach = barrier ? 0.6 : 0.66
+            let thick = barrier ? 0.05 : 0.06
+            var posts = Path()
+            for side in [-1.0, 1.0] {
+                posts.addRect(face(x + side * reach - thick, x + side * reach + thick, 0, barrier ? 0.6 : 1.75))
+            }
+            context.fill(posts, with: .color(barrier ? Color(hex: 0xE8E4EE) : PierStyle.beamPost))
+            let board = barrier ? face(x - 0.66, x + 0.66, 0.36, 0.66) : face(x - 0.74, x + 0.74, 1.05, 1.5)
+            context.fill(Path(roundedRect: board, cornerRadius: board.height * 0.2), with: .color(barrier ? PierStyle.warningRed : Theme.highlight))
+        case .stack:
+            var crates = Path(face(x - 0.64, x + 0.64, 0, 1.28))
+            crates.addRect(face(x - 0.5, x + 0.56, 1.28, 2.3))
+            context.fill(crates, with: .color(PierStyle.crate))
+        case .barrel:
+            let body = face(x - 0.52, x + 0.52, 0, 0.72)
+            context.fill(Path(roundedRect: body, cornerRadius: body.height * 0.42), with: .color(PierStyle.barrel))
         }
     }
 
