@@ -71,6 +71,9 @@ public final class RunnerSession: ObservableObject, GameSession {
 
     public let context: GameContext
     public let hud = RunnerHUD()
+    let tuning: PierTuning
+    /// Debug builds, `-frameProbe`: measures how evenly the pier is drawn.
+    let probe: FrameProbe?
     public private(set) var run: Run
     public private(set) var moments = Moments()
 
@@ -80,6 +83,7 @@ public final class RunnerSession: ObservableObject, GameSession {
     /// The moment the run has been played up to, while the clock is running.
     private var playedTo: Date? = nil
     private var loop: Task<Void, Never>? = nil
+    private var ticker: FrameTicker? = nil
     private var lastSaved = Date.distantPast
     private var lastCoinSound = Date.distantPast
     private let resultReveal = Pending()
@@ -94,13 +98,20 @@ public final class RunnerSession: ObservableObject, GameSession {
     /// In UI tests the clock stands still, and every touch moves it on by this much.
     public static let testStride = 0.5
 
+    /// Every save and load of a run goes through here, in order: the saves made while running
+    /// are written without holding up the main thread, and a load always sees the last save.
+    private static let disk = DispatchQueue(label: "Runner.saves", qos: .utility)
+
     public init(context: GameContext) {
         self.context = context
+        tuning = PierTuning(options: context.options)
+        probe = FrameProbe(options: context.options)
         let run: Run
         let best: Int
         let goal: Int
         let underWay: Bool
-        if let save = context.saveSlot.load(RunnerSave.self) {
+        let slot = context.saveSlot
+        if let save = Self.disk.sync(execute: { slot.load(RunnerSave.self) }) {
             run = save.run
             best = save.best
             goal = save.goal
@@ -191,6 +202,7 @@ public final class RunnerSession: ObservableObject, GameSession {
         guard self.inView != inView else { return }
         self.inView = inView
         if !inView { pause() }
+        if inView, probe != nil, phase == .ready { start(at: Date()) }
     }
 
     // MARK: Player actions
@@ -313,7 +325,7 @@ public final class RunnerSession: ObservableObject, GameSession {
             context.feedback.play(.win)
             context.announce("Goal reached")
         }
-        if phase == .running && now.timeIntervalSince(lastSaved) > 2 { save() }
+        if phase == .running && now.timeIntervalSince(lastSaved) > 2 { save(waiting: !tuning.contains(.frameClock)) }
     }
 
     /// In UI tests, a touch moves the clock on.
@@ -355,7 +367,15 @@ public final class RunnerSession: ObservableObject, GameSession {
     private func startClock(at moment: Date) {
         guard !isStepped else { return }
         playedTo = moment
-        guard loop == nil else { return }
+        guard loop == nil, ticker == nil else { return }
+        if tuning.contains(.frameClock) {
+            ticker = FrameTicker { [weak self] in
+                guard let self else { return false }
+                self.advance(to: Date())
+                return true
+            }
+            return
+        }
         loop = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 16_000_000)
@@ -369,6 +389,8 @@ public final class RunnerSession: ObservableObject, GameSession {
         playedTo = nil
         loop?.cancel()
         loop = nil
+        ticker?.stop()
+        ticker = nil
     }
 
     // MARK: The end of a run
@@ -406,10 +428,18 @@ public final class RunnerSession: ObservableObject, GameSession {
                isBest: run.score > 0 && run.score >= best)
     }
 
-    private func save() {
+    /// - Parameter waiting: false for the saves made along the way, which are written in the
+    ///   background.
+    private func save(waiting: Bool = true) {
         lastSaved = Date()
-        context.saveSlot.save(RunnerSave(run: run, best: best, goal: goal, runsStarted: runsStarted,
-                                         isUnderWay: isUnderWay, resultRecorded: resultRecorded))
+        let slot = context.saveSlot
+        let snapshot = RunnerSave(run: run, best: best, goal: goal, runsStarted: runsStarted,
+                                  isUnderWay: isUnderWay, resultRecorded: resultRecorded)
+        if waiting {
+            Self.disk.sync { slot.save(snapshot) }
+        } else {
+            Self.disk.async { slot.save(snapshot) }
+        }
     }
 }
 

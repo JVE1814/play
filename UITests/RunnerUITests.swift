@@ -53,6 +53,28 @@ final class RunnerUITests: UITestCase {
         XCTAssertTrue(labelled("Played: 1").waitForExistence(timeout: 5))
     }
 
+    // MARK: Smoothness
+
+    /// Runs a busy course live for eight seconds with each way of drawing and clocking the pier,
+    /// and prints how evenly the frames came (`RUNNER-PERF` lines in the test log).
+    func testThePierIsDrawnSmoothly() {
+        for (tuning, appearance) in [("none", "dark"), ("gpu", "dark"), ("gpu,rate", "dark"), ("gpu,rate,clock", "dark"),
+                                     ("none", "light"), ("gpu,rate,clock", "light")] {
+            launch(["-scenario", "runnerProbe", "-frameProbe", "8", "-pierTuning", tuning], appearance: appearance, animated: true)
+            waitFor("game-runner").tap()
+            // The run starts by itself and pauses once measured.
+            let probe = element("frameProbe")
+            XCTAssertTrue(probe.waitForExistence(timeout: 90), "no report from the probe (\(tuning))")
+            let report = probe.value as? String ?? ""
+            print("RUNNER-PERF live tuning=\(tuning) appearance=\(appearance) \(report)")
+            let attachment = XCTAttachment(string: report)
+            attachment.name = "frame-probe-\(tuning)-\(appearance)"
+            attachment.lifetime = .keepAlways
+            add(attachment)
+            XCTAssertTrue(report.hasPrefix("frames="), report)
+        }
+    }
+
     // MARK: Screenshots
 
     func testRunnerScreenshotsLight() {

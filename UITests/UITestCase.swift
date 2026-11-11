@@ -9,9 +9,11 @@ class UITestCase: XCTestCase {
         continueAfterFailure = false
     }
 
-    func launch(_ arguments: [String] = [], reset: Bool = true, appearance: String? = nil) {
+    /// - Parameter animated: time passes and things move as they do for a player, instead of
+    ///   standing still between steps.
+    func launch(_ arguments: [String] = [], reset: Bool = true, appearance: String? = nil, animated: Bool = false) {
         let app = XCUIApplication()
-        var all = ["-disableAnimations"]
+        var all = animated ? [] : ["-disableAnimations"]
         if reset { all.append("-resetState") }
         if let appearance { all += ["-forceAppearance", appearance] }
         app.launchArguments = all + arguments

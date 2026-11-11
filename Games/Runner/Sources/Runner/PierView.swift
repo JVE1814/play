@@ -1,4 +1,5 @@
 import PlayKit
+import QuartzCore
 import RunnerEngine
 import SwiftUI
 
@@ -28,10 +29,16 @@ struct PierView: View {
             ZStack {
                 TimelineView(.animation(minimumInterval: frameInterval, paused: paused)) { timeline in
                     let frame = makeFrame(size: proxy.size, date: live ? timeline.date : Date())
-                    Canvas { context, _ in
+                    let probe = session.probe
+                    let owner = session
+                    rendered(Canvas { context, _ in
                         var context = context
+                        let begin = CACurrentMediaTime()
                         PierPainter(f: frame).paint(&context)
-                    }
+                        if let probe, probe.record(begin: begin, end: CACurrentMediaTime()) {
+                            Task { @MainActor in owner.togglePause() }
+                        }
+                    })
                     // Inside the timeline, so what VoiceOver says follows the run.
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Pier")
@@ -48,6 +55,13 @@ struct PierView: View {
                 .contentShape(Rectangle())
                 .gesture(swipes)
 
+                if let report = session.probe?.report {
+                    Text(report)
+                        .font(.system(size: 6))
+                        .foregroundStyle(.white)
+                        .accessibilityIdentifier("frameProbe")
+                        .accessibilityValue(report)
+                }
                 PierDisplay(session: session, hud: session.hud)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 cards
@@ -61,8 +75,18 @@ struct PierView: View {
 
     /// Full frame rate while running; half on the start line and after the run, where only
     /// the sea glitters.
-    private var frameInterval: Double {
-        session.phase == .running ? 1.0 / 60 : 1.0 / 30
+    private var frameInterval: Double? {
+        guard session.phase == .running else { return 1.0 / 30 }
+        return session.tuning.contains(.fullRate) ? nil : 1.0 / 60
+    }
+
+    @ViewBuilder
+    private func rendered(_ canvas: some View) -> some View {
+        if session.tuning.contains(.gpu) {
+            canvas.drawingGroup()
+        } else {
+            canvas
+        }
     }
 
     private func makeFrame(size: CGSize, date: Date) -> PierFrame {
