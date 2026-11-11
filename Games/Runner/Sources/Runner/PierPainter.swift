@@ -76,7 +76,20 @@ struct PierPainter {
         sky(&context)
         sea(&context)
         deck(&context)
+        // Far-off coins, a couple of pixels across, are gathered while they come one after
+        // another in depth and filled together; anything else in between is drawn first.
+        var farCoins = Path()
+        func drawFarCoins() {
+            guard !farCoins.isEmpty else { return }
+            context.fill(farCoins, with: .color(PierStyle.coin))
+            farCoins = Path()
+        }
         for item in items() {
+            if case .coin(let coin, let z) = item, let shape = farCoin(coin, z: z) {
+                farCoins.addPath(shape)
+                continue
+            }
+            drawFarCoins()
             switch item {
             case .furniture(let index, let z): furniture(&context, index: index, z: z)
             case .obstacle(let obstacle, let z): draw(obstacle, z: z, in: &context)
@@ -85,6 +98,7 @@ struct PierPainter {
             case .runner: runner(&context)
             }
         }
+        drawFarCoins()
         if !f.reduceMotion { speedLines(&context) }
         // The bottom edge falls into shade, so the toolbar below does not cut the planks off hard.
         context.fill(Path.box(x: 0, y: h * 0.78, width: w, height: h * 0.22),
@@ -122,6 +136,14 @@ struct PierPainter {
 
     /// How far down the pier things are drawn.
     private static let sight = 120.0
+    /// Things that fade or twinkle are drawn in this many steps of strength, each step one fill,
+    /// rather than one fill each.
+    private static let steps = 6
+
+    /// The step of strength (0...steps) for `strength` (0...1).
+    private static func step(_ strength: Double) -> Int {
+        min(steps, max(0, Int((strength * Double(steps)).rounded())))
+    }
     /// Points below which a face is too thin to see (half a point: a pixel and a half), and
     /// is not drawn.
     private static let detail = 0.5
@@ -145,13 +167,18 @@ struct PierPainter {
         let horizon = cam.horizon
         context.fill(Path.box(x: -10, y: -10, width: w + 20, height: horizon + 12),
                      with: .linearGradient(Gradient(stops: scenery.sky), startPoint: .zero, endPoint: CGPoint(x: 0, y: horizon)))
+        // The stars twinkle in a few steps of brightness, each step one fill.
         var stars = SeededGenerator(seed: 77)
+        var twinkling = [Path](repeating: Path(), count: Self.steps + 1)
         for index in 0..<scenery.starCount {
             let x = stars.nextUnit() * w
             let y = stars.nextUnit() * horizon * 0.7
             let size = 0.6 + stars.nextUnit() * 1.2
-            let twinkle = f.reduceMotion ? 1 : 0.6 + 0.4 * sin(f.clock * (1 + Double(index % 5) * 0.4) + Double(index))
-            context.fill(Path.disc(x: x, y: y, r: size / 2), with: .color(scenery.star.opacity(twinkle)))
+            let twinkle = f.reduceMotion ? 1 : 0.5 + 0.5 * sin(f.clock * (1 + Double(index % 5) * 0.4) + Double(index))
+            twinkling[Self.step(twinkle)].addPath(Path.disc(x: x, y: y, r: size / 2))
+        }
+        for (step, shape) in twinkling.enumerated() where !shape.isEmpty {
+            context.fill(shape, with: .color(scenery.star.opacity(0.2 + 0.8 * Double(step) / Double(Self.steps))))
         }
 
         // The sun on the horizon, or the moon above it, a little to the right. Nothing of
@@ -225,6 +252,7 @@ struct PierPainter {
         // Glitter under the sun or moon: short dashes, wider towards the viewer.
         let below = w * 0.64 - cam.x * 3
         var random = SeededGenerator(seed: 5)
+        var glitter = [Path](repeating: Path(), count: Self.steps + 1)
         for index in 0..<26 {
             let u = random.nextUnit()
             let y = horizon + 2 + u * u * (h - horizon) * 0.55
@@ -233,8 +261,10 @@ struct PierPainter {
             let x = below + (random.nextUnit() - 0.5) * 2 * spread
             let rate = 1.2 + random.nextUnit() * 2
             let shimmer = f.reduceMotion ? 0.6 : 0.35 + 0.65 * abs(sin(f.clock * rate + Double(index) * 1.7))
-            context.fill(Path.box(x: x - width / 2, y: y, width: width, height: 1.2 + u * 1.6, radius: 1),
-                         with: .color(scenery.glitter.opacity(shimmer * (1 - u * 0.6))))
+            glitter[Self.step(shimmer * (1 - u * 0.6))].addPath(Path.box(x: x - width / 2, y: y, width: width, height: 1.2 + u * 1.6, radius: 1))
+        }
+        for (step, shape) in glitter.enumerated() where step > 0 && !shape.isEmpty {
+            context.fill(shape, with: .color(scenery.glitter.opacity(Double(step) / Double(Self.steps))))
         }
     }
 
@@ -296,23 +326,45 @@ struct PierPainter {
         context.fill(dashes, with: .color(scenery.laneLine))
     }
 
-    /// A box standing on the planks: its top and the side the camera can see, then its front.
-    private func box(_ context: inout GraphicsContext, x x0: Double, _ x1: Double, y y0: Double, _ y1: Double,
-                     z near: Double, _ far: Double, front: Color, side: Color, top: Color) {
+    /// The faces of boxes the camera can see, gathered so that boxes side by side (which never
+    /// overlap) are filled together: each colour once, however many boxes.
+    private struct Faces {
+        var side = Path()
+        var top = Path()
+        var front = Path()
+    }
+
+    /// Adds a box standing on the planks: the side and top the camera can see, and its front.
+    private func add(_ faces: inout Faces, x x0: Double, _ x1: Double, y y0: Double, _ y1: Double, z near: Double, _ far: Double) {
         let z0 = max(near, PierCamera.near)
         let z1 = max(far, z0 + 0.01)
         // A side or a top seen as a sliver thinner than `detail` is left out.
         let shrink = cam.focal * (1 / z0 - 1 / z1)
         if cam.x < x0, (x0 - cam.x) * shrink > Self.detail {
-            context.fill(Path.quad(cam.point(x0, y0, z0), cam.point(x0, y1, z0), cam.point(x0, y1, z1), cam.point(x0, y0, z1)), with: .color(side))
+            faces.side.addPath(Path.quad(cam.point(x0, y0, z0), cam.point(x0, y1, z0), cam.point(x0, y1, z1), cam.point(x0, y0, z1)))
         }
         if cam.x > x1, (cam.x - x1) * shrink > Self.detail {
-            context.fill(Path.quad(cam.point(x1, y0, z0), cam.point(x1, y1, z0), cam.point(x1, y1, z1), cam.point(x1, y0, z1)), with: .color(side))
+            faces.side.addPath(Path.quad(cam.point(x1, y0, z0), cam.point(x1, y1, z0), cam.point(x1, y1, z1), cam.point(x1, y0, z1)))
         }
         if y1 < PierCamera.height, (PierCamera.height - y1) * shrink > Self.detail {
-            context.fill(Path.quad(cam.point(x0, y1, z0), cam.point(x1, y1, z0), cam.point(x1, y1, z1), cam.point(x0, y1, z1)), with: .color(top))
+            faces.top.addPath(Path.quad(cam.point(x0, y1, z0), cam.point(x1, y1, z0), cam.point(x1, y1, z1), cam.point(x0, y1, z1)))
         }
-        context.fill(Path.quad(cam.point(x0, y0, z0), cam.point(x1, y0, z0), cam.point(x1, y1, z0), cam.point(x0, y1, z0)), with: .color(front))
+        faces.front.addPath(Path.quad(cam.point(x0, y0, z0), cam.point(x1, y0, z0), cam.point(x1, y1, z0), cam.point(x0, y1, z0)))
+    }
+
+    /// Sides and tops, then fronts.
+    private func fill(_ faces: Faces, in context: inout GraphicsContext, front: Color, side: Color, top: Color) {
+        if !faces.side.isEmpty { context.fill(faces.side, with: .color(side)) }
+        if !faces.top.isEmpty { context.fill(faces.top, with: .color(top)) }
+        context.fill(faces.front, with: .color(front))
+    }
+
+    /// A box standing on the planks: its top and the side the camera can see, then its front.
+    private func box(_ context: inout GraphicsContext, x x0: Double, _ x1: Double, y y0: Double, _ y1: Double,
+                     z near: Double, _ far: Double, front: Color, side: Color, top: Color) {
+        var faces = Faces()
+        add(&faces, x: x0, x1, y: y0, y1, z: near, far)
+        fill(faces, in: &context, front: front, side: side, top: top)
     }
 
     /// A bollard on each edge with a rope sagging to the next, and a lamp at every fourth.
@@ -320,33 +372,41 @@ struct PierPainter {
         var layer = context
         layer.opacity = haze(z)
         let scale = cam.scale(z)
+        // The two edges of the pier never overlap, so each part of both is drawn at once.
+        var ropes = Path()
+        var posts = Faces()
+        var caps = Path()
+        var lampPosts = Path()
+        var lamps: [Spot] = []
         for side in [-1.0, 1.0] {
             let x = side * (PierCamera.halfWidth + 0.12)
-            let top = cam.point(x, 0.8, z)
-            let next = cam.point(x, 0.8, z + Self.bollardSpacing)
-            let sag = cam.point(x, 0.1, z + Self.bollardSpacing / 2)
-            var rope = Path()
-            rope.move(to: top.point)
-            rope.addQuadCurve(to: next.point, control: sag.point)
-            layer.stroke(rope, with: .color(scenery.rope), style: StrokeStyle(lineWidth: max(0.6, scale * 0.035), lineCap: .round))
-            box(&layer, x: x - 0.1, x + 0.1, y: 0, 0.9, z: z, z + 0.2, front: scenery.post, side: scenery.postSide, top: scenery.postTop)
+            ropes.move(to: cam.point(x, 0.8, z).point)
+            ropes.addQuadCurve(to: cam.point(x, 0.8, z + Self.bollardSpacing).point, control: cam.point(x, 0.1, z + Self.bollardSpacing / 2).point)
+            add(&posts, x: x - 0.1, x + 0.1, y: 0, 0.9, z: z, z + 0.2)
             let cap = cam.point(x, 0.9, z)
-            if scale > Self.farDetail { layer.fill(Path.box(x: cap.x - scale * 0.13, y: cap.y - scale * 0.07, width: scale * 0.26, height: scale * 0.09, radius: scale * 0.03),
-                       with: .color(scenery.postCap)) }
+            if scale > Self.farDetail {
+                caps.addPath(Path.box(x: cap.x - scale * 0.13, y: cap.y - scale * 0.07, width: scale * 0.26, height: scale * 0.09, radius: scale * 0.03))
+            }
             guard index % 4 == 0 else { continue }
-            let foot = cam.point(x + side * 0.05, 0, z)
-            let head = cam.point(x + side * 0.05, 3.4, z)
             let arm = cam.point(x - side * 0.5, 3.4, z)
-            var post = Path()
-            post.move(to: foot.point)
-            post.addLine(to: head.point)
-            post.addLine(to: arm.point)
-            layer.stroke(post, with: .color(scenery.lampPost), style: StrokeStyle(lineWidth: max(1, scale * 0.09), lineCap: .round, lineJoin: .round))
+            lampPosts.move(to: cam.point(x + side * 0.05, 0, z).point)
+            lampPosts.addLine(to: cam.point(x + side * 0.05, 3.4, z).point)
+            lampPosts.addLine(to: arm.point)
+            lamps.append(arm)
+        }
+        layer.stroke(ropes, with: .color(scenery.rope), style: StrokeStyle(lineWidth: max(0.6, scale * 0.035), lineCap: .round))
+        fill(posts, in: &layer, front: scenery.post, side: scenery.postSide, top: scenery.postTop)
+        if !caps.isEmpty { layer.fill(caps, with: .color(scenery.postCap)) }
+        guard !lamps.isEmpty else { return }
+        layer.stroke(lampPosts, with: .color(scenery.lampPost), style: StrokeStyle(lineWidth: max(1, scale * 0.09), lineCap: .round, lineJoin: .round))
+        var bulbs = Path()
+        for arm in lamps {
             layer.fill(Path.disc(x: arm.x, y: arm.y, r: scale * 1.1),
                        with: .radialGradient(Gradient(colors: [scenery.lampGlow, scenery.lampGlow.opacity(0)]),
                                              center: arm.point, startRadius: 0, endRadius: scale * 1.1))
-            layer.fill(Path.disc(x: arm.x, y: arm.y + scale * 0.05, r: scale * 0.13), with: .color(scenery.lamp))
+            bulbs.addPath(Path.disc(x: arm.x, y: arm.y + scale * 0.05, r: scale * 0.13))
         }
+        layer.fill(bulbs, with: .color(scenery.lamp))
     }
 
     // MARK: On the course
@@ -376,6 +436,7 @@ struct PierPainter {
         // (which costs the renderer a layer of its own for every board).
         let block = width / Double(blocks)
         let radius = min(height * 0.2, block / 2)
+        var painted = [Path(), Path()]
         for index in 0..<blocks {
             let first = index == 0
             let last = index == blocks - 1
@@ -383,9 +444,10 @@ struct PierPainter {
             let right = topLeft.x + Double(index + 1) * block + (last ? 0 : 0.5)
             let shape = UnevenRoundedRectangle(topLeadingRadius: first ? radius : 0, bottomLeadingRadius: first ? radius : 0,
                                                bottomTrailingRadius: last ? radius : 0, topTrailingRadius: last ? radius : 0)
-            context.fill(shape.path(in: CGRect(x: left, y: topLeft.y, width: right - left, height: height)),
-                         with: .color(index % 2 == 0 ? colors.0 : colors.1))
+            painted[index % 2].addPath(shape.path(in: CGRect(x: left, y: topLeft.y, width: right - left, height: height)))
         }
+        context.fill(painted[0], with: .color(colors.0))
+        context.fill(painted[1], with: .color(colors.1))
         let shadow = UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: radius, bottomTrailingRadius: radius, topTrailingRadius: 0)
         context.fill(shadow.path(in: CGRect(x: topLeft.x, y: topLeft.y + height * 0.72, width: width, height: height * 0.28)),
                      with: .color(.black.opacity(0.12)))
@@ -419,17 +481,19 @@ struct PierPainter {
         switch obstacle.kind {
         case .barrier:
             groundShadow(&layer, x: x, z: near, halfWidth: 0.72, depth: 0.3)
+            var posts = Faces()
             for side in [-1.0, 1.0] {
-                box(&layer, x: x + side * 0.6 - 0.05, x + side * 0.6 + 0.05, y: 0, 0.6, z: near, near + 0.1,
-                    front: Color(hex: 0xE8E4EE), side: Color(hex: 0xB9B3C6), top: .white)
+                add(&posts, x: x + side * 0.6 - 0.05, x + side * 0.6 + 0.05, y: 0, 0.6, z: near, near + 0.1)
             }
+            fill(posts, in: &layer, front: Color(hex: 0xE8E4EE), side: Color(hex: 0xB9B3C6), top: .white)
             stripedBoard(&layer, x: x - 0.66, x + 0.66, y: 0.36, 0.66, z: near, colors: (PierStyle.warningRed, PierStyle.cream), blocks: 6)
         case .beam:
             groundShadow(&layer, x: x, z: near, halfWidth: 0.72, depth: 0.3)
+            var posts = Faces()
             for side in [-1.0, 1.0] {
-                box(&layer, x: x + side * 0.66 - 0.06, x + side * 0.66 + 0.06, y: 0, 1.75, z: near, near + 0.12,
-                    front: PierStyle.beamPost, side: PierStyle.beamPostSide, top: PierStyle.beamPostTop)
+                add(&posts, x: x + side * 0.66 - 0.06, x + side * 0.66 + 0.06, y: 0, 1.75, z: near, near + 0.12)
             }
+            fill(posts, in: &layer, front: PierStyle.beamPost, side: PierStyle.beamPostSide, top: PierStyle.beamPostTop)
             stripedBoard(&layer, x: x - 0.74, x + 0.74, y: 1.05, 1.5, z: near, colors: (Theme.highlight, PierStyle.beamPostSide), blocks: 7)
             // A lamp hanging from the bar, at head height.
             let lamp = cam.point(x, 0.98, near)
@@ -501,7 +565,8 @@ struct PierPainter {
         context.fill(hoops, with: .color(PierStyle.hoop))
     }
 
-    private func draw(_ coin: Coin, z: Double, in context: inout GraphicsContext) {
+    /// Where a coin is drawn, its size and how far it is turned.
+    private func look(of coin: Coin, z: Double) -> (centre: Spot, radius: Double, across: Double) {
         var x = PierCamera.x(ofLane: Double(coin.lane))
         var y = coin.height
         if run.hasMagnet {
@@ -513,7 +578,20 @@ struct PierPainter {
         let centre = cam.point(x, y, z)
         let radius = max(1.2, cam.scale(z) * 0.21)
         let turn = f.reduceMotion ? 1 : abs(cos(f.clock * 3.2 + coin.position * 0.9))
-        let across = radius * (0.22 + 0.78 * turn)
+        return (centre, radius, radius * (0.22 + 0.78 * turn))
+    }
+
+    /// The face of a coin far enough off to be a couple of pixels across, and seen in full; nil
+    /// for any other.
+    private func farCoin(_ coin: Coin, z: Double) -> Path? {
+        guard haze(z) * passed(z) >= 1 else { return nil }
+        let (centre, radius, across) = look(of: coin, z: z)
+        guard radius <= 2.5 else { return nil }
+        return Path.oval(x: centre.x, y: centre.y, rx: across, ry: radius)
+    }
+
+    private func draw(_ coin: Coin, z: Double, in context: inout GraphicsContext) {
+        let (centre, radius, across) = look(of: coin, z: z)
         var layer = context
         layer.opacity = haze(z) * passed(z)
         guard radius > 2.5 else {
@@ -643,6 +721,7 @@ struct PierPainter {
         let rush = min(1, max(0, (run.speed - 13) / 8))
         guard rush > 0, !f.standing, run.status == .running else { return }
         var random = SeededGenerator(seed: 11)
+        var streaks = [Path](repeating: Path(), count: Self.steps + 1)
         for index in 0..<14 {
             let side = index % 2 == 0 ? -1.0 : 1.0
             let y = cam.horizon + random.nextUnit() * (h - cam.horizon) * 0.8
@@ -651,8 +730,11 @@ struct PierPainter {
             let length = (10 + 26 * random.nextUnit()) * rush
             let outward = (x - w / 2) / w
             let downward = (y - cam.horizon) / h
-            context.stroke(Path.line(Spot(x: x, y: y), Spot(x: x + outward * length, y: y + downward * length * 1.6)),
-                           with: .color(.white.opacity(0.25 * rush * (1 - age))), style: StrokeStyle(lineWidth: 1.2, lineCap: .round))
+            streaks[Self.step(1 - age)].addPath(Path.line(Spot(x: x, y: y), Spot(x: x + outward * length, y: y + downward * length * 1.6)))
+        }
+        for (step, shape) in streaks.enumerated() where step > 0 && !shape.isEmpty {
+            context.stroke(shape, with: .color(.white.opacity(0.25 * rush * Double(step) / Double(Self.steps))),
+                           style: StrokeStyle(lineWidth: 1.2, lineCap: .round))
         }
     }
 }
